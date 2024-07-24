@@ -1,38 +1,105 @@
-.App {
-  text-align: center;
+.main-container{
+  background-color: #ddd;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.header-btn{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: #ddd;
+    height: 60px;
+    width: 600px;
+    left: 300px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.flow-btn{
+    z-index: 10;
+    height: 32px;
+    width: 180px;
+    background-color: #1d5cfc;
+    color: #fff;
+    border: none;
+    margin-right: 40px;
+    border-radius: 15px;
+    font-size: 16px;
+}
+
+.publish-btn{
+    height: 32px;
+    width: 120px;
+    background-color: red;
+    color: #fff;
+    border: none;
+    font-size: 16px;
+}
+
+
+.description-lists {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px;
+    z-index: 10;
+    width: 250px;
+    max-height: 200px;
+    overflow-x: auto;
   }
-}
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+  .flow-btn:hover+.description-lists{
+    display: flex;
   }
-  to {
-    transform: rotate(360deg);
+
+
+  .description-button-wrapper:hover .description-lists {
+    display: block;
   }
-}
+
+
+  .left-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+  }
+
+
+  .flow-btn .num{
+    background-color: #fff;
+    color: #130d68;
+    font-size: 18px;
+    margin-right: 5px;
+  }
+
+  .btn-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #ddd;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  button{
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+  }
+
+  span{
+    background-color: #ddd;
+    margin-right: 20px;
+  }
+
+
+  second-line{
+    display: none;
+  }

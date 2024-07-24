@@ -1,0 +1,253 @@
+.announcement-container, .form-one-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+
+}
+
+
+.form {
+    position: relative;
+    background-color: #dedede;
+    height: 550px;
+    display: flex;
+    flex-direction: column;
+    margin-right: 30px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+input{
+  width: 308px;
+  height: 24px;
+}
+
+.form-container .input-select{
+  width: 316px;
+  height: 26px;
+}
+
+
+.node-btn {
+    width: 90px;
+    height: 24px;
+    font-size: 12px;
+}
+
+
+/* select {
+    width: 170px;
+    height: 24px;
+} */
+
+.save-btn {
+    position: absolute;
+    bottom: 20px;
+    height: 28px;
+    width: 90px;
+    background-color: red;
+    color: #fff;
+    border: none;
+    margin-left: 10px;
+}
+
+.delete-btn{
+    position: absolute;
+    bottom: 20px;
+    right:20px;
+    background-color: transparent;
+    border: none;
+}
+
+
+.copy-btn{
+  position: absolute;
+  bottom: 20px;
+  right:50px;
+  background-color: transparent;
+  border: none;
+}
+
+
+hr {
+    color: "#fff";
+    background-color: "#fff";
+    width: 400px;
+}
+
+
+.bottom-hr {
+    color: "#fff";
+    background-color: "#fff";
+    height: 2;
+    position: absolute;
+    border: 1px solid #bebaba;
+    bottom: 50px;
+}
+
+
+.form-container{
+    margin-left: 20px;
+    max-height: 400px;
+    overflow-x: auto;
+}
+
+.input{
+    height: 24px;
+    width:  200px;
+    border: none;
+    border-radius: 6px;
+}
+
+
+.remove-btn{
+    position: absolute;
+    width: 30px;
+    top: 20px;
+    right: 5px;
+    background-color: transparent;
+    border: none;
+}
+
+.radio {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 300px;
+  }
+  
+  .radio label {
+    flex: 1;
+  }
+  
+  .radio input[type="radio"] {
+    margin: 8px 12px;
+    height: 15px;
+  }
+  
+
+
+  /* textarea {
+    width: 80%;
+    height: 100px;
+    margin-top: 5px;
+  } */
+
+
+
+
+
+
+
+
+
+
+.toggle-switch {
+    width: 50px;
+    height: 28px;
+    background-color: #3e50c4;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.3s;
+  }
+  
+  .switch {
+    width: 26px;
+    height: 26px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    transition: transform 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .toggled {
+    transform: translateX(12px);
+  }
+  
+  .non-toggled {
+    transform: translateX(-11px);
+  }
+
+  .icon-on, .icon-off {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ccc;
+  }
+
+
+  .star{
+    color: red;
+  }
+  
+
+  .date-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 380px;
+  }
+
+  
+
+  .date-container label{
+    font-size: 12px;
+  }
+
+ 
+
+  .date-container button{
+    background-color:blue;
+    color: #fff;
+    margin-top: 5px;
+    margin-left: 5px;
+    font-size: 12px;
+    height: 24px;
+    width: 75px;
+  }
+
+
+  .params-container{
+    border: 1px solid #000;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    width: 300px;
+    margin: 8px;
+  }
+
+  .params-container input{
+    width: 100px;
+  }
+
+
+  .params{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .ivr-input{
+    width: 20px;
+  }
+
+
+  .sms-select{
+    width: 100px;
+    height: 20px;
+  }
+
+
+  .error{
+    color: red;
+  }
