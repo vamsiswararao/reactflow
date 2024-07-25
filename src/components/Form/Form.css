@@ -144,46 +144,71 @@ hr {
 
 
 
-.toggle-switch {
-    width: 50px;
-    height: 28px;
-    background-color: #3e50c4;
-    border-radius: 15px;
+  .toggle-section {
     display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: relative;
-    transition: background-color 0.3s;
+    margin-top: 10px;
+  }
+  
+  .toggle-section p {
+    margin: 0 10px;
   }
   
   .switch {
-    width: 26px;
-    height: 26px;
-    background-color: white;
-    border-radius: 50%;
+    cursor: pointer;
+    width: 50px;
+    height: 25px;
+    border-radius: 25px;
+    background: #6b6b6b;
+    position: relative;
+    transition: background 0.3s;
+  }
+  
+  .switch.toggled {
+    background: #475fe5;
+  }
+  
+  .switch::before {
+    content: '';
     position: absolute;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    background: white;
+    top: 1px;
+    left: 1px;
     transition: transform 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
   
-  .toggled {
-    transform: translateX(12px);
+  .switch.toggled::before {
+    transform: translateX(25px);
   }
   
-  .non-toggled {
-    transform: translateX(-11px);
-  }
-
   .icon-on, .icon-off {
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #ccc;
+    display: none;
   }
+  
+  .switch.toggled .icon-on {
+    display: block;
+  }
+  
+  .switch.non-toggled .icon-off {
+    display: block;
+  }
+  
+  .key-value-section, .text-section {
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .key-value-section {
+    background-color: #f0f8ff;
+  }
+  
+  .text-section {
+    background-color: #f5f5dc;
+  }
+  
 
 
   .star{

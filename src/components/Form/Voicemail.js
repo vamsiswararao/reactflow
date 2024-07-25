@@ -100,7 +100,7 @@ const VoicemailForm = ({
           {errors.selectedValue && <p className="error">{errors.selectedValue}</p>}
           <label>Recording duration:<span className="star">*</span></label>
           <input
-            type="number"
+            type="text"
             name="repeatCount"
             placeholder="Enter the repeat count"
             value={formData.repeatCount}

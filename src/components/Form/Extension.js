@@ -8,7 +8,7 @@ const Extensions = ({
   handleLabelChange,
   deleteNode,
   removeForm,
-  copyNode
+  copyNode,
 }) => {
   const [name, setName] = useState("");
   const [audio, setAudio] = useState("");
@@ -30,10 +30,10 @@ const Extensions = ({
       description,
     };
     console.log("Form data:", formData);
-    setName("")
-  setAudio("")
-  setRetries("")
-  setDescription("")
+    setName("");
+    setAudio("");
+    setRetries("");
+    setDescription("");
   };
 
   return (
@@ -45,16 +45,23 @@ const Extensions = ({
         </button>
         <hr />
         <form className="form-container">
-          <label>Name:<span className="star">*</span></label>
+          <label>
+            Name:<span className="star">*</span>
+          </label>
           <input
             type="text"
             placeholder="Enter the Name"
             value={nodeLabel}
             onChange={handleLabelChange}
           />
-          <label>Audio:<span className="star">*</span></label>
-          <select              className="input-select"
-value={audio} onChange={(e) => setAudio(e.target.value)}>
+          <label>
+            Audio:<span className="star">*</span>
+          </label>
+          <select
+            className="input-select"
+            value={audio}
+            onChange={(e) => setAudio(e.target.value)}
+          >
             <option>Select the audio</option>
             {[...Array(10)].map((_, i) => (
               <option key={i} value={i + 1}>
@@ -63,13 +70,21 @@ value={audio} onChange={(e) => setAudio(e.target.value)}>
             ))}
           </select>
 
-          <label>Retries:<span className="star">*</span></label>
-          <input
-            type="number"
-            placeholder="Enter the retries"
-            value={retries}
-            onChange={(e) => setRetries(e.target.value)}
-          />
+          <label>
+            Retries:<span className="star">*</span>
+          </label>
+
+          <select
+            className="input-select"
+            value={audio}
+            onChange={(e) => setAudio(e.target.value)}
+          >
+            {[...Array(2)].map((_, i) => (
+              <option key={i} value={i + 1}>
+                {i + 1}
+              </option>
+            ))}
+          </select>
           <label>Description:</label>
           <textarea
             type="text"
@@ -84,7 +99,9 @@ value={audio} onChange={(e) => setAudio(e.target.value)}>
         <button className="save-btn" onClick={handleSave}>
           Save
         </button>
-        <button onClick={copyNode} className="copy-btn"><FaCopy style={{height:'20px',width:'20px'}} /></button>
+        <button onClick={copyNode} className="copy-btn">
+          <FaCopy style={{ height: "20px", width: "20px" }} />
+        </button>
         <button onClick={deleteNode} className="delete-btn">
           <RiDeleteBin6Line style={{ height: "20px", width: "20px" }} />
         </button>

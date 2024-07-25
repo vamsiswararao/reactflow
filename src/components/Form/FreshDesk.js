@@ -141,25 +141,68 @@ const FreshDeskFrom = ({
               </option>
             ))}
           </select>
-          <label>
-            Retries:<span className="star">*</span>
-          </label>
-          <input
-            type="text"
-            name="retries"
-            placeholder="Enter the retries"
-            value={formValues.retries}
-            onChange={handleInputChange}
-          />
-          <label>Description:</label>
+          
+          <label>Ticket Messages:<span className="star">*</span></label>
           <textarea
             name="description"
-            placeholder="Enter the description"
+            placeholder="Enter the Ticket Message"
             value={formValues.description}
             onChange={handleInputChange}
             rows="6"
             cols="40"
           />
+<label>Subject:<span className="star">*</span></label>
+          <textarea
+            name="description"
+            placeholder="Enter the subject"
+            value={formValues.description}
+            onChange={handleInputChange}
+            rows="3"
+            cols="40"
+            />
+          <label>
+            Status:<span className="star">*</span>
+          </label>
+          <select
+            className="input-select"
+            name="audioFile"
+            value={formValues.audioFile}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Select...</option>
+            {[...Array(10)].map((_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {i + 1}
+              </option>
+            ))}
+          </select>
+          <label>
+            Source:<span className="star">*</span>
+          </label>
+          <select
+            className="input-select"
+            name="audioFile"
+            value={formValues.audioFile}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Select...</option>
+            {[...Array(10)].map((_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {i + 1}
+              </option>
+            ))}
+          </select>
+          <label>Custom Post Field:<span className="star">*</span></label>
+          <textarea
+            name="description"
+            placeholder="Enter the subject"
+            value={formValues.description}
+            onChange={handleInputChange}
+            rows="3"
+            cols="40"
+            />
         </form>
         <hr className="bottom-hr" />
         <button className="save-btn" onClick={handleFormSubmit}>

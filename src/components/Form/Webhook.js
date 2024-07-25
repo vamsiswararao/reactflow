@@ -238,7 +238,7 @@ const WebhookForm = ({
                     )}
                   </div>
                 </div>
-                <p style={{ marginLeft: "10px" }}>Description</p>
+                <p style={{ marginLeft: "10px" }}>Text</p>
               </div>
             )}
 
@@ -248,7 +248,7 @@ const WebhookForm = ({
                   <Params />
                 ) : (
                   <>
-                    <label>Description:</label>
+                    <label>Json-text:</label>
                     <textarea
                       placeholder="write the description"
                       rows="4"
@@ -259,6 +259,14 @@ const WebhookForm = ({
               </>
             ):(Params()
           )}
+          <div>
+                    <label>Description:</label>
+                    <textarea
+                      placeholder="write the description"
+                      rows="4"
+                      cols="40"
+                    />
+                  </div>
           </div>
         </div>
         <hr className="bottom-hr" />

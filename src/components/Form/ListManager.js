@@ -96,7 +96,7 @@ const ListManagers = ({
               />
               <div style={{ display: "flex" }}>
                 <button type="submit" className="add-popup-btn">
-                  Add
+                  Save
                 </button>
                 <button
                   type="button"

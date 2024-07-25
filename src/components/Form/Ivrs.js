@@ -29,7 +29,22 @@ const Ivrs = ({
             onChange={handleLabelChange}
           />
           <div>
-            <label>ports</label>
+                <label>
+                 Audio:<span className="star">*</span>
+                </label>
+                <select className="input-select" name="selectedValue">
+                  <option>Select the audio</option>
+                  {[...Array(10)]
+                    .map((_, i) => i + 1)
+                    .map((i) => (
+                      <option key={i} value={i}>
+                        {i}
+                      </option>
+                    ))}
+                </select>
+              </div>
+          <div>
+            <label>IVRS No:</label>
             <div style={{display:'flex', width:'350px', flexWrap:'wrap'}}>
 
             {Array.from({ length: 10 }).map((_, index) => (
@@ -65,7 +80,7 @@ const Ivrs = ({
             </div>
             <div>
                 <label>
-                 Noinput audio:<span className="star">*</span>
+                 No DTMF audio:<span className="star">*</span>
                 </label>
                 <select className="input-select" name="selectedValue">
                   <option>Select the audio</option>
@@ -80,7 +95,7 @@ const Ivrs = ({
               </div>
               <div>
                 <label>
-                 Invalid audio:<span className="star">*</span>
+                 Invalid DTMF audio:<span className="star">*</span>
                 </label>
                 <select className="input-select" name="selectedValue">
                   <option>Select the audio</option>

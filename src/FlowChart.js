@@ -226,9 +226,6 @@ const FlowChart = () => {
             edge.source !== selectedNode.id && edge.target !== selectedNode.id
         )
       );
-      if(fixedNodeIds.IVRS){
-        setVisiblePorts(Array(10).fill(false))
-      }
       // const label=selectedNode.data.label;
       // const name=label.replace(/[@\d]/g, "");
       //  const count= nodeCounters[name] || 0;
