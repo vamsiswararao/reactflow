@@ -197,7 +197,7 @@ const FreshDeskFrom = ({
           <label>Custom Post Field:<span className="star">*</span></label>
           <textarea
             name="description"
-            placeholder="Enter the subject"
+            placeholder="Enter the post field"
             value={formValues.description}
             onChange={handleInputChange}
             rows="3"

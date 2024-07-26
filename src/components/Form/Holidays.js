@@ -71,21 +71,21 @@ const Holiday = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,cop
           <div>
             {dates.map((date, index) => (
               <div key={index} className="date-container">
-                <label>Date:</label>
-                <input type="text" placeholder="DD-MM-YY" style={{width:"80px"}}
+                <label style={{marginRight:"5px",width:'40px'}}>Date :</label>
+                <input type="text" placeholder="DD-MM-YYYY" style={{width:"80px",fontSize:'12px'}}
                 value={date.date ? parseDate(date.date) : ""}
                 />
                 <input
                   type="date"
                   name="date"
-                  style={{height:'26px',width:'20px'}}
+                  style={{height:'26px',width:'18px'}}
                   value={date.date ? parseDate(date.date) : ""}
                   onChange={(e) => handleDateChange(index, e)}
                 />
 
-                <label>Date description:</label>
+                <label style={{marginLeft:'30px',width:'45px'}}>Name :</label>
                 <input
-                style={{width:'80px'}}
+                style={{width:'80px',marginLeft:'10px'}}
                   type="text"
                   name="description"
                   value={date.description}
@@ -97,14 +97,14 @@ const Holiday = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,cop
                     onClick={handleAddDate}
                     className="add-date-btn"
                   >
-                    Add Date
+                    Add
                   </button>
                 )}
                 {index > 0 && ( // Display remove button for additional entries
                   <button
                     type="button"
                     onClick={() => handleRemoveDate(index)}
-                    className="remove-date-btn"
+                    style={{background:"red"}}
                   >
                     Remove
                   </button>

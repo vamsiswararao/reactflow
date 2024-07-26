@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
+import { RxCross2 } from "react-icons/rx";
 
 const WebhookForm = ({
   nodeLabel,
@@ -71,16 +72,18 @@ const WebhookForm = ({
       <div className="params-container">
         {params.map((param, index) => (
           <div key={index} className="params">
-            <label>Key:</label>
+            <label style={{marginRight:'5px'}}>Key :</label>
             <input
+              style={{width:'75px',marginRight:'5px'}}
               type="text"
               name="key"
               value={param.key}
               onChange={(e) => handleParamChange(index, e)}
             />
-            <label>Value:</label>
+            <label style={{marginLeft:'10px',marginRight:'5px'}}>Value :</label>
             <input
-              type="text"
+            style={{width:'75px',marginRight:'5px'}}
+            type="text"
               name="value"
               value={param.value}
               onChange={(e) => handleParamChange(index, e)}
@@ -91,7 +94,9 @@ const WebhookForm = ({
                 style={{
                   background: "Green",
                   marginTop: "8px",
-                  marginLeft: "5px",
+                  marginRight: "5px",
+                  height:"25px",
+                  width:'20px'
                 }}
               >
                 +
@@ -102,10 +107,12 @@ const WebhookForm = ({
                 style={{
                   background: "Red",
                   marginTop: "8px",
-                  marginLeft: "5px",
+                  marginRight: "5px",
+                  height:"25px",
+                  width:'20px'
                 }}
               >
-                -
+                <RxCross2 />
               </button>
             )}
           </div>
@@ -125,15 +132,17 @@ const WebhookForm = ({
       <div className="params-container">
         {headers.map((header, index) => (
           <div key={index} className="params">
-            <label>Key:</label>
+            <label style={{marginRight:'5px'}}>Key :</label>
             <input
+              style={{width:'75px',marginRight:'5px'}}
               type="text"
               name="key"
               value={header.key}
               onChange={(e) => handleHeaderChange(index, e)}
             />
-            <label>Value:</label>
+            <label style={{marginLeft:'10px',marginRight:'5px'}} >Value :</label>
             <input
+            style={{width:'75px',marginRight:'5px'}}
               type="text"
               name="value"
               value={header.value}
@@ -145,7 +154,9 @@ const WebhookForm = ({
                 style={{
                   background: "Green",
                   marginTop: "8px",
-                  marginLeft: "5px",
+                  marginRight: "5px",
+                  height:'25px',
+                  width:'20px'
                 }}
               >
                 +
@@ -156,10 +167,12 @@ const WebhookForm = ({
                 style={{
                   background: "Red",
                   marginTop: "8px",
-                  marginLeft: "5px",
+                  marginRight: "5px",
+                  height:"25px",
+                  width:'20px'
                 }}
               >
-                -
+            <RxCross2 />
               </button>
             )}
           </div>
@@ -250,7 +263,7 @@ const WebhookForm = ({
                   <>
                     <label>Json-text:</label>
                     <textarea
-                      placeholder="write the description"
+                      placeholder="write the text"
                       rows="4"
                       cols="40"
                     />

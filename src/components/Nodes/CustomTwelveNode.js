@@ -9,9 +9,10 @@ const DEFAULT_HANDLE_STYLE = {
 
 };
 
-const CustomTwelveNode = ({ data, visiblePorts,handlePortClick }) => {
- 
+const CustomTwelveNode = ({ data }) => {
 
+const {IvrsPorts}=data
+console.log(IvrsPorts)
   return (
     <div
       style={{
@@ -31,7 +32,7 @@ const CustomTwelveNode = ({ data, visiblePorts,handlePortClick }) => {
       />
       <div>{data.label}</div>
 
-      {visiblePorts.map((isVisible, index) =>
+      {IvrsPorts.map((isVisible, index) =>
         isVisible ? (
           <Handle
             key={index}
@@ -40,7 +41,7 @@ const CustomTwelveNode = ({ data, visiblePorts,handlePortClick }) => {
             id={`port-${index}`}
             style={{ left: 15 + 30 * index, ...DEFAULT_HANDLE_STYLE, borderRadius: 0, background: "#139e13" }}
           >
-            <div style={{ fontSize: '12px', marginBottom: '2px', fontWeight: '800', color: '#fff' }}> <button> {index}</button></div>
+            <div style={{ fontSize: '12px', marginBottom: '2px', fontWeight: '800', color: '#fff' }}>{index}</div>
           </Handle>
         ) : null
       )}
@@ -52,17 +53,17 @@ const CustomTwelveNode = ({ data, visiblePorts,handlePortClick }) => {
         style={{ left: 30 + 38 * 8, ...DEFAULT_HANDLE_STYLE, borderRadius: 0, width: '50px', background: "#ff0000" }}
         // onClick={() => handlePortClick("NoInput")}
       >
-        <div style={{ fontSize: '10px', marginBottom: '2px', fontWeight: '600', color: '#fff' }}>No DTMF</div>
+        <div style={{ fontSize: '10px', marginBottom: '2px', fontWeight: '600', color: '#fff' }}>no Input</div>
       </Handle>
 
       <Handle
         type="source"
         position={Position.Bottom}
         id="Input"
-        style={{ left: 400, ...DEFAULT_HANDLE_STYLE, borderRadius: 0, width: '60px', background: "#139e13" }}
+        style={{ left: 400, ...DEFAULT_HANDLE_STYLE, borderRadius: 0, width: '50px', background: "#139e13" }}
         // onClick={() => handlePortClick("Invalid")}
       >
-        <div style={{ fontSize: '10px', marginBottom: '2px', fontWeight: '600', color: '#fff' }}>Invalid DTMF</div>
+        <div style={{ fontSize: '10px', marginBottom: '2px', fontWeight: '600', color: '#fff' }}>Invalid</div>
       </Handle>
 
       

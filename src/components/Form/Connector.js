@@ -131,7 +131,7 @@ const CollectorFrom = ({
               ))}
           </select>
           <div className="radio">
-          <label style={{width:'60px'}}>
+          <label style={{maxWidth:'90px'}}>
           Sticky:<span className="star">*</span>
             </label>
             <input
@@ -152,7 +152,7 @@ const CollectorFrom = ({
             <span>No</span>
           </div>
           <div className="radio">
-          <label style={{width:'60px'}}>
+          <label style={{maxWidth:'90px'}}>
           Recording:<span className="star">*</span>
             </label>
             <input
@@ -173,7 +173,7 @@ const CollectorFrom = ({
             <span>No</span>
           </div>
           <div className="radio">
-            <label style={{width:'60px'}}>
+            <label style={{maxWidth:'90px'}}>
               Enable Queue:<span className="star">*</span>
             </label>
             <input
@@ -197,14 +197,22 @@ const CollectorFrom = ({
           <label>
             Default hold tune:<span className="star">*</span>
           </label>
-          <input
-            type="number"
-            placeholder="Enter the ring time"
-            value={holdTune}
-            onChange={(e) => setHoldTune(e.target.value)}
-          />
+          <select
+            className="input-select"
+            value={missedCallTo}
+            onChange={(e) => setMissedCallTo(e.target.value)}
+          >
+            <option value="">Select the default hold tune</option>
+            {[...Array(10)]
+              .map((_, i) => i + 1)
+              .map((i) => (
+                <option key={i} value={i}>
+                  {i}
+                </option>
+              ))}
+          </select>
 
-          <label>Ring time(sec):</label>
+          <label>Ring time (sec):</label>
           <input
             type="number"
             placeholder="Enter the ring time"

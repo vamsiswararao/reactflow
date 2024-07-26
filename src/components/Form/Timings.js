@@ -103,7 +103,7 @@ const TimingsForm = ({
           {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
             <div key={day}>
               <div className="radio">
-                <label style={{ width: '60px' }}>{day}:</label>
+                <label style={{ minWidth: '90px' }}>{day}:</label>
                 <input
                   type="radio"
                   name={`${day.toLowerCase()}-status`}
@@ -122,13 +122,13 @@ const TimingsForm = ({
                 <span>Close</span>
               </div>
               {daysOpenStatus[day] && (
-                <div className="radio">
+                <div className="time-radio">
                   <label>From:</label>
-                  <select id={`${day}-from`} style={{ width: "80px",height:'25px',fontSize:'16px' }} required>
+                  <select id={`${day}-from`} style={{ marginLeft:'65px', width: "90px",height:'25px',fontSize:'16px' }} required>
                     {timeOptions}
                   </select>
-                  <label>To:</label>
-                  <select id={`${day}-to`} style={{ width: "80px",height:"25px",fontSize:'16px'}}>
+                  <label style={{marginLeft:"20px"}}>To:</label>
+                  <select id={`${day}-to`} style={{ marginLeft:'20px',width: "90px",height:"25px",fontSize:'16px'}}>
                     {timeOptions}
                   </select>
                 </div>
