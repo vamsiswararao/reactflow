@@ -26,6 +26,20 @@ const WhoCallingFrom = ({
         <div className="form-container">
           <label>Name:<span className="star">*</span></label>
           <input type="text" placeholder="Enter the Name" value={nodeLabel} onChange={handleLabelChange}/>
+          <label>If member of :<span className="star">*</span></label>
+          <select
+            className="input-select"
+            name="selectedValue"
+          >
+            <option value="">select...</option>
+            {[...Array(10)]
+              .map((_, i) => i + 1)
+              .map((i) => (
+                <option key={i} value={i}>
+                  {i}
+                </option>
+              ))}
+          </select>
           <label>Description:</label>
           <textarea placeholder="write the description" rows="4" cols="40"/>
         </div>

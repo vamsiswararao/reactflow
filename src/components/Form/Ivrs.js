@@ -70,7 +70,7 @@ const Ivrs = ({
             </select>
           </div>
           <div>
-            <label>ports</label>
+            <label>Ivrs</label>
             <div style={{ display: "flex", width: "350px", flexWrap: "wrap" }}>
               {Array.from({ length: 10 }).map((_, index) => (
                 <div

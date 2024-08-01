@@ -1,130 +1,60 @@
-import React, { useState } from 'react';
-import { Handle, Position } from 'react-flow-renderer';
+import React from 'react';
+import { Handle } from 'reactflow';
 
-const CustomNode = ({ data, onPortSelect }) => {
-  const [ports, setPorts] = useState([{ id: 0, number: 0 }]); // Start with one port
-
-  const addPort = () => {
-    if (ports.length < 10) {
-      const newPortId = ports.length;
-      setPorts((prevPorts) => [...prevPorts, { id: newPortId, number: newPortId }]);
-    }
+// Custom node component
+const CustomNode = ({ id, data, updatePortNumber, addPort, onEditPortClick }) => {
+  const handleEditClick = (portIndex) => {
+    onEditPortClick(id, portIndex, data.ports[portIndex]);
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        position: 'relative',
-        padding: '10px',
-        background: '#fff',
-        width: '400px',
-        textAlign: 'center',
-        border: '2px solid #00ff00',
-        borderRadius: '5px',
-        boxSizing: 'border-box',
-      }}
-    >
+    <div style={{ border: '1px solid black', width: '500px', padding: 10, height: 'auto', position: 'relative', display: 'flex' }}>
       <div style={{ flex: 1 }}>
-        <Handle type="target" position={Position.Top} id="target" />
-        <div>{data.label}</div>
-        {/* Static Handles */}
-          <Handle
-            type="source"
-            position={Position.Bottom}
-            id="invalid"
-            style={{ left: 15,bottom:-15, background: '#ff0000',}}
-          >
-          <span
-            style={{
-              position: 'absolute',
-              width: '30px',
-              height: '12px',
-              left: -10,
-              bottom:6,
-              background: 'rgba(255, 0, 0)',
-              color: '#fff',
-              fontSize: '9px'
-            }}
-          >
-            invalid
-          </span>
-        </Handle>
-
-          <Handle
-            type="source"
-            position={Position.Bottom}
-            id="noInput"
-            style={{ left: 60, bottom: -14, background: '#00ff00',  }}
-          >
-          <span
-            style={{
-              position: 'absolute',
-              width: '45px',
-              left: -18,
-              bottom: 5,
-              background: 'rgba(0, 255, 0)',
-              color: '#fff',
-              fontSize: '9px'
-            }}
-          >
-            Noinput
-          </span>
-        </Handle>
-
-        {/* Dynamic Ports */}
-        {ports.map((port, index) => (
-            <Handle
-            key={port.id}
-              type="source"
-              position={Position.Bottom}
-              id={`source-${port.id}`}
-              style={{ left: 100 + 30 * index, bottom: -16, background: '#00ff00', }}
-            >
-            <span
-              style={{
-                zIndex: '9',
-                width: '20px',
-                left: 90 + 30 * index,
-                bottom: -20,
-                background: 'rgba(0, 255, 0, 0.5)',
-                color: '#fff',
-                fontSize: '9px'
-              }}
-            >
-              
-                {port.number}
-            </span>
-          </Handle>
-        ))}
-
-        <div
+        <Handle
+          type="target"
+          position="top"
+          id="1"
+        />
+        <div>{data.label} (ID: {id})</div>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+          {data.ports.map((port, index) => (
+            <div key={index} style={{ position: 'relative', marginRight: '10px' }}>
+              <Handle
+                type="source"
+                position="bottom"
+                id={`port-${id}-${index}`}
+                style={{ background: '#555', position: 'absolute',
+                  top: '20px', left: 30 + 38 * index, transform: 'translateX(-50%)' }}
+              >
+                <button
+                  onClick={() => handleEditClick(index)}
+                  style={{
+                    position: 'absolute',
+                    bottom: '5px',
+                    left: -9
+                  }}
+                >
+                  {port}
+                </button>
+              </Handle>
+            </div>
+          ))}
+        </div>
+        <button
           style={{
             position: 'absolute',
-            right: 5,
-            bottom: -10,
-            width: '42px',
-            border: '1px dotted red',
-            borderRadius: '20px',
-            height: '20px',
-            background: '#fff'
+            top: '15px',
+            right: 10,
+            transform: 'translateY(100%)',
+            borderRadius:'10px',
+            background:'blue',
+    border:'none',
+    color:'#fff'
           }}
+          onClick={() => addPort(id)}
         >
-          <button
-            onClick={addPort}
-            style={{
-              position: 'absolute',
-              right: 2,
-              top: 1,
-              background: 'red',
-              border: 'none',
-              borderRadius: '10px',
-              color: '#fff'
-            }}
-          >
-            New
-          </button>
-        </div>
+          New
+        </button>
       </div>
     </div>
   );

@@ -37,7 +37,6 @@ function CustomEdge({
     targetX,
     targetY,
   });
-
   const { connectionHandleId } = useStore();
 
   return (

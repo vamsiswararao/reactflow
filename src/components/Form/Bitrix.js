@@ -93,7 +93,7 @@ const BitrixForm = ({
           />
 
           <div style={{ display: "flex", alignItems: "center" }}>
-            <h3>Create CRM:</h3>
+            <p>Create CRM:</p>
             <p style={{ marginRight: "10px", marginLeft: "10px" }}>No</p>
 
             <div className="toggle-switch" onClick={handleToggle}>
@@ -110,7 +110,7 @@ const BitrixForm = ({
             <p style={{ marginLeft: "10px" }}>Yes</p>
           </div>
 
-          <label>CRM type:</label>
+          <label >CRM type:</label>
           <select
             className="input-select"
             value={crmType}
@@ -126,7 +126,7 @@ const BitrixForm = ({
               ))}
           </select>
           <label>
-            Assign miscellaneous:<span className="star">*</span>
+            Assign miscellaneous to:<span className="star">*</span>
           </label>
           <select
             className="input-select"

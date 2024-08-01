@@ -23,7 +23,7 @@ const CollectorFrom = ({
   
 
   const handleSave = () => {
-    if (!nodeLabel || !selectedValue || !dtmfKey || !keyLength || !timeout || !repeatCount){
+    if (!nodeLabel || !selectedValue || !dtmfKey || !keyLength || !timeout ){
         alert("Please fill in all required fields.");
         return;
       
@@ -101,14 +101,14 @@ const CollectorFrom = ({
             onChange={(e) => setTimeout(e.target.value)}
           />
 
-          <label>Repeat count<span className="star">*</span></label>
+          <label>Repeat count</label>
           <input 
             value={repeatCount}
             placeholder="Enter the repeat count"
             onChange={(e) => setRepeatCount(e.target.value)}
           />
           
-          <label>Description<span className="star">*</span></label>
+          <label>Description</label>
           <textarea
             placeholder="Write the description"
             value={description}

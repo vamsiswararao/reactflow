@@ -85,7 +85,7 @@ const ListManagers = ({
           <div className="popup">
             <h3>Add New List Item</h3>
             <form>
-              <label>name:</label>
+              <label>name:<span className="star">*</span></label>
               <input type="text" placeholder="Enter new name" />
               <label>Description:</label>
               <textarea

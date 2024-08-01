@@ -85,7 +85,7 @@ const Holiday = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,cop
 
                 <label style={{marginLeft:'30px',width:'45px'}}>Name :</label>
                 <input
-                style={{width:'80px',marginLeft:'10px'}}
+                style={{width:'80px',marginLeft:'6px'}}
                   type="text"
                   name="description"
                   value={date.description}

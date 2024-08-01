@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import ReactFlow, {
   addEdge,
   Background,
@@ -11,6 +11,7 @@ import ReactFlow, {
 import { v4 as uuidv4 } from "uuid";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useParams } from 'react-router-dom';
 
 import { FaRegListAlt, FaSlack } from "react-icons/fa";
 import { GrAnnounce } from "react-icons/gr";
@@ -28,6 +29,8 @@ import { ImPhoneHangUp } from "react-icons/im";
 import { MdPhoneMissed, MdHolidayVillage } from "react-icons/md";
 import { TiTicket, TiSortNumericallyOutline } from "react-icons/ti";
 import { FcCollect } from "react-icons/fc";
+
+
 
 import CustomTwoNode from "./components/Nodes/CustomTwoNode";
 import CustomThreeNode from "./components/Nodes/CustomThreeNode";
@@ -99,9 +102,64 @@ const FlowChart = () => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [descriptions, setDescriptions] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
+  const [name, setName] = useState(null);
+
   const [nodeLabel, setNodeLabel] = useState("");
   const [nodeCounters, setNodeCounters] = useState({});
-  const [position, setPosition] = useState({ x: 10, y: 10 });
+  const [position, setPosition] = useState({ x: 50, y: 50 });
+  
+  //const { id } = useParams();
+  // useEffect(() => {
+  //         const storedFlows = JSON.parse(localStorage.getItem('flows')) || [];
+  //         const currentFlow = storedFlows.find(flow => flow.flow_id === id);
+  //         if (currentFlow.flows) {
+  //           setNodes(currentFlow.flows.nodes || []);
+  //           setEdges(currentFlow.flows.edges || []);
+  //           setName(currentFlow.name || []);
+  //         } else {
+  //           setNodes([]);
+  //           setEdges([]);
+  //           setName(currentFlow.name || []);
+  //         }
+          
+      
+  // }, [id,setNodes,setEdges,setName]);
+
+  useEffect(() => {
+    const fetchFlowData = async () => {
+      try {
+        // const response = await fetch(`https://dummyapi.io/flows/${flowId}`, {
+        //   method: 'GET',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     'Authorization': 'Bearer YOUR_API_TOKEN' // If your API requires authorization
+        //   }
+        // });
+
+        // if (!response.ok) {
+        //   throw new Error('Network response was not ok');
+        // }
+
+        // const data = await response.json();
+        const data={"flow_data":{"id":"faf18cb1-f101-4234-82eb-5e3bec904a1a","flows":{"nodes":[{"id":"8379ebac-0492-451a-9260-85e03c919dd1","type":"default","data":{"label":"Announcement_02","app_id":"90712abd-697e-4841-832c-31229526dfa0","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":211,"y":22},"width":150,"height":38,"selected":false,"positionAbsolute":{"x":211,"y":22},"dragging":false},{"id":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","type":"twoCustom","data":{"label":"Collector","app_id":"88cfb29b-a325-4345-9824-6246a694e167","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":100,"y":100},"width":143,"height":45},{"id":"3683c782-e229-4123-8a99-4d8ee9b6f530","type":"twoCustom","data":{"label":"Extension","app_id":"335683bc-0b72-49b2-b352-b5e5cfbf406e","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":346,"y":108},"width":143,"height":45,"selected":true,"positionAbsolute":{"x":346,"y":108},"dragging":false}],"edges":[{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-5bd82aa5-19ce-477d-a14b-b336b67c64a0"},{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"3683c782-e229-4123-8a99-4d8ee9b6f530","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-3683c782-e229-4123-8a99-4d8ee9b6f530"}]}}}        
+        console.log('Flow data retrieved successfully:', data.flow_data.flows);
+        setNodes(data.flow_data.flows.nodes || []);
+        setEdges(data.flow_data.flows.edges || []);
+        const nodeLength=(data.flow_data.flows.nodes.length)
+        const position= (data.flow_data.flows.nodes[nodeLength-1].position)
+        setPosition({ x: position.x+50, y: position.y+100 })
+        // Update state with the retrieved flow data
+      } catch (error) {
+        console.error('Failed to retrieve flow data:', error);
+      }
+    };
+
+    // Call fetchFlowData when flowId changes or on component mount
+    fetchFlowData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // useEffect dependency on flowId
+
 
   const handleNodeChange = (changes) => {
     changes.forEach((change) => {
@@ -133,17 +191,18 @@ const FlowChart = () => {
     []
   );
 
-  const createNode = (type, name, id, style) => {
+  const createNode = (type, name, app_id, style) => {
     const count = nodeCounters[name] || 0;
     const number = count > 8 ? count + 1 : `0${count + 1}`;
     const newLabel = count === 0 ? name : `${name}_${number}`;
-
+    
     const newNode = {
       id: uuidv4(),
       type: type,
-      data: { label: newLabel, id, IvrsPorts: Array(10).fill(false) },
+      data: { label: newLabel, app_id , IvrsPorts:Array(10).fill(true)},
       position: { x: position.x, y: position.y },
       style: style,
+
     };
     setNodes((nds) => nds.concat(newNode));
     setNodeCounters((prevCounter) => ({
@@ -151,7 +210,7 @@ const FlowChart = () => {
       [name]: count + 1,
     }));
     setPosition((pos) => ({ x: pos.x + 100, y: pos.y + 100 }));
-    addDescription(`Added ${id}`);
+    addDescription(`Added ${app_id}`);
   };
 
   const announcement = () =>
@@ -253,7 +312,6 @@ const FlowChart = () => {
   const handleNodeClick = (event, node, viewport) => {
     setSelectedNode(node);
     setNodeLabel(node.data.label);
-    console.log(node.position);
   };
 
   const handleLabelChange = (event) => {
@@ -312,14 +370,57 @@ const FlowChart = () => {
     toast(`${data} data saved.`);
   };
 
-  const saveFlow = () => {
-    const flow = {
-      nodes,
-      edges,
+  // const saveFlow = () => {
+  //   const storedFlows = JSON.parse(localStorage.getItem('flows')) || [];
+    
+  //   const flows = {
+  //     nodes,
+  //     edges,
+  //   };
+  //   const updatedFlows = storedFlows.map(flow => 
+  //     flow.id === id ? {...flow , flows} : ""
+  // );
+  //   localStorage.setItem("flows", JSON.stringify(updatedFlows));
+  //   addDescription("Saved flow state");
+  // };
+
+  const saveFlow = async () => {
+    const flowData = {
+     flow_data: {id:uuidv4(),
+      flows: {
+        nodes,
+        edges,
+      }}
     };
-    localStorage.setItem("flow", JSON.stringify(flow));
-    addDescription("Saved flow state");
+  
+  
+    try {
+      // Replace the URL with your actual API endpoint
+      const response = await fetch('https://enrbgth6q54c8.x.pipedream.net', {
+        method: 'POST', // Use 'PUT' or 'PATCH' if you're updating an existing flow
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer YOUR_API_TOKEN' // If your API requires authorization
+        },
+        body: JSON.stringify(flowData)
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const data = await response.json();
+      console.log('Flow saved successfully:', data);
+      toast(`Flow data saved.`);
+
+  
+      addDescription("Saved flow state");
+    } catch (error) {
+      console.error('Failed to save flow:', error);
+      addDescription("Failed to save flow state");
+    }
   };
+  
 
   const restoreFlow = () => {
     const flow = JSON.parse(localStorage.getItem("flow"));
@@ -337,7 +438,7 @@ const FlowChart = () => {
 
   const copyNode = () => {
     if (!selectedNode) return;
-    const id = selectedNode.data.id;
+    const app_id = selectedNode.data.app_id;
     const selectLabel = selectedNode.data.label.replace(/[_\d]/g, "");
     const count = nodeCounters[selectLabel] || 0;
     const number = count > 8 ? count + 1 : `0${count + 1}`;
@@ -346,7 +447,7 @@ const FlowChart = () => {
     const newNode = {
       ...selectedNode,
       id: uuidv4(),
-      data: { label: newLabel, id },
+      data: { label: newLabel, app_id,IvrsPorts:Array(10).fill(true) },
       position: {
         x: position.x + 100,
         y: position.y + 100,
@@ -375,7 +476,7 @@ const FlowChart = () => {
         save: save,
         copyNode: copyNode,
       };
-      switch (selectedNode.data.id) {
+      switch (selectedNode.data.app_id) {
         case fixedNodeIds.Announcement:
           return <Announcement {...formProps} />;
         case fixedNodeIds.Bitrix:
@@ -661,11 +762,15 @@ const FlowChart = () => {
   };
 
   return (
-    <div style={{ height: "100vh", width: "100vw", display: "flex" }}>
+    <div style={{height:'100%'}}>
+    {/* {name ?( */}
+      <div style={{ height: "100vh", width: "100vw", display: "flex" }}>
       <ReactFlowProvider>
         <div className="left-container">
           <div className="header-btn">
+            <h3 style={{marginRight:'20px',marginBottom:'25px',marginLeft:'10px'}}>{name}</h3>
             <div className="description-button-wrapper">
+              
               <button className="flow-btn">
                 <span className="num">
                   {descriptions.length !== 0 ? descriptions.length : ""}
@@ -711,6 +816,8 @@ const FlowChart = () => {
         <div style={{ width: "30%", paddingRight: "20px" }}>{renderForm()}</div>
       </ReactFlowProvider>
       <ToastContainer />
+      </div>
+     {/* ):(<div style={{display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}>invalid id</div>)} */}
     </div>
   );
 };

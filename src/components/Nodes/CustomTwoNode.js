@@ -5,7 +5,7 @@ const CustomTwoNode = ({ data }) => {
   let port1;
   let port2;
 
-  switch (data.id) {
+  switch (data.app_id) {
     case '88cfb29b-a325-4345-9824-6246a694e167':
       port1 = "Success";
       port2 = "Fail";
@@ -34,6 +34,10 @@ const CustomTwoNode = ({ data }) => {
       port1 = "Success";
       port2 = "Fail";
       break;
+    case "ab99faa9-ab2c-4981-8a89-be188efdf061":
+        port1 = "InList";
+        port2 = "NotinList";
+        break;
     default:
       port1 = "";
       port2 = "";
@@ -54,14 +58,13 @@ const CustomTwoNode = ({ data }) => {
       <Handle
         type="target"
         position={Position.Top}
-        id="a"
         // style={{ left: '65px', borderRadius: 0, height: '12px', width: '28px', border: 'none', background: "#0000ff" }}
       />
       <div>{data.label}</div>
       <Handle
         type="source"
         position={Position.Bottom}
-        id="a"
+        id={port1.toLowerCase().replace(/ /g, '')}     
         style={{ left: 30, borderRadius: 0,bottom:-6, height: '15px', width: '40px', border: 'none', background: "#139e13" }}
       >
         <div style={{ fontSize: '9px', marginBottom: '2px', color: '#fff' }}>{port1}</div>
@@ -69,7 +72,7 @@ const CustomTwoNode = ({ data }) => {
       <Handle
         type="source"
         position={Position.Bottom}
-        id="b"
+        id={port2.toLowerCase().replace(/ /g, '')}     
         style={{ left: 105, bottom:-6, borderRadius: 0, height: '15px', width: '60px', border: 'none', background: "#ff0000" }}
       >
         

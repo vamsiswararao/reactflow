@@ -123,12 +123,12 @@ const TimingsForm = ({
               </div>
               {daysOpenStatus[day] && (
                 <div className="time-radio">
-                  <label>From:</label>
-                  <select id={`${day}-from`} style={{ marginLeft:'65px', width: "90px",height:'25px',fontSize:'16px' }} required>
+                  <label style={{width:'160px',marginRight:'10px'}}>From time:</label>
+                  <select id={`${day}-from`} style={{ marginLeft:'5px', width: "90px",height:'25px',fontSize:'16px' }} required>
                     {timeOptions}
                   </select>
-                  <label style={{marginLeft:"20px"}}>To:</label>
-                  <select id={`${day}-to`} style={{ marginLeft:'20px',width: "90px",height:"25px",fontSize:'16px'}}>
+                  <label style={{marginLeft:"20px",width:'100px'}}>To time:</label>
+                  <select id={`${day}-to`} style={{ marginLeft:'5px',width: "90px",height:"25px",fontSize:'16px'}}>
                     {timeOptions}
                   </select>
                 </div>

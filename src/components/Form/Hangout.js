@@ -59,12 +59,14 @@ const HangOut = ({
             onChange={handleLabelChange}
           />
           <label>Url:<span className="star">*</span></label>
-          <input
+          <textarea
             type="url"
             name="url"
             placeholder="Enter the url"
             value={formData.url}
             onChange={handleInputChange}
+            rows="4"
+            cols="40"
           />
           <label>Message:<span className="star">*</span></label>
           <textarea

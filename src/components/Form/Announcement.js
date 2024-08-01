@@ -107,6 +107,7 @@ const Announcement = ({
           />
         </div>
         <hr className="bottom-hr" />
+        <div className="button-group">
         <button className="save-btn" onClick={handleSave}>
           Save
         </button>
@@ -115,6 +116,7 @@ const Announcement = ({
         <button onClick={deleteNode} className="delete-btn">
           <RiDeleteBin6Line style={{ height: '20px', width: '20px' }} />
         </button>
+        </div>
       </div>
     </div>
   );

@@ -16,7 +16,6 @@ const CustomThreeNode = ({ data }) => {
        <Handle
         type="target"
         position={Position.Top}
-        id="a"
         // style={{ bottom: 100,borderRadius:0,height:'15px', width:'60px',border:'none' ,background: "#0000ff"}}
 
       />

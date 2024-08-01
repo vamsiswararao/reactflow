@@ -6,13 +6,13 @@ const DEFAULT_HANDLE_STYLE = {
   height: 20,
   bottom: -12,
   border:'2px solid rgba(0, 0, 255,)'
-
 };
 
-const CustomTwelveNode = ({ data }) => {
+const CustomTwelveNode = ({id, data, isConnectable }) => {
+  const { IvrsPorts } = data;
+  console.log(IvrsPorts);
+  console.log(id)
 
-const {IvrsPorts}=data
-console.log(IvrsPorts)
   return (
     <div
       style={{
@@ -27,17 +27,16 @@ console.log(IvrsPorts)
       <Handle
         type="target"
         position={Position.Top}
-        id="a"
-        // style={{ borderRadius: 0, right: '10px', top: -12, height: '18px', width: '80px', background: "#0000ff" }}
       />
       <div>{data.label}</div>
 
       {IvrsPorts.map((isVisible, index) =>
         isVisible ? (
           <Handle
-            key={index}
+            key={`port-${index}`}
             type="source"
             position={Position.Bottom}
+            isConnectable={isConnectable}
             id={`port-${index}`}
             style={{ left: 15 + 30 * index, ...DEFAULT_HANDLE_STYLE, borderRadius: 0, background: "#139e13" }}
           >
@@ -46,31 +45,25 @@ console.log(IvrsPorts)
         ) : null
       )}
 
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        id="NoInput"
-        style={{ left: 30 + 38 * 8, ...DEFAULT_HANDLE_STYLE, borderRadius: 0, width: '50px', background: "#ff0000" }}
-        // onClick={() => handlePortClick("NoInput")}
-      >
-        <div style={{ fontSize: '10px', marginBottom: '2px', fontWeight: '600', color: '#fff' }}>no Input</div>
-      </Handle>
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          id="NoInput"
+          style={{ left: 30 + 38 * 8, ...DEFAULT_HANDLE_STYLE, borderRadius: 0, width: '50px', background: "#ff0000" }}
+        >
+          <div style={{ fontSize: '10px', marginBottom: '2px', fontWeight: '600', color: '#fff' }}>no Input</div>
+        </Handle>
 
       <Handle
         type="source"
         position={Position.Bottom}
         id="Input"
         style={{ left: 400, ...DEFAULT_HANDLE_STYLE, borderRadius: 0, width: '50px', background: "#139e13" }}
-        // onClick={() => handlePortClick("Invalid")}
       >
         <div style={{ fontSize: '10px', marginBottom: '2px', fontWeight: '600', color: '#fff' }}>Invalid</div>
       </Handle>
-
-      
     </div>
   );
 };
-
-
 
 export default CustomTwelveNode;

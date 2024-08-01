@@ -127,8 +127,10 @@ const StickyAgentForm = ({
             </select>
           </div>
           <label>Description:</label>
-          <input
+          <textarea
             type="text"
+            rows="6"
+            cols="40"
             placeholder="Enter the description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
