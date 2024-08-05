@@ -3,18 +3,18 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 
-
-const FreshDeskFrom = ({
+const FreshDeskForm = ({
   node,
   nodeLabel,
   handleLabelChange,
   deleteNode,
   removeForm,
-  copyNode
+  copyNode,
+  save
 }) => {
   // State for form inputs
   const [formValues, setFormValues] = useState({
-    name: "",
+    name:nodeLabel || "",
     apiKey: "",
     password: "",
     domain: "",
@@ -22,11 +22,18 @@ const FreshDeskFrom = ({
     audioFile: "",
     retries: "",
     description: "",
+    subject: "",
+    status: "",
+    source: "",
+    customPostField: ""
   });
 
   // Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name === "name") {
+      handleLabelChange(e); // Call the prop function to update nodeLabel in parent component
+    } 
     setFormValues({ ...formValues, [name]: value });
   };
 
@@ -40,15 +47,15 @@ const FreshDeskFrom = ({
       !formValues.password ||
       !formValues.domain ||
       !formValues.priority ||
-      !formValues.audioFile ||
-      !formValues.retries
-    ) {
+      !formValues.audioFile 
+      ) {
       alert("Please fill in all required fields.");
       return;
     }
     // Save or submit form data
     console.log("Form data:", formValues);
     // You can implement saving logic here
+    save(nodeLabel)
   };
 
   return (
@@ -93,37 +100,34 @@ const FreshDeskFrom = ({
             onChange={handleInputChange}
             required
           />
-          <div>
-            <label>
-              Domain:<span className="star">*</span>
-            </label>
-            <input
-              type="text"
-              name="domain"
-              placeholder="Enter the domain"
-              value={formValues.domain}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <label>
-              Priority:<span className="star">*</span>
-            </label>
-            <select
-              className="input-select"
-              name="priority"
-              value={formValues.priority}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">Select the priority</option>
-              {[...Array(10)].map((_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  {i + 1}
-                </option>
-              ))}
-            </select>
-          </div>
+          <label>
+            Domain:<span className="star">*</span>
+          </label>
+          <input
+            type="text"
+            name="domain"
+            placeholder="Enter the domain"
+            value={formValues.domain}
+            onChange={handleInputChange}
+            required
+          />
+          <label>
+            Priority:<span className="star">*</span>
+          </label>
+          <select
+            className="input-select"
+            name="priority"
+            value={formValues.priority}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Select the priority</option>
+            {[...Array(10)].map((_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {i + 1}
+              </option>
+            ))}
+          </select>
           <label>
             Send audio file:<span className="star">*</span>
           </label>
@@ -141,8 +145,9 @@ const FreshDeskFrom = ({
               </option>
             ))}
           </select>
-          
-          <label>Ticket Messages:<span className="star">*</span></label>
+          <label>
+            Ticket Messages:<span className="star">*</span>
+          </label>
           <textarea
             name="description"
             placeholder="Enter the Ticket Message"
@@ -151,22 +156,24 @@ const FreshDeskFrom = ({
             rows="6"
             cols="40"
           />
-<label>Subject:<span className="star">*</span></label>
+          <label>
+            Subject:<span className="star">*</span>
+          </label>
           <textarea
-            name="description"
+            name="subject"
             placeholder="Enter the subject"
-            value={formValues.description}
+            value={formValues.subject}
             onChange={handleInputChange}
             rows="3"
             cols="40"
-            />
+          />
           <label>
             Status:<span className="star">*</span>
           </label>
           <select
             className="input-select"
-            name="audioFile"
-            value={formValues.audioFile}
+            name="status"
+            value={formValues.status}
             onChange={handleInputChange}
             required
           >
@@ -182,8 +189,8 @@ const FreshDeskFrom = ({
           </label>
           <select
             className="input-select"
-            name="audioFile"
-            value={formValues.audioFile}
+            name="source"
+            value={formValues.source}
             onChange={handleInputChange}
             required
           >
@@ -194,21 +201,25 @@ const FreshDeskFrom = ({
               </option>
             ))}
           </select>
-          <label>Custom Post Field:<span className="star">*</span></label>
+          <label>
+            Custom Post Field:<span className="star">*</span>
+          </label>
           <textarea
-            name="description"
+            name="customPostField"
             placeholder="Enter the post field"
-            value={formValues.description}
+            value={formValues.customPostField}
             onChange={handleInputChange}
-            rows="3"
+            rows="6"
             cols="40"
-            />
+          />
         </form>
         <hr className="bottom-hr" />
         <button className="save-btn" onClick={handleFormSubmit}>
           Save
         </button>
-        <button onClick={copyNode} className="copy-btn"><FaCopy style={{height:'20px',width:'20px'}} /></button>
+        <button onClick={copyNode} className="copy-btn">
+          <FaCopy style={{ height: '20px', width: '20px' }} />
+        </button>
         <button onClick={deleteNode} className="delete-btn">
           <RiDeleteBin6Line style={{ height: "20px", width: "20px" }} />
         </button>
@@ -217,4 +228,4 @@ const FreshDeskFrom = ({
   );
 };
 
-export default FreshDeskFrom;
+export default FreshDeskForm;

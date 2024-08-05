@@ -9,16 +9,20 @@ const HangOut = ({
   handleLabelChange,
   deleteNode,
   removeForm,
-  copyNode
+  copyNode,
+  save
 }) => {
   const [formData, setFormData] = useState({
-    name: "",
+    name: nodeLabel ||"",
     url: "",
     message: "",
   });
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    if (name === "name") {
+      handleLabelChange(event); // Call the prop function to update nodeLabel in parent component
+    }  
     setFormData({
       ...formData,
       [name]: value,
@@ -27,7 +31,7 @@ const HangOut = ({
 
   const handleSave = () => {
     // Perform validation before saving
-    if (formData.name.trim() === "" || !formData.name.url || !formData.name.message) {
+    if (formData.name.trim() === "" || !formData.url || !formData.message) {
       alert("Please fill in all required fields.");
       return;
     }
@@ -39,6 +43,7 @@ const HangOut = ({
       url: "",
       message: "",
     });
+    save(nodeLabel)
   };
 
   return (
@@ -55,8 +60,8 @@ const HangOut = ({
             type="text"
             name="name"
             placeholder="Enter the name"
-            value={nodeLabel}
-            onChange={handleLabelChange}
+            value={formData.name}
+            onChange={handleInputChange}
           />
           <label>Url:<span className="star">*</span></label>
           <textarea

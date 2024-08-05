@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
@@ -9,6 +9,15 @@ const SmsFrom = ({ nodeLabel,handleLabelChange,deleteNode, removeForm,save,copyN
   const [message, setMessage] = useState("");
   const [description, setDescription] = useState("");
   const [toValue, setToValue] = useState("");
+  const maxLength = 160;
+
+  const credits = useMemo(() => Math.ceil(message.length / maxLength), [message.length]);
+
+  const getMessageType = () => {
+    // Define your logic for message type
+    if (message.length > 100) return 'Urgent';
+    return 'Normal';
+  };
 
   const handleSave = () => {
     // Basic validation
@@ -37,7 +46,7 @@ const SmsFrom = ({ nodeLabel,handleLabelChange,deleteNode, removeForm,save,copyN
         </button>
         <hr />
         <div className="form-container">
-          <label>Name:<span className="star">*</span></label>
+          <label>Name :<span className="star">*</span></label>
           <input
             type="text"
             placeholder="Enter the Name"
@@ -46,7 +55,7 @@ const SmsFrom = ({ nodeLabel,handleLabelChange,deleteNode, removeForm,save,copyN
           />
 
           <div style={{ display: "flex", width: "315px", marginTop: "10px" }}>
-            <label style={{ width: "130px",fontSize:'16px' }}>Sender Id:<span className="star">*</span></label>
+            <label style={{ width: "85px",fontSize:'16px' }}>Sender Id :<span className="star">*</span></label>
             <select
               className="sms-select"
               value={selectedValue}
@@ -79,15 +88,23 @@ const SmsFrom = ({ nodeLabel,handleLabelChange,deleteNode, removeForm,save,copyN
                 ))}
             </select>
           </div>
-          <label style={{ marginTop: '10px' }}>Message:<span className="star">*</span></label>
+          <label style={{ marginTop: '10px' }}>Message :<span className="star">*</span></label>
           <textarea
             placeholder="Enter the message"
             rows="6"
             cols="40"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            maxLength={maxLength*10}
+
           />
-          <label>Description:</label>
+           <div style={{display:'flex'}}>
+        <p> MsgType: {getMessageType()} </p>
+        <p>Length: {message.length} </p>
+        <p>Credits: {credits} </p>
+        <p>Characters Left: {maxLength*credits - message.length}</p>
+      </div>
+          <label>Description :</label>
           <textarea
             placeholder="Enter the description"
             rows="6"
@@ -96,6 +113,7 @@ const SmsFrom = ({ nodeLabel,handleLabelChange,deleteNode, removeForm,save,copyN
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
+     
 
         <hr className="bottom-hr" />
         <button onClick={handleSave} className="save-btn">Save</button>

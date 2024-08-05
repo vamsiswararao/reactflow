@@ -11,12 +11,12 @@ import ReactFlow, {
 import { v4 as uuidv4 } from "uuid";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useParams } from 'react-router-dom';
+//import { useParams } from 'react-router-dom';
 
 import { FaRegListAlt, FaSlack } from "react-icons/fa";
 import { GrAnnounce } from "react-icons/gr";
 import { RiLockPasswordLine, RiStickyNoteAddFill } from "react-icons/ri";
-import { FaTelegram } from "react-icons/fa6";
+import { FaTelegram , FaRepeat} from "react-icons/fa6";
 import { MdOutlineSms, MdOutlineMailOutline } from "react-icons/md";
 import { BsMicrosoftTeams } from "react-icons/bs";
 import { CgVoicemailR } from "react-icons/cg";
@@ -29,6 +29,7 @@ import { ImPhoneHangUp } from "react-icons/im";
 import { MdPhoneMissed, MdHolidayVillage } from "react-icons/md";
 import { TiTicket, TiSortNumericallyOutline } from "react-icons/ti";
 import { FcCollect } from "react-icons/fc";
+import { BiTransfer } from "react-icons/bi";
 
 
 
@@ -42,9 +43,11 @@ import Announcement from "./components/Form/Announcement";
 import CollectorFrom from "./components/Form/Collector";
 import BitrixForm from "./components/Form/Bitrix";
 import ConnectorFrom from "./components/Form/Connector";
+import DynamicConnectorForm from "./components/Form/DynamicConnector";
 import EmailFrom from "./components/Form/Email";
 import ExtensionFrom from "./components/Form/Extension";
 import FreshDeskFrom from "./components/Form/FreshDesk";
+import FlowTransferForm from "./components/Form/FlowTransfer";
 import HangUp from "./components/Form/Hangup";
 import HangOut from "./components/Form/Hangout";
 import Holiday from "./components/Form/Holidays";
@@ -64,6 +67,7 @@ import VoicemailForm from "./components/Form/Voicemail";
 import ZapierForm from "./components/Form/Zapier";
 import WhoCallingFrom from "./components/Form/WhosCalling";
 import WebhookForm from "./components/Form/Webhook";
+import RepeatedCallForm from "./components/Form/RepeatedCallFrom";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -73,9 +77,11 @@ const fixedNodeIds = {
   Bitrix: "07e1aad7-29d9-448d-abd2-2dc5703fbad2",
   Collectors: "88cfb29b-a325-4345-9824-6246a694e167",
   Connector: "9c8fed32-3d1e-4b6d-a14f-fcd499b19199",
+  DynamicConnector: "9c8fed32-3d1e-4b6d-a14f-fcd499b19100",
   Email: "9aea22f7-a11e-400e-a935-eb814a1e9aa5",
   Extension: "335683bc-0b72-49b2-b352-b5e5cfbf406e",
   FreshDesk: "378f553e-f776-4827-b64a-81f8a7179fed",
+  FlowTransfer: "378f553e-f776-4827-b64a-81f8a7179100",
   Hangout: "ff700fce-b1c3-444d-9570-ad68774431f3",
   Hangup: "01330d73-c93e-4098-8e2c-b436ec66f172",
   Holidays: "daacc396-3bd5-47f7-bff7-7a7e89c5d1a0",
@@ -86,6 +92,7 @@ const fixedNodeIds = {
   MissedCallCallertune: "3c551d3b-1828-4097-a3bc-f276bd9e6302",
   OSTicket: "5fb3dff1-1a98-4cc0-bc73-982924b90ee7",
   Password: "d7972781-9077-4e8c-840d-b61468f03cf7",
+  RepeatedCall: "7972781-9077-4e8c-840d-b61468f03c00",
   SMS: "59f004f6-a2a9-4496-9985-575d6ac4867e",
   Slack: "32fed744-61dc-4052-a04d-0ef1cbe84044",
   StickyAgent: "d41846e8-43f9-4c3e-b24a-29241e761f7d",
@@ -141,10 +148,11 @@ const FlowChart = () => {
         // }
 
         // const data = await response.json();
-        const data={"flow_data":{"id":"faf18cb1-f101-4234-82eb-5e3bec904a1a","flows":{"nodes":[{"id":"8379ebac-0492-451a-9260-85e03c919dd1","type":"default","data":{"label":"Announcement_02","app_id":"90712abd-697e-4841-832c-31229526dfa0","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":211,"y":22},"width":150,"height":38,"selected":false,"positionAbsolute":{"x":211,"y":22},"dragging":false},{"id":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","type":"twoCustom","data":{"label":"Collector","app_id":"88cfb29b-a325-4345-9824-6246a694e167","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":100,"y":100},"width":143,"height":45},{"id":"3683c782-e229-4123-8a99-4d8ee9b6f530","type":"twoCustom","data":{"label":"Extension","app_id":"335683bc-0b72-49b2-b352-b5e5cfbf406e","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":346,"y":108},"width":143,"height":45,"selected":true,"positionAbsolute":{"x":346,"y":108},"dragging":false}],"edges":[{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-5bd82aa5-19ce-477d-a14b-b336b67c64a0"},{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"3683c782-e229-4123-8a99-4d8ee9b6f530","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-3683c782-e229-4123-8a99-4d8ee9b6f530"}]}}}        
+        const data={"flow_data":{"id":"faf18cb1-f101-4234-82eb-5e3bec904a1a","flow_name":'ReactFlow',"flows":{"nodes":[{"id":"8379ebac-0492-451a-9260-85e03c919dd1","type":"default","data":{"label":"Announcement_02","app_id":"90712abd-697e-4841-832c-31229526dfa0","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":211,"y":22},"width":150,"height":38,"selected":false,"positionAbsolute":{"x":211,"y":22},"dragging":false},{"id":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","type":"twoCustom","data":{"label":"Collector","app_id":"88cfb29b-a325-4345-9824-6246a694e167","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":100,"y":100},"width":143,"height":45},{"id":"3683c782-e229-4123-8a99-4d8ee9b6f530","type":"twoCustom","data":{"label":"Extension","app_id":"335683bc-0b72-49b2-b352-b5e5cfbf406e","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":346,"y":108},"width":143,"height":45,"selected":true,"positionAbsolute":{"x":346,"y":108},"dragging":false}],"edges":[{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-5bd82aa5-19ce-477d-a14b-b336b67c64a0"},{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"3683c782-e229-4123-8a99-4d8ee9b6f530","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-3683c782-e229-4123-8a99-4d8ee9b6f530"}]}}}        
         console.log('Flow data retrieved successfully:', data.flow_data.flows);
         setNodes(data.flow_data.flows.nodes || []);
         setEdges(data.flow_data.flows.edges || []);
+        setName(data.flow_data.flow_name)
         const nodeLength=(data.flow_data.flows.nodes.length)
         const position= (data.flow_data.flows.nodes[nodeLength-1].position)
         setPosition({ x: position.x+50, y: position.y+100 })
@@ -164,9 +172,8 @@ const FlowChart = () => {
   const handleNodeChange = (changes) => {
     changes.forEach((change) => {
       if (change.type === "position" && change.position) {
-        const { id, position } = change;
+        const { position } = change;
         setPosition((pos) => ({ x: position.x, y: position.y + 100 }));
-        console.log(`Node ${id} moved to position:`, position);
       }
     });
   };
@@ -220,11 +227,14 @@ const FlowChart = () => {
     createNode("twoCustom", "Collector", fixedNodeIds.Collectors);
   const Connector = () =>
     createNode("twoCustom", "Connector", fixedNodeIds.Connector);
+  const DynamicConnector = () =>
+    createNode("threeCustom", "Dynamic Connector", fixedNodeIds.DynamicConnector);
   const Email = () => createNode("default", "Email", fixedNodeIds.Email);
   const Extension = () =>
     createNode("twoCustom", "Extension", fixedNodeIds.Extension);
   const FreshDesk = () =>
     createNode("default", "FreshDesk", fixedNodeIds.FreshDesk);
+  const FlowTransfer = () => createNode("default", "FlowTransfer", fixedNodeIds.FlowTransfer);
   const Hangout = () => createNode("default", "HangOut", fixedNodeIds.Hangout);
   const Hangup = () => createNode("output", "HangUp", fixedNodeIds.Hangup);
   const Holidays = () =>
@@ -246,6 +256,8 @@ const FlowChart = () => {
     createNode("default", "OS Ticket", fixedNodeIds.OSTicket);
   const Password = () =>
     createNode("twoCustom", "Password", fixedNodeIds.Password);
+  const RepeatedCall = () =>
+    createNode("twoCustom", "Repeated Call", fixedNodeIds.RepeatedCall);
   const Sms = () => createNode("default", "SMS", fixedNodeIds.Sms);
   const Slacks = () => createNode("default", "Slack", fixedNodeIds.Slack);
   const StickyAgent = () =>
@@ -366,7 +378,6 @@ const FlowChart = () => {
 
   const save = (data) => {
     setSelectedNode("");
-    console.log(data);
     toast(`${data} data saved.`);
   };
 
@@ -466,6 +477,7 @@ const FlowChart = () => {
 
   const renderForm = () => {
     if (selectedNode) {
+    console.log(selectedNode.data);
       const formProps = {
         node: selectedNode,
         nodeLabel: nodeLabel,
@@ -485,12 +497,16 @@ const FlowChart = () => {
           return <CollectorFrom {...formProps} />;
         case fixedNodeIds.Connector:
           return <ConnectorFrom {...formProps} />;
+        case fixedNodeIds.DynamicConnector:
+          return <DynamicConnectorForm {...formProps} />;
         case fixedNodeIds.Email:
           return <EmailFrom {...formProps} />;
         case fixedNodeIds.Extension:
           return <ExtensionFrom {...formProps} />;
         case fixedNodeIds.FreshDesk:
           return <FreshDeskFrom {...formProps} />;
+        case fixedNodeIds.FlowTransfer:
+            return <FlowTransferForm {...formProps} />;
         case fixedNodeIds.Hangout:
           return <HangOut {...formProps} />;
         case fixedNodeIds.Hangup:
@@ -518,6 +534,8 @@ const FlowChart = () => {
           return <OsTickets {...formProps} />;
         case fixedNodeIds.Password:
           return <Passwords {...formProps} />;
+        case fixedNodeIds.RepeatedCall:
+          return <RepeatedCallForm {...formProps} />;
         case fixedNodeIds.Sms:
           return <SmsFrom {...formProps} />;
         case fixedNodeIds.Slack:
@@ -544,8 +562,7 @@ const FlowChart = () => {
       <div
         style={{
           width: "350x",
-          padding: "10px",
-          height: "97vh",
+          height: "100%",
           background: "#ddd",
         }}
       >
@@ -602,6 +619,14 @@ const FlowChart = () => {
             />
             Connector
           </button>
+          <button onClick={DynamicConnector}>
+            <img
+              src="https://static.thenounproject.com/png/67422-200.png"
+              alt="connector"
+              style={{ height: "20px", width: "20px", marginRight: "12px" }}
+            />
+            Dynamic Connector
+          </button>
           <button onClick={Email}>
             <span>
               <MdOutlineMailOutline />
@@ -619,6 +644,12 @@ const FlowChart = () => {
               <LiaDesktopSolid />
             </span>
             Fresh Desk
+          </button>
+          <button onClick={FlowTransfer}>
+            <span>
+            <BiTransfer />
+            </span>
+            Flow Transfer
           </button>
           <button onClick={Hangout}>
             <span>
@@ -682,6 +713,12 @@ const FlowChart = () => {
             </span>
             Password
           </button>
+          <button onClick={RepeatedCall}>
+            <span>
+            <FaRepeat />
+            </span>
+            Repeated call
+          </button>
           <button onClick={Sms}>
             <span>
               <MdOutlineSms />
@@ -727,7 +764,7 @@ const FlowChart = () => {
           <button onClick={WhosCalling}>
             <span>
               <TiSortNumericallyOutline />
-            </span>{" "}
+            </span>
             Who's Calling
           </button>
           <button onClick={Zapier}>
@@ -764,13 +801,12 @@ const FlowChart = () => {
   return (
     <div style={{height:'100%'}}>
     {/* {name ?( */}
-      <div style={{ height: "100vh", width: "100vw", display: "flex" }}>
+      <div style={{ height: "100vh", width: "100%", display: "flex" }}>
       <ReactFlowProvider>
         <div className="left-container">
           <div className="header-btn">
             <h3 style={{marginRight:'20px',marginBottom:'25px',marginLeft:'10px'}}>{name}</h3>
             <div className="description-button-wrapper">
-              
               <button className="flow-btn">
                 <span className="num">
                   {descriptions.length !== 0 ? descriptions.length : ""}
@@ -813,7 +849,7 @@ const FlowChart = () => {
             <Background />
           </ReactFlow>
         </div>
-        <div style={{ width: "30%", paddingRight: "20px" }}>{renderForm()}</div>
+        <div style={{height:'100%', width: "30%", paddingRight: "20px" }}>{renderForm()}</div>
       </ReactFlowProvider>
       <ToastContainer />
       </div>

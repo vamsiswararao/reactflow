@@ -26,7 +26,7 @@ const Passwords = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,c
       successAudio,
       failAudio,
     });
-    save()
+    save(nodeLabel)
 
     // Clear errors if everything is valid
   };

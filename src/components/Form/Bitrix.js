@@ -3,7 +3,6 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 
-
 const BitrixForm = ({
   nodeLabel,
   handleLabelChange,
@@ -25,11 +24,10 @@ const BitrixForm = ({
 
   const handleSave = () => {
     // Form validation
-    if (!nodeLabel.trim()|| !url || !assignMiscellaneous) {
+    if (!nodeLabel.trim() || !url || !assignMiscellaneous) {
       alert("Please fill in all required fields.");
       return;
     }
-
 
     const formData = {
       name: nodeLabel,
@@ -49,7 +47,7 @@ const BitrixForm = ({
     setIsToggled(true);
     setCrmType("");
     setAssignMiscellaneous("");
-    save();
+    save(nodeLabel);
   };
 
   return (
@@ -83,8 +81,7 @@ const BitrixForm = ({
           />
           <label>Additional parameters:</label>
           <textarea
-            required
-            type="Text"
+            type="text"
             placeholder="Enter the additional parameters"
             value={additionalParameters}
             onChange={(e) => setAdditionalParameters(e.target.value)}
@@ -110,20 +107,16 @@ const BitrixForm = ({
             <p style={{ marginLeft: "10px" }}>Yes</p>
           </div>
 
-          <label >CRM type:</label>
+          <label>CRM type:</label>
           <select
             className="input-select"
             value={crmType}
             onChange={(e) => setCrmType(e.target.value)}
           >
-            <option value="">Select the crm type</option>
-            {[...Array(10)]
-              .map((_, i) => i + 1)
-              .map((i) => (
-                <option key={i} value={i}>
-                  {i}
-                </option>
-              ))}
+            <option value="">Select the CRM type</option>
+            <option value="Contact">Contact</option>
+            <option value="Company">Company</option>
+            <option value="Lead">Lead</option>
           </select>
           <label>
             Assign miscellaneous to:<span className="star">*</span>
@@ -148,7 +141,9 @@ const BitrixForm = ({
         <button className="save-btn" onClick={handleSave}>
           Save
         </button>
-        <button onClick={copyNode} className="copy-btn"><FaCopy style={{height:'20px',width:'20px'}} /></button>
+        <button onClick={copyNode} className="copy-btn">
+          <FaCopy style={{ height: '20px', width: '20px' }} />
+        </button>
         <button onClick={deleteNode} className="delete-btn">
           <RiDeleteBin6Line style={{ height: "20px", width: "20px" }} />
         </button>

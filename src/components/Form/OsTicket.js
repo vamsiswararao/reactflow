@@ -48,7 +48,7 @@ const OsTickets = ({
 
     // Log form data to console
     console.log("Form Data:", formData);
-    save()
+    save(name)
   };
 
   return (
@@ -123,7 +123,7 @@ const OsTickets = ({
           <label>Subject:<span className="star">*</span></label>
           <textarea
             placeholder="write the subject"
-            rows="3"
+            rows="6"
             cols="40"
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
@@ -131,7 +131,7 @@ const OsTickets = ({
           <label>Message:<span className="star">*</span></label>
           <textarea
             placeholder="write the message"
-            rows="3"
+            rows="6"
             cols="40"
             value={message}
             onChange={(e) => setMessage(e.target.value)}

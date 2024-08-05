@@ -3,14 +3,13 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 
-
 const CollectorFrom = ({
   nodeLabel,
   handleLabelChange,
   deleteNode,
   removeForm,
   save, // Function to handle saving form data
-  copyNode
+  copyNode,
 }) => {
   const [connectType, setConnectType] = useState("");
   const [distributionType, setDistributionType] = useState("");
@@ -19,9 +18,11 @@ const CollectorFrom = ({
   const [ringTime, setRingTime] = useState("");
   const [maxCallTime, setMaxCallTime] = useState("");
   const [url, setUrl] = useState("");
-  const [sticky, setSticky] = useState(""); // State for Sticky radio button
-  const [recording, setRecording] = useState(""); // State for Recording radio button
-  const [enableQueue, setEnableQueue] = useState(""); // State for Enable Queue radio button
+  const [sticky, setSticky] = useState("yes"); // State for Sticky radio button
+  const [recording, setRecording] = useState("yes"); // State for Recording radio button
+  const [enableQueue, setEnableQueue] = useState("no"); // State for Enable Queue radio button
+  const [queueType, setQueueType] = useState(""); // State for Queue Type dropdown
+  const [queueTime, setQueueTime] = useState(""); // State for Queue Time input
 
   const handleSaveClick = () => {
     // Basic validation example
@@ -30,7 +31,6 @@ const CollectorFrom = ({
       !connectType ||
       !distributionType ||
       !missedCallTo ||
-      !holdTune ||
       !holdTune ||
       !sticky ||
       !recording ||
@@ -53,11 +53,13 @@ const CollectorFrom = ({
       sticky,
       recording,
       enableQueue,
+      queueType,
+      queueTime,
       // Add other form fields as needed
     };
-    console.log(formData)
+    console.log(formData);
     // Call the handleSave function from props to save the data
-    save();
+    save(formData); // Pass the formData object
   };
 
   return (
@@ -131,11 +133,12 @@ const CollectorFrom = ({
               ))}
           </select>
           <div className="radio">
-          <label style={{maxWidth:'90px'}}>
-          Sticky:<span className="star">*</span>
+            <label style={{ maxWidth: "90px" }}>
+              Sticky:<span className="star">*</span>
             </label>
             <input
               type="radio"
+              className="blue-radio"
               name="sticky"
               value="yes"
               checked={sticky === "yes"}
@@ -144,6 +147,7 @@ const CollectorFrom = ({
             <span>Yes</span>
             <input
               type="radio"
+              className="blue-radio"
               name="sticky"
               value="no"
               checked={sticky === "no"}
@@ -152,11 +156,12 @@ const CollectorFrom = ({
             <span>No</span>
           </div>
           <div className="radio">
-          <label style={{maxWidth:'90px'}}>
-          Recording:<span className="star">*</span>
+            <label style={{ maxWidth: "90px" }}>
+              Recording:<span className="star">*</span>
             </label>
             <input
               type="radio"
+              className="blue-radio"
               name="Recording"
               value="yes"
               checked={recording === "yes"}
@@ -165,6 +170,7 @@ const CollectorFrom = ({
             <span>Yes</span>
             <input
               type="radio"
+              className="blue-radio"
               name="Recording"
               value="no"
               checked={recording === "no"}
@@ -173,11 +179,12 @@ const CollectorFrom = ({
             <span>No</span>
           </div>
           <div className="radio">
-            <label style={{maxWidth:'90px'}}>
+            <label style={{ maxWidth: "90px" }}>
               Enable Queue:<span className="star">*</span>
             </label>
             <input
               type="radio"
+              className="blue-radio"
               name="Queue"
               value="yes"
               checked={enableQueue === "yes"}
@@ -186,6 +193,7 @@ const CollectorFrom = ({
             <span>Yes</span>
             <input
               type="radio"
+              className="blue-radio"
               name="Queue"
               value="no"
               checked={enableQueue === "no"}
@@ -193,14 +201,43 @@ const CollectorFrom = ({
             />
             <span>No</span>
           </div>
+          {enableQueue === "yes" && (
+            <>
+              <label>
+                Queue Tune:<span className="star">*</span>
+              </label>
+              <select
+                className="input-select"
+                value={queueType}
+                onChange={(e) => setQueueType(e.target.value)}
+                required
+              >
+                <option value="">Select the queue tune</option>
+                {[...Array(10)]
+                  .map((_, i) => i + 1)
+                  .map((i) => (
+                    <option key={i} value={i}>
+                      {i}
+                    </option>
+                  ))}
+              </select>
+              <label>Max time in Queue  (sec):</label>
+              <input
+                type="number"
+                placeholder="Enter the queue time"
+                value={queueTime}
+                onChange={(e) => setQueueTime(e.target.value)}
+              />
+            </>
+          )}
 
           <label>
             Default hold tune:<span className="star">*</span>
           </label>
           <select
             className="input-select"
-            value={missedCallTo}
-            onChange={(e) => setMissedCallTo(e.target.value)}
+            value={holdTune}
+            onChange={(e) => setHoldTune(e.target.value)}
           >
             <option value="">Select the default hold tune</option>
             {[...Array(10)]
@@ -238,7 +275,9 @@ const CollectorFrom = ({
         <button className="save-btn" onClick={handleSaveClick}>
           Save
         </button>
-        <button onClick={copyNode} className="copy-btn"><FaCopy style={{height:'20px',width:'20px'}} /></button>
+        <button onClick={copyNode} className="copy-btn">
+          <FaCopy style={{ height: "20px", width: "20px" }} />
+        </button>
 
         <button onClick={deleteNode} className="delete-btn">
           <RiDeleteBin6Line style={{ height: "20px", width: "20px" }} />

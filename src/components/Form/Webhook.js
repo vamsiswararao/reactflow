@@ -9,12 +9,12 @@ const WebhookForm = ({
   handleLabelChange,
   deleteNode,
   removeForm,
-  copyNode
+  copyNode,
 }) => {
   const [isToggled, setIsToggled] = useState(false);
   const [params, setParams] = useState([{ key: "", value: "" }]);
   const [headers, setHeaders] = useState([{ key: "", value: "" }]);
-  const [selectedMethod, setSelectedMethod] = useState("");
+  const [selectedMethod, setSelectedMethod] = useState("Get");
 
   const handleToggle = () => {
     setIsToggled(!isToggled);
@@ -72,18 +72,18 @@ const WebhookForm = ({
       <div className="params-container">
         {params.map((param, index) => (
           <div key={index} className="params">
-            <label style={{marginRight:'5px'}}>Key :</label>
+            <label style={{ marginRight: '5px' }}>Key :</label>
             <input
-              style={{width:'75px',marginRight:'5px'}}
+              style={{ width: '75px', marginRight: '5px' }}
               type="text"
               name="key"
               value={param.key}
               onChange={(e) => handleParamChange(index, e)}
             />
-            <label style={{marginLeft:'10px',marginRight:'5px'}}>Value :</label>
+            <label style={{ marginLeft: '10px', marginRight: '5px' }}>Value :</label>
             <input
-            style={{width:'75px',marginRight:'5px'}}
-            type="text"
+              style={{ width: '75px', marginRight: '5px' }}
+              type="text"
               name="value"
               value={param.value}
               onChange={(e) => handleParamChange(index, e)}
@@ -95,8 +95,8 @@ const WebhookForm = ({
                   background: "Green",
                   marginTop: "8px",
                   marginRight: "5px",
-                  height:"25px",
-                  width:'20px'
+                  height: "25px",
+                  width: '20px'
                 }}
               >
                 +
@@ -108,8 +108,8 @@ const WebhookForm = ({
                   background: "Red",
                   marginTop: "8px",
                   marginRight: "5px",
-                  height:"25px",
-                  width:'20px'
+                  height: "25px",
+                  width: '20px'
                 }}
               >
                 <RxCross2 />
@@ -132,17 +132,17 @@ const WebhookForm = ({
       <div className="params-container">
         {headers.map((header, index) => (
           <div key={index} className="params">
-            <label style={{marginRight:'5px'}}>Key :</label>
+            <label style={{ marginRight: '5px' }}>Key :</label>
             <input
-              style={{width:'75px',marginRight:'5px'}}
+              style={{ width: '75px', marginRight: '5px' }}
               type="text"
               name="key"
               value={header.key}
               onChange={(e) => handleHeaderChange(index, e)}
             />
-            <label style={{marginLeft:'10px',marginRight:'5px'}} >Value :</label>
+            <label style={{ marginLeft: '10px', marginRight: '5px' }}>Value :</label>
             <input
-            style={{width:'75px',marginRight:'5px'}}
+              style={{ width: '75px', marginRight: '5px' }}
               type="text"
               name="value"
               value={header.value}
@@ -155,8 +155,8 @@ const WebhookForm = ({
                   background: "Green",
                   marginTop: "8px",
                   marginRight: "5px",
-                  height:'25px',
-                  width:'20px'
+                  height: '25px',
+                  width: '20px'
                 }}
               >
                 +
@@ -168,11 +168,11 @@ const WebhookForm = ({
                   background: "Red",
                   marginTop: "8px",
                   marginRight: "5px",
-                  height:"25px",
-                  width:'20px'
+                  height: "25px",
+                  width: '20px'
                 }}
               >
-            <RxCross2 />
+                <RxCross2 />
               </button>
             )}
           </div>
@@ -213,6 +213,7 @@ const WebhookForm = ({
               type="radio"
               name="method"
               value="Get"
+              checked={selectedMethod === "Get"}
               onChange={handleMethodChange}
             />
             <span>GET</span>
@@ -220,6 +221,7 @@ const WebhookForm = ({
               type="radio"
               name="method"
               value="Post"
+              checked={selectedMethod === "Post"}
               onChange={handleMethodChange}
             />
             <span>POST</span>
@@ -227,6 +229,7 @@ const WebhookForm = ({
               type="radio"
               name="method"
               value="Json"
+              checked={selectedMethod === "Json"}
               onChange={handleMethodChange}
             />
             <span>Json</span>
@@ -234,16 +237,9 @@ const WebhookForm = ({
           <div>
             {selectedMethod === "Json" && (
               <div style={{ display: "flex", alignItems: "center" }}>
-                <p style={{ marginRight: "10px", marginLeft: "10px" }}>
-                  key-value
-                </p>
-
+                <p style={{ marginRight: "10px", marginLeft: "10px" }}>key-value</p>
                 <div className="toggle-switch" onClick={handleToggle}>
-                  <div
-                    className={`switch ${
-                      isToggled ? "toggled" : "non-toggled"
-                    }`}
-                  >
+                  <div className={`switch ${isToggled ? "toggled" : "non-toggled"}`}>
                     {isToggled ? (
                       <i className="icon-on"></i> // Icon when toggled on
                     ) : (
@@ -256,30 +252,21 @@ const WebhookForm = ({
             )}
 
             {selectedMethod === "Json" ? (
-              <>
-                {!isToggled ? (
-                  <Params />
-                ) : (
-                  <>
-                    <label>Json-text:</label>
-                    <textarea
-                      placeholder="write the text"
-                      rows="4"
-                      cols="40"
-                    />
-                  </>
-                )}
-              </>
-            ):(Params()
-          )}
-          <div>
-                    <label>Description:</label>
-                    <textarea
-                      placeholder="write the description"
-                      rows="4"
-                      cols="40"
-                    />
-                  </div>
+              !isToggled ? (
+                <Params />
+              ) : (
+                <>
+                  <label>Json-text:</label>
+                  <textarea placeholder="write the text" rows="4" cols="40" />
+                </>
+              )
+            ) : (
+              <Params />
+            )}
+            <div>
+              <label>Description:</label>
+              <textarea placeholder="write the description" rows="4" cols="40" />
+            </div>
           </div>
         </div>
         <hr className="bottom-hr" />

@@ -39,7 +39,7 @@ const CollectorFrom = ({
     };
     
     console.log("Form Data:", formData);
-    save()
+    save(nodeLabel)
     // Clear form fields and errors
     setSelectedValue("");
     setDescription("");

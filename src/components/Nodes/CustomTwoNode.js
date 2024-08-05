@@ -38,6 +38,10 @@ const CustomTwoNode = ({ data }) => {
         port1 = "InList";
         port2 = "NotinList";
         break;
+    case "7972781-9077-4e8c-840d-b61468f03c00":
+        port1 = "Yes";
+        port2 = "No";
+        break;
     default:
       port1 = "";
       port2 = "";
@@ -51,7 +55,7 @@ const CustomTwoNode = ({ data }) => {
         padding: "10px",
         borderRadius: "5px",
         background: "#fff",
-        width: "120px",
+        minWidth: "120px",
         textAlign: "center",
       }}
     >

@@ -48,11 +48,7 @@ const VoicemailForm = ({
       newErrors.repeatCount = "Please enter a valid recording duration.";
       isValid = false;
     }
-    if (!formData.remarks) {
-      newErrors.remarks = "Remarks are required.";
-      isValid = false;
-    }
-
+    
     setErrors(newErrors);
     return isValid;
   };
@@ -103,7 +99,7 @@ const VoicemailForm = ({
             type="text"
             name="repeatCount"
             placeholder="Enter the repeat count"
-            value={formData.repeatCount}
+            value={formData.repeatCount }
             onChange={handleInputChange}
           />
           {errors.repeatCount && <p className="error">{errors.repeatCount}</p>}
@@ -116,7 +112,6 @@ const VoicemailForm = ({
             value={formData.remarks}
             onChange={handleInputChange}
           />
-          {errors.remarks && <p className="error">{errors.remarks}</p>}
         </div>
         <hr className="bottom-hr" />
         <button className="save-btn" onClick={handleSave}>Save</button>

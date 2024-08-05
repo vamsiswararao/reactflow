@@ -31,7 +31,7 @@ const HangUp = ({
     };
 
     console.log('Form data:', formData);
-    save()
+    save(nodeLabel)
   };
 
   return (

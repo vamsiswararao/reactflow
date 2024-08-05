@@ -70,6 +70,9 @@ input{
   border: none;
 }
 
+.blue-radio{
+  accent-color: blue;
+}
 
 hr {
     color: "#fff";
@@ -121,6 +124,21 @@ hr {
     width: 360px;
   }
 
+  .flow-radio {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 360px;
+  }
+
+
+  .flow-radio input[type="radio"] {
+    margin:8px 10px;
+    height: 15px;
+    width: 25px;
+  }
+
+  
   .time-radio {
     display: flex;
     align-items: center;
@@ -293,3 +311,62 @@ hr {
   .error{
     color: red;
   }
+
+  
+  
+
+
+  /* .dropdown {
+    position: relative;
+    display: inline-block;
+    width: 200px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .dropdown-header {
+    padding: 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-height: 150px;
+    overflow-y: auto;  
+  }
+  
+  .dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .dropdown-item.selected {
+    background-color: blue;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .dropdown-icon {
+    margin-left: 10px;
+  }
+  
+  .dropdown-icon.open {
+    transform: rotate(180deg);
+  }
+   */
+
+
+   

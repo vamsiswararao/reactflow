@@ -14,7 +14,7 @@ const Announcement = ({
   copyNode
 }) => {
   const [formData, setFormData] = useState({
-    name: nodeLabel || "",
+    name: nodeLabel || "", // Initialize with nodeLabel or an empty string
     selectedValue: "",
     repeatCount: "",
     remarks: "",
@@ -24,6 +24,9 @@ const Announcement = ({
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name === "name") {
+      handleLabelChange(e); // Call the prop function to update nodeLabel in parent component
+    }    
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -32,7 +35,7 @@ const Announcement = ({
 
   const validateForm = () => {
     const newErrors = {};
-    if (!nodeLabel) newErrors.nodeLabel = "Name is required";
+    if (!formData.name) newErrors.name = "Name is required";
     if (!formData.selectedValue) newErrors.selectedValue = "Audio selection is required";
     if (!formData.repeatCount) newErrors.repeatCount = "Repeat Count is required";
     return newErrors;
@@ -42,11 +45,12 @@ const Announcement = ({
     const formErrors = validateForm();
     if (Object.keys(formErrors).length === 0) {
       console.log("Saved Data:", formData);
-      save(nodeLabel);
+      save(formData.name); // Use formData.name instead of nodeLabel
     } else {
       setErrors(formErrors);
     }
   };
+
   return (
     <div className="announcement-container">
       <div className="form">
@@ -62,10 +66,11 @@ const Announcement = ({
           <input
             type="text"
             placeholder="Enter the Name"
-            value={nodeLabel}
-            onChange={handleLabelChange}
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
           />
-          {errors.nodeLabel && <p className="error">{errors.nodeLabel}</p>}
+          {errors.name && <p className="error">{errors.name}</p>}
           <label>
             Audio:<span className="star">*</span>
           </label>
@@ -108,14 +113,15 @@ const Announcement = ({
         </div>
         <hr className="bottom-hr" />
         <div className="button-group">
-        <button className="save-btn" onClick={handleSave}>
-          Save
-        </button>
-        <button onClick={copyNode} className="copy-btn"><FaCopy style={{height:'20px',width:'20px'}} /></button>
-
-        <button onClick={deleteNode} className="delete-btn">
-          <RiDeleteBin6Line style={{ height: '20px', width: '20px' }} />
-        </button>
+          <button className="save-btn" onClick={handleSave}>
+            Save
+          </button>
+          <button onClick={copyNode} className="copy-btn">
+            <FaCopy style={{ height: '20px', width: '20px' }} />
+          </button>
+          <button onClick={deleteNode} className="delete-btn">
+            <RiDeleteBin6Line style={{ height: '20px', width: '20px' }} />
+          </button>
         </div>
       </div>
     </div>

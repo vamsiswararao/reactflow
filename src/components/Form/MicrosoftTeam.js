@@ -36,7 +36,7 @@ const MicrosoftTeam = ({
       return
     }
     console.log("Form Data:", formData);
-    save()
+    save(nodeLabel)
   };
 
   return (

@@ -10,21 +10,22 @@ const Extensions = ({
   removeForm,
   copyNode,
 }) => {
+  
   const [name, setName] = useState("");
   const [audio, setAudio] = useState("");
-  const [retries, setRetries] = useState("");
+  const [retries, setRetries] = useState("1");
   const [description, setDescription] = useState("");
 
   const handleSave = () => {
     // Perform validation
-    if (!name || !audio || !retries) {
+    if (!nodeLabel || !audio || !retries) {
       alert("Please fill in all fields.");
       return;
     }
 
     // Save data or perform any other action
     const formData = {
-      name,
+      name: nodeLabel || "",
       audio,
       retries,
       description,
@@ -76,8 +77,8 @@ const Extensions = ({
 
           <select
             className="input-select"
-            value={audio}
-            onChange={(e) => setAudio(e.target.value)}
+            value={retries}
+            onChange={(e) => setRetries(e.target.value)}
           >
             {[...Array(2)].map((_, i) => (
               <option key={i} value={i + 1}>
