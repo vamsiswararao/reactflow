@@ -5,14 +5,20 @@ import { FaCopy } from "react-icons/fa";
 
 
 const MicrosoftTeam = ({
+  node,
   nodeLabel,
   handleLabelChange,
   deleteNode,
   removeForm,save,
-  copyNode
+  copyNode,
+  flow_id
 }) => {
   const [formData, setFormData] = useState({
-    name: nodeLabel,
+    app_id:node.data.app_id ,
+    // "5c93b0a9b0810",
+    flow_id: flow_id,
+    inst_id:node.id,
+    name: nodeLabel || '',
     url: "",
     message: ""
   });

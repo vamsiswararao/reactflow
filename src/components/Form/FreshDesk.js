@@ -10,22 +10,26 @@ const FreshDeskForm = ({
   deleteNode,
   removeForm,
   copyNode,
-  save
+  save,
+  flow_id
 }) => {
   // State for form inputs
   const [formValues, setFormValues] = useState({
+    app_id:node.data.app_id ,
+    // "5c93b0a9b0810",
+    flow_id: flow_id,
+    inst_id:node.id,
     name:nodeLabel || "",
-    apiKey: "",
+    api_key: "",
     password: "",
     domain: "",
-    priority: "",
-    audioFile: "",
-    retries: "",
+    priority_id: "",
+    audio_id: "",
     description: "",
     subject: "",
-    status: "",
-    source: "",
-    customPostField: ""
+    status_id: "",
+    source_id: "",
+    custom_post_field: ""
   });
 
   // Handle input change
@@ -43,11 +47,16 @@ const FreshDeskForm = ({
     // Perform validation
     if (
       !formValues.name ||
-      !formValues.apiKey ||
+      !formValues.api_key ||
       !formValues.password ||
       !formValues.domain ||
-      !formValues.priority ||
-      !formValues.audioFile 
+      !formValues.priority_id ||
+      !formValues.audio_id ||
+      !formValues.description ||
+      !formValues.subject ||
+      !formValues.status_id ||
+      !formValues.source_id ||
+      !formValues.custom_post_field
       ) {
       alert("Please fill in all required fields.");
       return;
@@ -83,9 +92,9 @@ const FreshDeskForm = ({
           </label>
           <input
             type="text"
-            name="apiKey"
+            name="api_key"
             placeholder="Enter the api key"
-            value={formValues.apiKey}
+            value={formValues.api_key}
             onChange={handleInputChange}
             required
           />
@@ -116,8 +125,8 @@ const FreshDeskForm = ({
           </label>
           <select
             className="input-select"
-            name="priority"
-            value={formValues.priority}
+            name="priority_id"
+            value={formValues.priority_id}
             onChange={handleInputChange}
             required
           >
@@ -133,8 +142,8 @@ const FreshDeskForm = ({
           </label>
           <select
             className="input-select"
-            name="audioFile"
-            value={formValues.audioFile}
+            name="audio_id"
+            value={formValues.audio_id}
             onChange={handleInputChange}
             required
           >
@@ -172,8 +181,8 @@ const FreshDeskForm = ({
           </label>
           <select
             className="input-select"
-            name="status"
-            value={formValues.status}
+            name="status_id"
+            value={formValues.status_id}
             onChange={handleInputChange}
             required
           >
@@ -189,8 +198,8 @@ const FreshDeskForm = ({
           </label>
           <select
             className="input-select"
-            name="source"
-            value={formValues.source}
+            name="source_id"
+            value={formValues.source_id}
             onChange={handleInputChange}
             required
           >
@@ -205,9 +214,9 @@ const FreshDeskForm = ({
             Custom Post Field:<span className="star">*</span>
           </label>
           <textarea
-            name="customPostField"
+            name="custom_post_field"
             placeholder="Enter the post field"
-            value={formValues.customPostField}
+            value={formValues.custom_post_field}
             onChange={handleInputChange}
             rows="6"
             cols="40"

@@ -5,12 +5,14 @@ import { FaCopy } from "react-icons/fa";
 
 
 const HangUp = ({
+  node,
   nodeLabel,
   handleLabelChange,
   deleteNode,
   removeForm,
   save,
-  copyNode
+  copyNode,
+  flow_id
 }) => {
   const [remarks, setRemarks] = useState('');
 
@@ -26,7 +28,11 @@ const HangUp = ({
 
     // Clear form errors if validation passes
     const formData = {
-      nodeLabel,
+      app_id:node.data.app_id ,
+    // "5c93b0a9b0810",
+    flow_id: flow_id,
+    inst_id:node.id,
+      name:nodeLabel,
       remarks,
     };
 

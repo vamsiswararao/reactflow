@@ -5,12 +5,14 @@ import { FaCopy } from "react-icons/fa";
 
 
 const TelegramForm = ({
+  node,
   nodeLabel,
   handleLabelChange,
   deleteNode,
   removeForm,
   save,
-  copyNode
+  copyNode,
+  flow_id
 }) => {
   const [selectedValue, setSelectedValue] = useState("");
   const [message, setMessage] = useState("");
@@ -27,10 +29,17 @@ const TelegramForm = ({
       return;
     }
 
-    console.log("Form Data:");
-    console.log("Name:", nodeLabel);
-    console.log("To:", selectedValue);
-    console.log("Message:", message);
+    const formData= {
+      app_id:node.data.app_id ,
+      // "5c93b0a9b0810",
+      flow_id: flow_id,
+      inst_id:node.id,
+      name: nodeLabel,
+      to_id:selectedValue,
+      message:message
+    }
+
+    console.log( formData);
     save(nodeLabel)
     // You can add additional logic for form submission here
   };

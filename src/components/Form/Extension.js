@@ -4,11 +4,13 @@ import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 
 const Extensions = ({
+  node,
   nodeLabel,
   handleLabelChange,
   deleteNode,
   removeForm,
   copyNode,
+  flow_id
 }) => {
   
   const [name, setName] = useState("");
@@ -25,8 +27,12 @@ const Extensions = ({
 
     // Save data or perform any other action
     const formData = {
+      app_id:node.data.app_id ,
+    // "5c93b0a9b0810",
+    flow_id: flow_id,
+    inst_id:node.id,
       name: nodeLabel || "",
-      audio,
+      audio_id:audio,
       retries,
       description,
     };

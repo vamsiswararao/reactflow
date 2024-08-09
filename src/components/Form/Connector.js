@@ -4,12 +4,14 @@ import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 
 const CollectorFrom = ({
+  node,
   nodeLabel,
   handleLabelChange,
   deleteNode,
   removeForm,
   save, // Function to handle saving form data
   copyNode,
+  flow_id
 }) => {
   const [connectType, setConnectType] = useState("");
   const [distributionType, setDistributionType] = useState("");
@@ -18,48 +20,84 @@ const CollectorFrom = ({
   const [ringTime, setRingTime] = useState("");
   const [maxCallTime, setMaxCallTime] = useState("");
   const [url, setUrl] = useState("");
-  const [sticky, setSticky] = useState("yes"); // State for Sticky radio button
-  const [recording, setRecording] = useState("yes"); // State for Recording radio button
-  const [enableQueue, setEnableQueue] = useState("no"); // State for Enable Queue radio button
-  const [queueType, setQueueType] = useState(""); // State for Queue Type dropdown
-  const [queueTime, setQueueTime] = useState(""); // State for Queue Time input
+  const [sticky, setSticky] = useState("yes");
+  const [recording, setRecording] = useState("yes");
+  const [enableQueue, setEnableQueue] = useState("no");
+  const [queueType, setQueueType] = useState("");
+  const [queueTime, setQueueTime] = useState("10");
 
-  const handleSaveClick = () => {
-    // Basic validation example
-    if (
-      !nodeLabel ||
-      !connectType ||
-      !distributionType ||
-      !missedCallTo ||
-      !holdTune ||
-      !sticky ||
-      !recording ||
-      !enableQueue
-    ) {
-      alert("Please fill in all required fields.");
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!nodeLabel) newErrors.nodeLabel = "Name is required.";
+    if (!connectType) newErrors.connectType = "Call connect type is required.";
+    if (!distributionType) newErrors.distributionType = "Call distribution type is required.";
+    if (!holdTune) newErrors.holdTune = "Hold tune is required.";
+    if (!sticky) newErrors.sticky = "Sticky selection is required.";
+    if (!recording) newErrors.recording = "Recording selection is required.";
+    if (!enableQueue) newErrors.enableQueue = "Queue enable selection is required.";
+    if (enableQueue === "yes" && !queueType) newErrors.queueType = "Queue type is required.";
+    return newErrors;
+  };
+
+  const handleSaveClick = async () => {
+    const formErrors = validateForm();
+
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
       return;
     }
 
-    // Gather all form data into an object
+  
+    
+   
+   
+    
+    
+
+
     const formData = {
-      nodeLabel,
-      connectType,
-      distributionType,
-      missedCallTo,
-      holdTune,
-      ringTime,
-      maxCallTime,
+      app_id:node.data.app_id ,
+      // "5c93b0a9b0810",
+      flow_id: flow_id,
+      inst_id:node.id,
+      name: nodeLabel,
+      call_cnt_type_id:connectType,
+      call_dst_type_id:distributionType,
+      assign_msd_call_id:missedCallTo,
+      default_hold_tune:holdTune,
+      ring_time:ringTime,
+      max_call_time:maxCallTime,
       url,
       sticky,
       recording,
-      enableQueue,
+      enable_quene:enableQueue,
       queueType,
       queueTime,
-      // Add other form fields as needed
     };
-    console.log(formData);
-    // Call the handleSave function from props to save the data
-    save(formData); // Pass the formData object
+
+    try {
+      const response = await fetch("https://enrbgth6q54c8.x.pipedream.net", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
+      }
+
+      //const data = await response.json();
+      console.log("Data saved:", formData);
+      save(formData); // Pass the formData object to the save function
+      setErrors({}); // Clear errors after successful save
+    } catch (error) {
+      console.error("Error saving data:", error);
+      setErrors({ global: "Error saving data. Please try again." });
+    }
   };
 
   return (
@@ -71,6 +109,8 @@ const CollectorFrom = ({
         </button>
         <hr />
         <div className="form-container">
+          {errors.global && <p className="error global-error">{errors.global}</p>}
+          
           <label>
             Name:<span className="star">*</span>
           </label>
@@ -81,6 +121,8 @@ const CollectorFrom = ({
             onChange={handleLabelChange}
             required
           />
+          {errors.nodeLabel && <p className="error">{errors.nodeLabel}</p>}
+
           <label>
             Call connect type:<span className="star">*</span>
           </label>
@@ -99,6 +141,8 @@ const CollectorFrom = ({
                 </option>
               ))}
           </select>
+          {errors.connectType && <p className="error">{errors.connectType}</p>}
+
           <label>
             Call distribution type:<span className="star">*</span>
           </label>
@@ -117,7 +161,9 @@ const CollectorFrom = ({
                 </option>
               ))}
           </select>
-          <label>Assign missedcall to:</label>
+          {errors.distributionType && <p className="error">{errors.distributionType}</p>}
+
+          <label>Assign missed call to:</label>
           <select
             className="input-select"
             value={missedCallTo}
@@ -132,6 +178,7 @@ const CollectorFrom = ({
                 </option>
               ))}
           </select>
+
           <div className="radio">
             <label style={{ maxWidth: "90px" }}>
               Sticky:<span className="star">*</span>
@@ -155,6 +202,8 @@ const CollectorFrom = ({
             />
             <span>No</span>
           </div>
+          {errors.sticky && <p className="error">{errors.sticky}</p>}
+
           <div className="radio">
             <label style={{ maxWidth: "90px" }}>
               Recording:<span className="star">*</span>
@@ -178,6 +227,8 @@ const CollectorFrom = ({
             />
             <span>No</span>
           </div>
+          {errors.recording && <p className="error">{errors.recording}</p>}
+
           <div className="radio">
             <label style={{ maxWidth: "90px" }}>
               Enable Queue:<span className="star">*</span>
@@ -201,6 +252,8 @@ const CollectorFrom = ({
             />
             <span>No</span>
           </div>
+          {errors.enableQueue && <p className="error">{errors.enableQueue}</p>}
+
           {enableQueue === "yes" && (
             <>
               <label>
@@ -221,7 +274,9 @@ const CollectorFrom = ({
                     </option>
                   ))}
               </select>
-              <label>Max time in Queue  (sec):</label>
+              {errors.queueType && <p className="error">{errors.queueType}</p>}
+
+              <label>Max time in Queue (sec):</label>
               <input
                 type="number"
                 placeholder="Enter the queue time"
@@ -256,6 +311,7 @@ const CollectorFrom = ({
             value={ringTime}
             onChange={(e) => setRingTime(e.target.value)}
           />
+
           <label>Max call time (sec):</label>
           <input
             type="number"
@@ -263,6 +319,7 @@ const CollectorFrom = ({
             value={maxCallTime}
             onChange={(e) => setMaxCallTime(e.target.value)}
           />
+
           <label>URL:</label>
           <input
             type="url"

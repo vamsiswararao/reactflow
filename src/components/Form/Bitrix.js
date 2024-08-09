@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
@@ -18,27 +18,79 @@ const BitrixForm = ({
   const [crmType, setCrmType] = useState("");
   const [assignMiscellaneous, setAssignMiscellaneous] = useState("");
 
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`https://enrbgth6q54c8.x.pipedream.net`);
+        const data = await response.json();
+        if (data) {
+          setUrl(data.url || "");
+          setAdditionalParameters(data.additional_prm|| "");
+          setRemarks(data.remarks || "");
+          setIsToggled(data.create_crm !== undefined ? data.isToggled : true);
+          setCrmType(data.crm_type || "");
+          setAssignMiscellaneous(data.assign_Mis || "");
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    if (nodeLabel) {
+      fetchData();
+    }
+  }, [nodeLabel]);
+
   const handleToggle = () => {
     setIsToggled(!isToggled);
   };
 
-  const handleSave = () => {
-    // Form validation
-    if (!nodeLabel.trim() || !url || !assignMiscellaneous) {
-      alert("Please fill in all required fields.");
+  const validateForm = () => {
+    const newErrors = {};
+    if (!nodeLabel.trim()) newErrors.nodeLabel = "Name is required.";
+    if (!url) newErrors.url = "URL is required.";
+    if (!assignMiscellaneous) newErrors.assignMiscellaneous = "Assign miscellaneous is required.";
+    return newErrors;
+  };
+
+  const handleSave = async () => {
+    const formErrors = validateForm();
+
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
       return;
     }
 
     const formData = {
       name: nodeLabel,
       url: url,
-      additionalParameters: additionalParameters,
+      additional_prm: additionalParameters,
       remarks: remarks,
-      isToggled: isToggled,
-      crmType: crmType,
-      assignMiscellaneous: assignMiscellaneous,
+      create_crm: isToggled,
+      crm_type: crmType,
+      assign_Mis: assignMiscellaneous,
     };
-    console.log("Form Data:", formData);
+
+    try {
+      const response = await fetch(`https://enrbgth6q54c8.x.pipedream.net`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save data");
+      }
+
+      console.log("Form Data Saved:", formData);
+      save(nodeLabel);
+    } catch (error) {
+      console.error("Error saving data:", error);
+    }
 
     // Reset form fields
     setUrl("");
@@ -47,7 +99,7 @@ const BitrixForm = ({
     setIsToggled(true);
     setCrmType("");
     setAssignMiscellaneous("");
-    save(nodeLabel);
+    setErrors({});
   };
 
   return (
@@ -68,6 +120,8 @@ const BitrixForm = ({
             value={nodeLabel}
             onChange={handleLabelChange}
           />
+          {errors.nodeLabel && <p className="error">{errors.nodeLabel}</p>}
+
           <label>
             Url:<span className="star">*</span>
           </label>
@@ -79,6 +133,8 @@ const BitrixForm = ({
             rows="6"
             cols="40"
           />
+          {errors.url && <p className="error">{errors.url}</p>}
+
           <label>Additional parameters:</label>
           <textarea
             type="text"
@@ -118,6 +174,7 @@ const BitrixForm = ({
             <option value="Company">Company</option>
             <option value="Lead">Lead</option>
           </select>
+
           <label>
             Assign miscellaneous to:<span className="star">*</span>
           </label>
@@ -135,6 +192,9 @@ const BitrixForm = ({
                 </option>
               ))}
           </select>
+          {errors.assignMiscellaneous && (
+            <p className="error">{errors.assignMiscellaneous}</p>
+          )}
         </div>
 
         <hr className="bottom-hr" />

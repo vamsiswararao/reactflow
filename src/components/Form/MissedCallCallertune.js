@@ -14,7 +14,6 @@ const MissedCallCallerTunes = ({
   removeForm,
   copyNode
 }) => {
-
   return (
     <div className="form-one-container">
       <div className="form">

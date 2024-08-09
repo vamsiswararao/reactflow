@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
@@ -26,6 +26,13 @@ const TimingsForm = ({
     description: "",
     timings: {},
   });
+
+  useEffect(() => {
+    setFormData((prevData) => ({
+      ...prevData,
+      name: nodeLabel,
+    }));
+  }, [nodeLabel]);
 
   const timeOptions = Array.from({ length: 48 }, (_, index) => {
     const hours = String(Math.floor(index / 2)).padStart(2, '0');
@@ -72,14 +79,17 @@ const TimingsForm = ({
     });
 
     // Update form data
-    setFormData({
+    const updatedFormData = {
       ...formData,
       timings,
-    });
+    };
+    setFormData(updatedFormData);
 
-    console.log("Form Data:", formData);
-    save()
+    console.log("Form Data:", updatedFormData);
+    save();
   };
+
+
 
   return (
     <div className="form-one-container">

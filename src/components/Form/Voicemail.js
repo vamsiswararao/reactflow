@@ -6,22 +6,30 @@ import { FaCopy } from "react-icons/fa";
 import "./Form.css";
 
 const VoicemailForm = ({
+  node,
   nodeLabel,
   handleLabelChange,
   deleteNode,
   removeForm,
   save,
-  copyNode
+  copyNode,
+  flow_id
+
 }) => {
   const [formData, setFormData] = useState({
-    selectedValue: "",
-    repeatCount: "",
+    app_id:node.data.app_id ,
+      // "5c93b0a9b0810",
+    flow_id: flow_id,
+    inst_id:node.id,
+    name: nodeLabel ||'',
+    audio_id: "",
+    recording_duration: "",
     remarks: "",
   });
 
   const [errors, setErrors] = useState({
-    selectedValue: "",
-    repeatCount: "",
+    audio_id: "",
+    recording_duration: "",
     remarks: "",
   });
 
@@ -37,14 +45,14 @@ const VoicemailForm = ({
     let isValid = true;
     const newErrors = { selectedValue: "", repeatCount: "", remarks: "" };
 
-    if (!formData.selectedValue) {
+    if (!formData.audio_id) {
       newErrors.selectedValue = "Audio selection is required.";
       isValid = false;
     }
-    if (!formData.repeatCount) {
+    if (!formData.recording_duration) {
       newErrors.repeatCount = "Recording duration is required.";
       isValid = false;
-    } else if (isNaN(formData.repeatCount) || formData.repeatCount <= 0) {
+    } else if (isNaN(formData.recording_duration) || formData.recording_duration <= 0) {
       newErrors.repeatCount = "Please enter a valid recording duration.";
       isValid = false;
     }
@@ -74,14 +82,14 @@ const VoicemailForm = ({
           <input
             type="text"
             placeholder="Enter the Name"
-            value={nodeLabel}
+            value={formData.name}
             onChange={handleLabelChange}
           />
           <label>Audio:<span className="star">*</span></label>
           <select
             className="input-select"
-            name="selectedValue"
-            value={formData.selectedValue}
+            name="audio_id"
+            value={formData.audio_id}
             onChange={handleInputChange}
           >
             <option value="">Select the audio</option>
@@ -97,9 +105,9 @@ const VoicemailForm = ({
           <label>Recording duration:<span className="star">*</span></label>
           <input
             type="text"
-            name="repeatCount"
+            name="recording_duration"
             placeholder="Enter the repeat count"
-            value={formData.repeatCount }
+            value={formData.recording_duration }
             onChange={handleInputChange}
           />
           {errors.repeatCount && <p className="error">{errors.repeatCount}</p>}

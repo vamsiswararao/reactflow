@@ -81,7 +81,7 @@ const fixedNodeIds = {
   Email: "9aea22f7-a11e-400e-a935-eb814a1e9aa5",
   Extension: "335683bc-0b72-49b2-b352-b5e5cfbf406e",
   FreshDesk: "378f553e-f776-4827-b64a-81f8a7179fed",
-  FlowTransfer: "378f553e-f776-4827-b64a-81f8a7179100",
+  FlowTransfer: "b2fac29a-34ac-4370-a177-5e38f627e080",
   Hangout: "ff700fce-b1c3-444d-9570-ad68774431f3",
   Hangup: "01330d73-c93e-4098-8e2c-b436ec66f172",
   Holidays: "daacc396-3bd5-47f7-bff7-7a7e89c5d1a0",
@@ -92,7 +92,7 @@ const fixedNodeIds = {
   MissedCallCallertune: "3c551d3b-1828-4097-a3bc-f276bd9e6302",
   OSTicket: "5fb3dff1-1a98-4cc0-bc73-982924b90ee7",
   Password: "d7972781-9077-4e8c-840d-b61468f03cf7",
-  RepeatedCall: "7972781-9077-4e8c-840d-b61468f03c00",
+  RepeatedCall: "ccfa929d-75cc-4103-bebd-0a2e2f68ffc7",
   SMS: "59f004f6-a2a9-4496-9985-575d6ac4867e",
   Slack: "32fed744-61dc-4052-a04d-0ef1cbe84044",
   StickyAgent: "d41846e8-43f9-4c3e-b24a-29241e761f7d",
@@ -104,59 +104,49 @@ const fixedNodeIds = {
   Zapier: "593b207e-5e3d-49ff-abad-4f79c15f3df1",
 };
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
+
 const FlowChart = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [descriptions, setDescriptions] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [name, setName] = useState(null);
+  //const [name, setName] = useState(null);
 
   const [nodeLabel, setNodeLabel] = useState("");
   const [nodeCounters, setNodeCounters] = useState({});
   const [position, setPosition] = useState({ x: 50, y: 50 });
+  const flow_id="66addcaec9beb"
   
-  //const { id } = useParams();
-  // useEffect(() => {
-  //         const storedFlows = JSON.parse(localStorage.getItem('flows')) || [];
-  //         const currentFlow = storedFlows.find(flow => flow.flow_id === id);
-  //         if (currentFlow.flows) {
-  //           setNodes(currentFlow.flows.nodes || []);
-  //           setEdges(currentFlow.flows.edges || []);
-  //           setName(currentFlow.name || []);
-  //         } else {
-  //           setNodes([]);
-  //           setEdges([]);
-  //           setName(currentFlow.name || []);
-  //         }
-          
-      
-  // }, [id,setNodes,setEdges,setName]);
-
   useEffect(() => {
     const fetchFlowData = async () => {
       try {
-        // const response = await fetch(`https://dummyapi.io/flows/${flowId}`, {
-        //   method: 'GET',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'Authorization': 'Bearer YOUR_API_TOKEN' // If your API requires authorization
-        //   }
-        // });
+        const response = await fetch(`${apiUrl}/flow_data_get_data?flow_id=${flow_id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            // 'Authorization': 'Bearer YOUR_API_TOKEN' // If your API requires authorization
+          }
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
 
-        // if (!response.ok) {
-        //   throw new Error('Network response was not ok');
-        // }
+        const data = await response.json();
+        //const data={"flow_data":{"id":"faf18cb1-f101-4234-82eb-5e3bec904a1a","flow_name":'ReactFlow',"flows":{"nodes":[{"id":"8379ebac-0492-451a-9260-85e03c919dd1","type":"default","data":{"label":"Announcement","app_id":"90712abd-697e-4841-832c-31229526dfa0","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":211,"y":22},"width":150,"height":38,"selected":false,"positionAbsolute":{"x":211,"y":22},"dragging":false},{"id":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","type":"twoCustom","data":{"label":"Collector","app_id":"88cfb29b-a325-4345-9824-6246a694e167","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":100,"y":100},"width":143,"height":45},{"id":"3683c782-e229-4123-8a99-4d8ee9b6f530","type":"twoCustom","data":{"label":"Extension","app_id":"335683bc-0b72-49b2-b352-b5e5cfbf406e","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":346,"y":108},"width":143,"height":45,"selected":true,"positionAbsolute":{"x":346,"y":108},"dragging":false}],"edges":[{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-5bd82aa5-19ce-477d-a14b-b336b67c64a0"},{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"3683c782-e229-4123-8a99-4d8ee9b6f530","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-3683c782-e229-4123-8a99-4d8ee9b6f530"}]}}}        
+        //console.log('Flow data retrieved successfully:', data.resp.flow_data);
+        //console.log('Flow data retrieved successfully:', data.resp.flow_data.id);
 
-        // const data = await response.json();
-        const data={"flow_data":{"id":"faf18cb1-f101-4234-82eb-5e3bec904a1a","flow_name":'ReactFlow',"flows":{"nodes":[{"id":"8379ebac-0492-451a-9260-85e03c919dd1","type":"default","data":{"label":"Announcement_02","app_id":"90712abd-697e-4841-832c-31229526dfa0","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":211,"y":22},"width":150,"height":38,"selected":false,"positionAbsolute":{"x":211,"y":22},"dragging":false},{"id":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","type":"twoCustom","data":{"label":"Collector","app_id":"88cfb29b-a325-4345-9824-6246a694e167","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":100,"y":100},"width":143,"height":45},{"id":"3683c782-e229-4123-8a99-4d8ee9b6f530","type":"twoCustom","data":{"label":"Extension","app_id":"335683bc-0b72-49b2-b352-b5e5cfbf406e","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":346,"y":108},"width":143,"height":45,"selected":true,"positionAbsolute":{"x":346,"y":108},"dragging":false}],"edges":[{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-5bd82aa5-19ce-477d-a14b-b336b67c64a0"},{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"3683c782-e229-4123-8a99-4d8ee9b6f530","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-3683c782-e229-4123-8a99-4d8ee9b6f530"}]}}}        
-        console.log('Flow data retrieved successfully:', data.flow_data.flows);
-        setNodes(data.flow_data.flows.nodes || []);
-        setEdges(data.flow_data.flows.edges || []);
-        setName(data.flow_data.flow_name)
-        const nodeLength=(data.flow_data.flows.nodes.length)
-        const position= (data.flow_data.flows.nodes[nodeLength-1].position)
-        setPosition({ x: position.x+50, y: position.y+100 })
         // Update state with the retrieved flow data
+        setNodes(data.resp.flow_data.flows.nodes || []);
+        setEdges(data.resp.flow_data.flows.edges || []);
+        //setName(data.flow_data.flow_name)
+        const nodeLength=(data.resp.flow_data.flows.nodes.length)
+        if(nodeLength>0){
+        const position= (data.resp.flow_data.flows.nodes[nodeLength-1].position)
+        setPosition({ x: position.x+50 || 50, y: position.y+100 || 50 })
+        }
       } catch (error) {
         console.error('Failed to retrieve flow data:', error);
       }
@@ -165,10 +155,11 @@ const FlowChart = () => {
     // Call fetchFlowData when flowId changes or on component mount
     fetchFlowData();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // useEffect dependency on flowId
+  }, [setNodes,setEdges]); // useEffect dependency on setNodes and setEdges
 
 
+
+  //node change new position values for nodes 
   const handleNodeChange = (changes) => {
     changes.forEach((change) => {
       if (change.type === "position" && change.position) {
@@ -178,6 +169,8 @@ const FlowChart = () => {
     });
   };
 
+
+  // initialize the edges type 
   const edgeTypes = useMemo(
     () => ({
       customEdge: (props) => <CustomEdge onEdgeClick={edgeClick} {...props} />,
@@ -185,6 +178,8 @@ const FlowChart = () => {
     []
   );
 
+
+    // initialize the nodes type 
   const nodeTypes = useMemo(
     () => ({
       twoCustom: CustomTwoNode,
@@ -198,6 +193,8 @@ const FlowChart = () => {
     []
   );
 
+
+// create a custom node 
   const createNode = (type, name, app_id, style) => {
     const count = nodeCounters[name] || 0;
     const number = count > 8 ? count + 1 : `0${count + 1}`;
@@ -281,6 +278,8 @@ const FlowChart = () => {
     addDescription(`Removed edge from ${id}`);
   };
 
+
+// nodes and edges are connected to each other 
   const onConnect = useCallback(
     (params) => {
       setEdges((eds) => addEdge({ ...params, type: "customEdge" }, eds));
@@ -289,6 +288,8 @@ const FlowChart = () => {
     [setEdges]
   );
 
+  
+//remove nodes and edges from the flow data 
   const removeNode = () => {
     if (selectedNode) {
       setNodes((nds) => nds.filter((node) => node.id !== selectedNode.id));
@@ -321,11 +322,14 @@ const FlowChart = () => {
     setDescriptions((des) => des.concat(description));
   };
 
-  const handleNodeClick = (event, node, viewport) => {
+  // select the node
+  const handleNodeClick = (event, node) => {
     setSelectedNode(node);
     setNodeLabel(node.data.label);
   };
 
+
+  // change the selected node label 
   const handleLabelChange = (event) => {
     if (selectedNode) {
       setNodeLabel(event.target.value);
@@ -345,23 +349,23 @@ const FlowChart = () => {
     // }
   };
 
-  const updateNodeLabel = () => {
-    if (selectedNode && nodeLabel.trim() !== "") {
-      setNodes((nds) =>
-        nds.map((node) =>
-          node.id === selectedNode.id
-            ? { ...node, data: { ...node.data, label: nodeLabel } }
-            : node
-        )
-      );
-      setSelectedNode(null);
-      addDescription(
-        `Updated label for node ${selectedNode.id} to "${nodeLabel}"`
-      );
-    } else {
-      addDescription(`Failed to update label: Empty label`);
-    }
-  };
+  // const updateNodeLabel = () => {
+  //   if (selectedNode && nodeLabel.trim() !== "") {
+  //     setNodes((nds) =>
+  //       nds.map((node) =>
+  //         node.id === selectedNode.id
+  //           ? { ...node, data: { ...node.data, label: nodeLabel } }
+  //           : node
+  //       )
+  //     );
+  //     setSelectedNode(null);
+  //     addDescription(
+  //       `Updated label for node ${selectedNode.id} to "${nodeLabel}"`
+  //     );
+  //   } else {
+  //     addDescription(`Failed to update label: Empty label`);
+  //   }
+  // };
 
   // const PublishFlow=()=>{
   //   const flow={
@@ -372,42 +376,29 @@ const FlowChart = () => {
   //   addDescription("Saved flow state");
   // }
 
+  //remove the selected node  
   const removeForm = () => {
     setSelectedNode("");
   };
 
+  //save the node data to the flow  
   const save = (data) => {
     setSelectedNode("");
     toast(`${data} data saved.`);
   };
 
-  // const saveFlow = () => {
-  //   const storedFlows = JSON.parse(localStorage.getItem('flows')) || [];
-    
-  //   const flows = {
-  //     nodes,
-  //     edges,
-  //   };
-  //   const updatedFlows = storedFlows.map(flow => 
-  //     flow.id === id ? {...flow , flows} : ""
-  // );
-  //   localStorage.setItem("flows", JSON.stringify(updatedFlows));
-  //   addDescription("Saved flow state");
-  // };
-
-  const saveFlow = async () => {
+  // save the flow data to the flow
+  const publishFlow = async () => {
     const flowData = {
-     flow_data: {id:uuidv4(),
+     flow_data: {id:"66addcaec9beb",
       flows: {
         nodes,
         edges,
       }}
     };
-  
-  
     try {
       // Replace the URL with your actual API endpoint
-      const response = await fetch('https://enrbgth6q54c8.x.pipedream.net', {
+      const response = await fetch(`${apiUrl}/flow_data_update`, {
         method: 'POST', // Use 'PUT' or 'PATCH' if you're updating an existing flow
         headers: {
           'Content-Type': 'application/json',
@@ -421,10 +412,8 @@ const FlowChart = () => {
       }
   
       const data = await response.json();
-      console.log('Flow saved successfully:', data);
-      toast(`Flow data saved.`);
-
-  
+      console.log('Flow saved successfully:', data,flowData);
+      toast(`Flow data saved.`)
       addDescription("Saved flow state");
     } catch (error) {
       console.error('Failed to save flow:', error);
@@ -433,20 +422,22 @@ const FlowChart = () => {
   };
   
 
-  const restoreFlow = () => {
-    const flow = JSON.parse(localStorage.getItem("flow"));
-    if (flow) {
-      setNodes(flow.nodes || []);
-      setEdges(flow.edges || []);
-      addDescription("Restored flow state");
-      console.log(flow.visiblePorts);
-    } else {
-      setNodes([]);
-      setEdges([]);
-      addDescription("No saved flow state found");
-    }
-  };
+  // const restoreFlow = () => {
+  //   const flow = JSON.parse(localStorage.getItem("flow"));
+  //   if (flow) {
+  //     setNodes(flow.nodes || []);
+  //     setEdges(flow.edges || []);
+  //     addDescription("Restored flow state");
+  //     console.log(flow.visiblePorts);
+  //   } else {
+  //     setNodes([]);
+  //     setEdges([]);
+  //     addDescription("No saved flow state found");
+  //   }
+  // };
 
+
+  //code nodes form 
   const copyNode = () => {
     if (!selectedNode) return;
     const app_id = selectedNode.data.app_id;
@@ -475,18 +466,21 @@ const FlowChart = () => {
     setNodeLabel(newNode.data.label);
   };
 
+
+  //forms 
   const renderForm = () => {
     if (selectedNode) {
-    console.log(selectedNode.data);
       const formProps = {
         node: selectedNode,
         nodeLabel: nodeLabel,
         handleLabelChange: handleLabelChange,
-        updateNodeLabel: updateNodeLabel,
+        // updateNodeLabel: updateNodeLabel,
         deleteNode: removeNode,
         removeForm: removeForm,
         save: save,
         copyNode: copyNode,
+        flow_id:flow_id
+
       };
       switch (selectedNode.data.app_id) {
         case fixedNodeIds.Announcement:
@@ -639,17 +633,17 @@ const FlowChart = () => {
             </span>
             Extension
           </button>
-          <button onClick={FreshDesk}>
-            <span>
-              <LiaDesktopSolid />
-            </span>
-            Fresh Desk
-          </button>
           <button onClick={FlowTransfer}>
             <span>
             <BiTransfer />
             </span>
             Flow Transfer
+          </button>
+          <button onClick={FreshDesk}>
+            <span>
+              <LiaDesktopSolid />
+            </span>
+            Fresh Desk
           </button>
           <button onClick={Hangout}>
             <span>
@@ -782,6 +776,9 @@ const FlowChart = () => {
     console.log(nodeData);
   };
 
+
+
+// Ivrs checkboxes
   const handleCheckboxChange = (update) => {
     setNodes((nds) =>
       nds.map((node) =>
@@ -805,7 +802,7 @@ const FlowChart = () => {
       <ReactFlowProvider>
         <div className="left-container">
           <div className="header-btn">
-            <h3 style={{marginRight:'20px',marginBottom:'25px',marginLeft:'10px'}}>{name}</h3>
+            <h3 style={{marginRight:'150px',marginBottom:'25px',marginLeft:'10px'}}>Name</h3>
             <div className="description-button-wrapper">
               <button className="flow-btn">
                 <span className="num">
@@ -822,13 +819,13 @@ const FlowChart = () => {
                 </ul>
               </div>
             </div>
-            <button onClick={saveFlow} className="publish-btn">
+            {/* <button onClick={saveFlow} className="publish-btn">
               Save
             </button>
             <button onClick={restoreFlow} className="publish-btn">
               Restore
-            </button>
-            <button className="publish-btn">Publish</button>
+            </button> */}
+            <button onClick={publishFlow} className="publish-btn">Publish</button>
           </div>
           <ReactFlow
             style={{ flex: 1 }}

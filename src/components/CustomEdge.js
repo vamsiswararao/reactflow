@@ -3,7 +3,6 @@ import {
   getBezierPath,
   getEdgeCenter,
   getMarkerEnd,
-  useStore,
 } from "react-flow-renderer";
 
 const foreignObjectSize = 40;
@@ -37,7 +36,7 @@ function CustomEdge({
     targetX,
     targetY,
   });
-  const { connectionHandleId } = useStore();
+  //const { connectionHandleId } = useStore();
 
   return (
     <>
@@ -57,14 +56,14 @@ function CustomEdge({
         y={edgeCenterY - foreignObjectSize / 2 + 8}
         requiredExtensions="http://www.w3.org/1999/xhtml"
       >
-        <body>
+        <div>
           <button
             className="edgebutton"
             onClick={() => onEdgeClick(id)}
           >
             X
           </button>
-        </body>
+        </div>
       </foreignObject>
     </>
   );

@@ -4,7 +4,7 @@ import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 
 const Ivrs = ({
-  node, // Add nodeId as a prop
+  node,
   nodeLabel,
   handleLabelChange,
   handleCheckboxChange,
@@ -12,13 +12,19 @@ const Ivrs = ({
   deleteNode,
   removeForm,
   copyNode,
-  saveNodeData, // Add a save function prop
+  save,
 }) => {
   const { data } = node;
   const { IvrsPorts } = data;
   const [port, setPort] = useState(IvrsPorts);
-  console.log(IvrsPorts)
-  console.log(port);
+  const [name, setName] = useState(nodeLabel);
+  const [audio, setAudio] = useState("");
+  const [repeats, setRepeats] = useState("");
+  const [dialTimeout, setDialTimeout] = useState("");
+  const [repeatKey, setRepeatKey] = useState("");
+  const [noDtmfAudio, setNoDtmfAudio] = useState("");
+  const [invalidDtmfAudio, setInvalidDtmfAudio] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     setPort(IvrsPorts);
@@ -33,7 +39,19 @@ const Ivrs = ({
   };
 
   const handleSave = () => {
-    saveNodeData(node.id); // Save the node data with node ID
+    const formData = {
+      name:nodeLabel || "",
+      audio_id:audio,
+      repeats,
+      dial_time_out:dialTimeout,
+      repeat_key:repeatKey,
+      no_dtmf_audio:noDtmfAudio,
+      invalid_dtmf_audio:invalidDtmfAudio,
+      description,
+      ports: port,
+    };
+    console.log(formData); // Log the form data
+    save(nodeLabel); // Save the node data with node ID
   };
 
   return (
@@ -51,22 +69,25 @@ const Ivrs = ({
           <input
             type="text"
             placeholder="Enter the Name"
-            value={nodeLabel}
-            onChange={handleLabelChange}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
           <div>
             <label>
               Audio:<span className="star">*</span>
             </label>
-            <select className="input-select" name="selectedValue">
-              <option>Select the audio</option>
-              {[...Array(10)]
-                .map((_, i) => i + 1)
-                .map((i) => (
-                  <option key={i} value={i}>
-                    {i}
-                  </option>
-                ))}
+            <select
+              className="input-select"
+              name="selectedValue"
+              value={audio}
+              onChange={(e) => setAudio(e.target.value)}
+            >
+              <option value="">Select the audio</option>
+              {[...Array(10)].map((_, i) => i + 1).map((i) => (
+                <option key={i} value={i}>
+                  {i}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -96,54 +117,72 @@ const Ivrs = ({
           <label>
             No of repeats:<span className="star">*</span>
           </label>
-          <input type="text" placeholder="Enter the no of repeats" />
+          <input
+            type="text"
+            placeholder="Enter the no of repeats"
+            value={repeats}
+            onChange={(e) => setRepeats(e.target.value)}
+          />
           <label>
             Dial timeout (sec):<span className="star">*</span>
           </label>
-          <input type="text" placeholder="Enter the dial timeout" />
+          <input
+            type="text"
+            placeholder="Enter the dial timeout"
+            value={dialTimeout}
+            onChange={(e) => setDialTimeout(e.target.value)}
+          />
           <label>
             Repeat key:<span className="star">*</span>
           </label>
           <div style={{ display: "flex" }}>
-            <select className="input-select">
-              <option>Select... </option>
-              {[...Array(10)]
-                .map((_, i) => i + 1)
-                .map((i) => (
-                  <option key={i} value={i}>
-                    {i}
-                  </option>
-                ))}
+            <select
+              className="input-select"
+              value={repeatKey}
+              onChange={(e) => setRepeatKey(e.target.value)}
+            >
+              <option value="">Select...</option>
+              {[...Array(10)].map((_, i) => i + 1).map((i) => (
+                <option key={i} value={i}>
+                  {i}
+                </option>
+              ))}
             </select>
           </div>
           <div>
             <label>
               No DTMF audio:<span className="star">*</span>
             </label>
-            <select className="input-select" name="selectedValue">
-              <option>Select the audio</option>
-              {[...Array(10)]
-                .map((_, i) => i + 1)
-                .map((i) => (
-                  <option key={i} value={i}>
-                    {i}
-                  </option>
-                ))}
+            <select
+              className="input-select"
+              name="selectedValue"
+              value={noDtmfAudio}
+              onChange={(e) => setNoDtmfAudio(e.target.value)}
+            >
+              <option value="">Select the audio</option>
+              {[...Array(10)].map((_, i) => i + 1).map((i) => (
+                <option key={i} value={i}>
+                  {i}
+                </option>
+              ))}
             </select>
           </div>
           <div>
             <label>
               Invalid DTMF audio:<span className="star">*</span>
             </label>
-            <select className="input-select" name="selectedValue">
-              <option>Select the audio</option>
-              {[...Array(10)]
-                .map((_, i) => i + 1)
-                .map((i) => (
-                  <option key={i} value={i}>
-                    {i}
-                  </option>
-                ))}
+            <select
+              className="input-select"
+              name="selectedValue"
+              value={invalidDtmfAudio}
+              onChange={(e) => setInvalidDtmfAudio(e.target.value)}
+            >
+              <option value="">Select the audio</option>
+              {[...Array(10)].map((_, i) => i + 1).map((i) => (
+                <option key={i} value={i}>
+                  {i}
+                </option>
+              ))}
             </select>
           </div>
           <label>Description:</label>
@@ -152,6 +191,8 @@ const Ivrs = ({
             placeholder="Enter the description"
             rows="6"
             cols="40"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </form>
         <hr className="bottom-hr" />

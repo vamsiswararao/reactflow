@@ -42,6 +42,10 @@ const CustomTwoNode = ({ data }) => {
         port1 = "Yes";
         port2 = "No";
         break;
+    case "ccfa929d-75cc-4103-bebd-0a2e2f68ffc7":
+        port1 = "Yes";
+        port2 = "No";
+        break;
     default:
       port1 = "";
       port2 = "";

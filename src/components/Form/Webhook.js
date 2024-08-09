@@ -15,6 +15,8 @@ const WebhookForm = ({
   const [params, setParams] = useState([{ key: "", value: "" }]);
   const [headers, setHeaders] = useState([{ key: "", value: "" }]);
   const [selectedMethod, setSelectedMethod] = useState("Get");
+  const [url, setUrl] = useState("");
+  const [description, setDescription] = useState("");
 
   const handleToggle = () => {
     setIsToggled(!isToggled);
@@ -54,6 +56,18 @@ const WebhookForm = ({
 
   const handleMethodChange = (e) => {
     setSelectedMethod(e.target.value);
+  };
+
+  const handleSave = () => {
+    const formData = {
+      nodeLabel,
+      url,
+      selectedMethod,
+      params,
+      headers,
+      description,
+    };
+    console.log(formData);
   };
 
   const Params = () => (
@@ -202,7 +216,13 @@ const WebhookForm = ({
           <label>
             Url:<span className="star">*</span>
           </label>
-          <textarea placeholder="write the url" rows="4" cols="40" />
+          <textarea
+            placeholder="write the url"
+            rows="4"
+            cols="40"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
           <div style={{ display: "flex", width: "200px" }}>
             <label>
               Method:<span className="star">*</span>
@@ -265,12 +285,20 @@ const WebhookForm = ({
             )}
             <div>
               <label>Description:</label>
-              <textarea placeholder="write the description" rows="4" cols="40" />
+              <textarea
+                placeholder="write the description"
+                rows="4"
+                cols="40"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </div>
           </div>
         </div>
         <hr className="bottom-hr" />
-        <button className="save-btn">Save</button>
+        <button className="save-btn" onClick={handleSave}>
+          Save
+        </button>
         <button onClick={copyNode} className="copy-btn">
           <FaCopy style={{ height: "20px", width: "20px" }} />
         </button>

@@ -15,11 +15,12 @@ const FlowTransferForm =({
     const [formData, setFormData] = useState({
         name: nodeLabel || "", // Initialize with nodeLabel or an empty string
         flow: "",
-        Description: "",
+        description: "",
       });
     
       const [errors, setErrors] = useState({});
-    
+      const apiUrl = process.env.REACT_APP_API_URL;
+      console.log(apiUrl);
       const handleInputChange = (e) => {
         const { name, value } = e.target;
         if (name === "name") {
@@ -42,7 +43,32 @@ const FlowTransferForm =({
         const formErrors = validateForm();
         if (Object.keys(formErrors).length === 0) {
           console.log("Saved Data:", formData);
-          save(formData.name); // Use formData.name instead of nodeLabel
+          
+          // Adding the data to the dummy API
+          fetch(`${apiUrl}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              "lml" : "66b0db9cc12ec",
+              "nm" : "testing",
+              "remarks" : "ytewytfyjewcyffecyw",
+              "mtyp" : "66aa1b3e7e166",
+              "k" : "66ab27436a029",
+              "flw" : "5dfb230c2b44a"
+          }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Success:", data); // You can handle the response data if needed
+              save(formData.name); // Use formData.name instead of nodeLabel
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              // You can handle the error if needed
+            });
+
         } else {
           setErrors(formErrors);
         }
@@ -92,8 +118,8 @@ const FlowTransferForm =({
                 placeholder="write the description"
                 rows="6"
                 cols="40"
-                name="remarks"
-                value={formData.remarks}
+                name="description"
+                value={formData.description}
                 onChange={handleInputChange}
               />
             </div>
@@ -114,4 +140,4 @@ const FlowTransferForm =({
       );
 }
 
-export default FlowTransferForm
+export default FlowTransferForm;

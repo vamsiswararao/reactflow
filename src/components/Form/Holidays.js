@@ -3,7 +3,6 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 
-
 const formatDate = (dateString) => {
   const [year, month, day] = dateString.split("-");
   return `${day}-${month}-${year}`;
@@ -14,7 +13,16 @@ const parseDate = (formattedDate) => {
   return `${day}-${month}-${year}`;
 };
 
-const Holiday = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,copyNode }) => {
+const Holiday = ({
+  node,
+  nodeLabel,
+  handleLabelChange,
+  deleteNode,
+  removeForm,
+  save,
+  copyNode,
+  flow_id,
+}) => {
   const [dates, setDates] = useState([{ date: "", description: "" }]);
 
   const handleAddDate = () => {
@@ -41,15 +49,19 @@ const Holiday = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,cop
 
   const handleSave = () => {
     const formData = {
+      app_id: node.data.app_id,
+      // "5c93b0a9b0810",
+      flow_id: flow_id,
+      inst_id: node.id,
       name: nodeLabel,
-      dates: dates.map(date => ({
+      dates_list: dates.map((date) => ({
         date: parseDate(date.date),
-        description: date.description
+        description: date.description,
       })),
-      description: document.querySelector('.form-container textarea').value
+      description: document.querySelector(".form-container textarea").value,
     };
     console.log("Form Data:", formData);
-    save(nodeLabel)
+    save(nodeLabel);
   };
 
   return (
@@ -61,7 +73,9 @@ const Holiday = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,cop
         </button>
         <hr />
         <form className="form-container">
-          <label>Name:<span className="star">*</span></label>
+          <label>
+            Name:<span className="star">*</span>
+          </label>
           <input
             type="text"
             placeholder="Enter the Name"
@@ -71,21 +85,28 @@ const Holiday = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,cop
           <div>
             {dates.map((date, index) => (
               <div key={index} className="date-container">
-                <label style={{marginRight:"5px",width:'40px'}}>Date :</label>
-                <input type="text" placeholder="DD-MM-YYYY" style={{width:"80px",fontSize:'12px'}}
-                value={date.date ? parseDate(date.date) : ""}
+                <label style={{ marginRight: "5px", width: "40px" }}>
+                  Date :
+                </label>
+                <input
+                  type="text"
+                  placeholder="DD-MM-YYYY"
+                  style={{ width: "80px", fontSize: "12px" }}
+                  value={date.date ? parseDate(date.date) : ""}
                 />
                 <input
                   type="date"
                   name="date"
-                  style={{height:'26px',width:'18px'}}
+                  style={{ height: "26px", width: "18px" }}
                   value={date.date ? parseDate(date.date) : ""}
                   onChange={(e) => handleDateChange(index, e)}
                 />
 
-                <label style={{marginLeft:'30px',width:'45px'}}>Name :</label>
+                <label style={{ marginLeft: "30px", width: "45px" }}>
+                  Name :
+                </label>
                 <input
-                style={{width:'80px',marginLeft:'6px'}}
+                  style={{ width: "80px", marginLeft: "6px" }}
                   type="text"
                   name="description"
                   value={date.description}
@@ -104,7 +125,7 @@ const Holiday = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,cop
                   <button
                     type="button"
                     onClick={() => handleRemoveDate(index)}
-                    style={{background:"red"}}
+                    style={{ background: "red" }}
                   >
                     Remove
                   </button>
@@ -121,8 +142,12 @@ const Holiday = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,cop
           />
         </form>
         <hr className="bottom-hr" />
-        <button className="save-btn" onClick={handleSave}>Save</button>
-        <button onClick={copyNode} className="copy-btn"><FaCopy style={{height:'20px',width:'20px'}} /></button>
+        <button className="save-btn" onClick={handleSave}>
+          Save
+        </button>
+        <button onClick={copyNode} className="copy-btn">
+          <FaCopy style={{ height: "20px", width: "20px" }} />
+        </button>
         <button onClick={deleteNode} className="delete-btn">
           <RiDeleteBin6Line style={{ height: "20px", width: "20px" }} />
         </button>

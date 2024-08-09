@@ -253,15 +253,13 @@ const DynamicConnectorForm = ({
                     <h3>Linear </h3> <span>- Calls get distributed in an assigned order</span>
                    </div>
                    <form>
-                     <label>name:<span className="star">*</span></label>
-                     <input type="text" placeholder="Enter new name" />
-                     <label>Description:</label>
-                     <textarea
-                       type="text"
-                       placeholder="Enter description"
-                       rows="5"
-                       cols="40"
-                     />
+                   <h3>Linear </h3> <span>- Calls get distributed in an assigned order</span>
+                    <h3>Random </h3> <span>- Calls get distributed in an unorganized way</span>
+                    <h3>Ring All </h3> <span>- Calls get distributed to the longest free agent</span>
+                    <h3>Least Calls </h3> <span>- Calls get distributed to the least call answered the agent </span>
+                    <h3>Talk Time-based </h3> <span>- Calls get distributed to the least talked (Call seconds) agent </span>
+                    <h3>Least Active </h3> <span>- Calls get distributed to the longest free agent</span>
+                    <h3>Round Robin </h3> <span>- Calls get distributed evenly across different agents. in other words,it sends calls down a predetermined list of receivers</span>
                      <div style={{ display: "flex" }}>
                        <button
                          type="button"

@@ -10,8 +10,6 @@ const DEFAULT_HANDLE_STYLE = {
 
 const CustomTwelveNode = ({id, data, isConnectable }) => {
   const { IvrsPorts } = data;
-  console.log(IvrsPorts);
-  console.log(id)
 
   return (
     <div
