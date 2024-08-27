@@ -5,47 +5,46 @@ import { FaCopy } from "react-icons/fa";
 
 
 const StickyAgentForm = ({
+  node,
   nodeLabel,
   handleLabelChange,
   deleteNode,
   removeForm,
   save,
-  copyNode
+  copyNode,
+  flow_id
 }) => {
-  const [connectType, setConnectType] = useState("");
-  const [distributionType, setDistributionType] = useState("");
-  const [missedCallTo, setMissedCallTo] = useState("");
-  const [holdTune, setHoldTune] = useState("");
+  const [audio_id, setAudio] = useState("");
+  const [hold_tune_id, setHoldTune] = useState("");
+  const [connect_to_id, setConnectTo] = useState("");
+  const [department_id, setDepartment] = useState("");
+
   const [description, setDescription] = useState("");
 
   const handleSave = () => {
     // Basic validation
-    if (!nodeLabel || !connectType || !distributionType || !missedCallTo || !holdTune) {
+    if (!nodeLabel || !audio_id || !hold_tune_id  || !connect_to_id || !department_id ) {
       alert("Please fill out all required fields.");
       return;
     }
 
     // Prepare the form data
     const formData = {
-      nodeLabel,
-      connectType,
-      distributionType,
-      missedCallTo,
-      holdTune,
+      app_id:node.data.app_id ,
+      // "5c93b0a9b0810",
+      flow_id: flow_id,
+      inst_id:node.id,
+      name:nodeLabel,
+      audio_id,
+      hold_tune_id,
+      connect_to_id,
+      department_id,
       description
     };
 
     // Log the form data to the console
     console.log("Form Data:", formData);
-    save()
-    // Optionally, you can reset the form fields or perform further actions here
-    // For example:
-    // setNodeLabel("");
-    // setConnectType("");
-    // setDistributionType("");
-    // setMissedCallTo("");
-    // setHoldTune("");
-    // setDescription("");
+    save(nodeLabel)
   };
 
   return (
@@ -67,8 +66,8 @@ const StickyAgentForm = ({
           <label>Audio:<span className="star">*</span></label>
           <select
             className="input-select"
-            value={connectType}
-            onChange={(e) => setConnectType(e.target.value)}
+            value={audio_id}
+            onChange={(e) => setAudio(e.target.value)}
           >
             <option value="">Select the audio</option>
             {[...Array(10)]
@@ -82,8 +81,8 @@ const StickyAgentForm = ({
           <label>Hold tune:<span className="star">*</span></label>
           <select
             className="input-select"
-            value={distributionType}
-            onChange={(e) => setDistributionType(e.target.value)}
+            value={hold_tune_id}
+            onChange={(e) => setHoldTune(e.target.value)}
           >
             <option value="">Select The hold tune</option>
             {[...Array(10)]
@@ -97,8 +96,8 @@ const StickyAgentForm = ({
           <label>Connect to:<span className="star">*</span></label>
           <select
             className="input-select"
-            value={missedCallTo}
-            onChange={(e) => setMissedCallTo(e.target.value)}
+            value={connect_to_id}
+            onChange={(e) => setConnectTo(e.target.value)}
           >
             <option value="">Select...</option>
             {[...Array(10)]
@@ -113,8 +112,8 @@ const StickyAgentForm = ({
           <div className="line">
             <select
               className="input-select"
-              value={holdTune}
-              onChange={(e) => setHoldTune(e.target.value)}
+              value={department_id}
+              onChange={(e) => setDepartment(e.target.value)}
             >
               <option value="">Select The department</option>
               {[...Array(10)]

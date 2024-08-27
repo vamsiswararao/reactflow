@@ -4,15 +4,22 @@ import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 
 const FlowTransferForm =({
+    node,
     nodeLabel,
     handleLabelChange,
     deleteNode,
     removeForm,
     save,
-    copyNode
+    copyNode,
+    flow_id
+
   })=>{
 
     const [formData, setFormData] = useState({
+        app_id:node.data.app_id ,
+      // "5c93b0a9b0810",
+        flow_id: flow_id,
+        inst_id:node.id,
         name: nodeLabel || "", // Initialize with nodeLabel or an empty string
         flow: "",
         description: "",

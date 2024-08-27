@@ -13,13 +13,12 @@ const FreshDeskForm = ({
   save,
   flow_id
 }) => {
-  // State for form inputs
+  // State for form inputs and errors
   const [formValues, setFormValues] = useState({
-    app_id:node.data.app_id ,
-    // "5c93b0a9b0810",
+    app_id: node.data.app_id,
     flow_id: flow_id,
-    inst_id:node.id,
-    name:nodeLabel || "",
+    inst_id: node.id,
+    name: nodeLabel || "",
     api_key: "",
     password: "",
     domain: "",
@@ -32,12 +31,14 @@ const FreshDeskForm = ({
     custom_post_field: ""
   });
 
+  const [errors, setErrors] = useState({});
+
   // Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "name") {
       handleLabelChange(e); // Call the prop function to update nodeLabel in parent component
-    } 
+    }
     setFormValues({ ...formValues, [name]: value });
   };
 
@@ -45,26 +46,42 @@ const FreshDeskForm = ({
   const handleFormSubmit = (e) => {
     e.preventDefault();
     // Perform validation
-    if (
-      !formValues.name ||
-      !formValues.api_key ||
-      !formValues.password ||
-      !formValues.domain ||
-      !formValues.priority_id ||
-      !formValues.audio_id ||
-      !formValues.description ||
-      !formValues.subject ||
-      !formValues.status_id ||
-      !formValues.source_id ||
-      !formValues.custom_post_field
-      ) {
-      alert("Please fill in all required fields.");
+    const newErrors = {};
+    if (!formValues.name) newErrors.name = "Name is required.";
+    if (!formValues.api_key) newErrors.api_key = "API key is required.";
+    if (!formValues.password) newErrors.password = "Password is required.";
+    if (!formValues.domain) newErrors.domain = "Domain is required.";
+    if (!formValues.priority_id) newErrors.priority_id = "Priority is required.";
+    if (!formValues.audio_id) newErrors.audio_id = "Audio is required.";
+    if (!formValues.description) newErrors.description = "Description is required.";
+    if (!formValues.subject) newErrors.subject = "Subject is required.";
+    if (!formValues.status_id) newErrors.status_id = "Status is required.";
+    if (!formValues.source_id) newErrors.source_id = "Source is required.";
+    if (!formValues.custom_post_field) newErrors.custom_post_field = "Custom post field is required.";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
-    }
+    } 
+
     // Save or submit form data
     console.log("Form data:", formValues);
-    // You can implement saving logic here
-    save(nodeLabel)
+    save(nodeLabel);
+    // Clear errors and form values
+    setErrors({});
+    setFormValues({
+      ...formValues,
+      api_key: "",
+      password: "",
+      domain: "",
+      priority_id: "",
+      audio_id: "",
+      description: "",
+      subject: "",
+      status_id: "",
+      source_id: "",
+      custom_post_field: ""
+    });
   };
 
   return (
@@ -83,10 +100,11 @@ const FreshDeskForm = ({
             type="text"
             name="name"
             placeholder="Enter the name"
-            value={nodeLabel}
-            onChange={handleLabelChange}
-            required
+            value={formValues.name}
+            onChange={handleInputChange}
           />
+          {errors.name && <div className="error-msg">{errors.name}</div>}
+          
           <label>
             API key:<span className="star">*</span>
           </label>
@@ -96,8 +114,9 @@ const FreshDeskForm = ({
             placeholder="Enter the api key"
             value={formValues.api_key}
             onChange={handleInputChange}
-            required
           />
+          {errors.api_key && <div className="error-msg">{errors.api_key}</div>}
+          
           <label>
             Password:<span className="star">*</span>
           </label>
@@ -107,8 +126,9 @@ const FreshDeskForm = ({
             placeholder="Enter the password"
             value={formValues.password}
             onChange={handleInputChange}
-            required
           />
+          {errors.password && <div className="error-msg">{errors.password}</div>}
+          
           <label>
             Domain:<span className="star">*</span>
           </label>
@@ -118,8 +138,9 @@ const FreshDeskForm = ({
             placeholder="Enter the domain"
             value={formValues.domain}
             onChange={handleInputChange}
-            required
           />
+          {errors.domain && <div className="error-msg">{errors.domain}</div>}
+          
           <label>
             Priority:<span className="star">*</span>
           </label>
@@ -128,7 +149,6 @@ const FreshDeskForm = ({
             name="priority_id"
             value={formValues.priority_id}
             onChange={handleInputChange}
-            required
           >
             <option value="">Select the priority</option>
             {[...Array(10)].map((_, i) => (
@@ -137,6 +157,8 @@ const FreshDeskForm = ({
               </option>
             ))}
           </select>
+          {errors.priority_id && <div className="error-msg">{errors.priority_id}</div>}
+          
           <label>
             Send audio file:<span className="star">*</span>
           </label>
@@ -145,7 +167,6 @@ const FreshDeskForm = ({
             name="audio_id"
             value={formValues.audio_id}
             onChange={handleInputChange}
-            required
           >
             <option value="">Select the audio File</option>
             {[...Array(10)].map((_, i) => (
@@ -154,6 +175,8 @@ const FreshDeskForm = ({
               </option>
             ))}
           </select>
+          {errors.audio_id && <div className="error-msg">{errors.audio_id}</div>}
+          
           <label>
             Ticket Messages:<span className="star">*</span>
           </label>
@@ -165,6 +188,8 @@ const FreshDeskForm = ({
             rows="6"
             cols="40"
           />
+          {errors.description && <div className="error-msg">{errors.description}</div>}
+          
           <label>
             Subject:<span className="star">*</span>
           </label>
@@ -176,6 +201,8 @@ const FreshDeskForm = ({
             rows="3"
             cols="40"
           />
+          {errors.subject && <div className="error-msg">{errors.subject}</div>}
+          
           <label>
             Status:<span className="star">*</span>
           </label>
@@ -184,7 +211,6 @@ const FreshDeskForm = ({
             name="status_id"
             value={formValues.status_id}
             onChange={handleInputChange}
-            required
           >
             <option value="">Select...</option>
             {[...Array(10)].map((_, i) => (
@@ -193,6 +219,8 @@ const FreshDeskForm = ({
               </option>
             ))}
           </select>
+          {errors.status_id && <div className="error-msg">{errors.status_id}</div>}
+          
           <label>
             Source:<span className="star">*</span>
           </label>
@@ -201,7 +229,6 @@ const FreshDeskForm = ({
             name="source_id"
             value={formValues.source_id}
             onChange={handleInputChange}
-            required
           >
             <option value="">Select...</option>
             {[...Array(10)].map((_, i) => (
@@ -210,6 +237,8 @@ const FreshDeskForm = ({
               </option>
             ))}
           </select>
+          {errors.source_id && <div className="error-msg">{errors.source_id}</div>}
+          
           <label>
             Custom Post Field:<span className="star">*</span>
           </label>
@@ -221,9 +250,10 @@ const FreshDeskForm = ({
             rows="6"
             cols="40"
           />
+          {errors.custom_post_field && <div className="error-msg">{errors.custom_post_field}</div>}
         </form>
         <hr className="bottom-hr" />
-        <button className="save-btn" onClick={handleFormSubmit}>
+        <button className="save-btn" type="submit">
           Save
         </button>
         <button onClick={copyNode} className="copy-btn">

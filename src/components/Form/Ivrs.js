@@ -13,45 +13,173 @@ const Ivrs = ({
   removeForm,
   copyNode,
   save,
+  flow_id,
 }) => {
   const { data } = node;
   const { IvrsPorts } = data;
   const [port, setPort] = useState(IvrsPorts);
-  const [name, setName] = useState(nodeLabel);
-  const [audio, setAudio] = useState("");
-  const [repeats, setRepeats] = useState("");
-  const [dialTimeout, setDialTimeout] = useState("");
-  const [repeatKey, setRepeatKey] = useState("");
-  const [noDtmfAudio, setNoDtmfAudio] = useState("");
-  const [invalidDtmfAudio, setInvalidDtmfAudio] = useState("");
-  const [description, setDescription] = useState("");
+  const apiUrl = process.env.REACT_APP_API_URL;
+  const [formData, setFormData] = useState({
+    lml: "66b9dee3ef1ca",
+    app_id: node.data.app_id,
+    // "5c93b0a9b0810",
+    flow_id: flow_id,
+    inst_id: node.id,
+    nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+    audio: "",
+    Ivrs_ports: port,
+    repeat_cnt: "",
+    dial_time_out: "",
+    repeat_key: "0",
+    no_dtmf_audio: "",
+    invalid_dtmf_audio: "",
+    des: "",
+  });
 
   useEffect(() => {
     setPort(IvrsPorts);
   }, [IvrsPorts]);
 
-  const handlePortChange = (index) => {
-    const updatedPorts = port.map((checked, i) =>
-      i === index ? !checked : checked
-    );
-    setPort(updatedPorts);
-    handleCheckboxChange(updatedPorts);
+  const [audioOptions, setAudioOptions] = useState([]);
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const fetchAnnouncementData = async () => {
+      try {
+        const announcementResponse = await fetch(`${apiUrl}/app_get_data_ivrs`,
+           {
+           method: "POST", // Specify the PUT method
+          headers: {
+            "Content-Type": "application/json", // Ensure the content type is JSON
+          },
+          body: JSON.stringify({
+            lml: "66b9dee3ef1ca",
+            flow_id: "66c708df247df", // Use the provided flow_id
+            app_id: node.data.app_id, // Use the provided app_id
+            inst_id: node.id, // Use the provided inst_id
+          }),
+        }
+        );
+        const announcementData = await announcementResponse.json();
+        console.log(announcementData.resp.app_data)
+        const annData= announcementData.resp.app_data
+        if (!announcementResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        setFormData((prevData) => ({
+
+           lml: "66b9dee3ef1ca",
+          app_id: node.data.app_id,
+          flow_id: flow_id,
+          inst_id: node.id,
+          nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+          audio:annData.audio,
+          Ivrs_ports: annData.ivrs_ports || port,
+          repeat_cnt: annData.retries, // Example of dynamic data usage
+          dial_time_out: annData.dto,
+          repeat_key: annData.repeat_key|| "0",
+          no_dtmf_audio: annData.nodt_audio,
+          invalid_dtmf_audio: annData.inv_audio,
+          des: "",
+        }));
+
+        // Fetch audio options with the same data
+
+        const audioResponse = await fetch(`${apiUrl}/app_get_audios`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            lml: "66b9dee3ef1ca",
+            flow_id: flow_id,
+            app_id: node.data.app_id,
+            inst_id: node.id,
+          }),
+        });
+
+        if (!audioResponse.ok) {
+          throw new Error("Failed to fetch audio options");
+        }
+
+        const audioData = await audioResponse.json();
+        console.log(audioData);
+        setAudioOptions(audioData.resp.aud_data || []);
+        //console.log(audioData.resp.aud_data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchAnnouncementData();
+  }, [flow_id, nodeLabel, node, apiUrl]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "nm") {
+      handleLabelChange(e); // Call the prop function to update nodeLabel in parent component
+    }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  const handleSave = () => {
-    const formData = {
-      name:nodeLabel || "",
-      audio_id:audio,
-      repeats,
-      dial_time_out:dialTimeout,
-      repeat_key:repeatKey,
-      no_dtmf_audio:noDtmfAudio,
-      invalid_dtmf_audio:invalidDtmfAudio,
-      description,
-      ports: port,
-    };
-    console.log(formData); // Log the form data
-    save(nodeLabel); // Save the node data with node ID
+  const validateForm = () => {
+    console.log(formData.audio);
+    const newErrors = {};
+    if (!formData.nm) newErrors.name = "Name is required";
+    if (!formData.audio)
+      newErrors.audio = "Audio selection is required";
+    if (!formData.repeat_cnt)
+      newErrors.repeatCount = "Repeat Count is required";
+    if (!formData.dial_time_out) newErrors.dial_time_out = "Dialtimeout is required";
+    if (!formData.no_dtmf_audio)
+      newErrors.noDtmfAudio = "noDtmfAudio is required";
+    if (!formData.invalid_dtmf_audio)
+      newErrors.invalidDtmfAudio = "invalidDtmfAudio is required";
+    return newErrors;
+  };
+
+  const handlePortChange = (index) => {
+    const updatedPorts = [...port]; // Create a copy
+    updatedPorts[index] = !updatedPorts[index]; // Toggle the value
+    setPort(updatedPorts);
+    handleCheckboxChange(updatedPorts);
+    setFormData((prevData) => ({
+      ...prevData,
+     Ivrs_ports: updatedPorts,
+   }));
+  };
+
+  const handleSave = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length === 0) {
+      setErrors({})
+      try {
+        const response = await fetch(`${apiUrl}/app_set_data_ivrs`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+        const data = await response.json();
+        console.log(data);
+        console.log(formData);
+        if (!response.ok) {
+          throw new Error("Failed to save data");
+        }
+
+        console.log("Form Data Saved:", formData);
+        save(nodeLabel); // Call the save handler from props
+      } catch (error) {
+        console.error("Error saving data:", error);
+      }
+    } else {
+      setErrors(formErrors);
+    }
   };
 
   return (
@@ -69,27 +197,30 @@ const Ivrs = ({
           <input
             type="text"
             placeholder="Enter the Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="nm"
+            value={formData.nm}
+            onChange={handleInputChange}
           />
+          {errors.name && <p className="error">{errors.name}</p>}
           <div>
             <label>
               Audio:<span className="star">*</span>
             </label>
             <select
               className="input-select"
-              name="selectedValue"
-              value={audio}
-              onChange={(e) => setAudio(e.target.value)}
+              name="audio"
+              value={formData.audio}
+              onChange={handleInputChange}
             >
               <option value="">Select the audio</option>
-              {[...Array(10)].map((_, i) => i + 1).map((i) => (
-                <option key={i} value={i}>
-                  {i}
+              {audioOptions.map((audio, index) => (
+                <option key={index} value={audio.auni}>
+                  {audio.anm}
                 </option>
               ))}
             </select>
           </div>
+          {errors.audio && <p className="error">{errors.audio}</p>}
           <div>
             <label>Ivrs</label>
             <div style={{ display: "flex", width: "350px", flexWrap: "wrap" }}>
@@ -118,35 +249,43 @@ const Ivrs = ({
             No of repeats:<span className="star">*</span>
           </label>
           <input
-            type="text"
+            type="number"
             placeholder="Enter the no of repeats"
-            value={repeats}
-            onChange={(e) => setRepeats(e.target.value)}
+            name="repeat_cnt"
+            value={formData.repeat_cnt}
+            onChange={handleInputChange}
+            min="0"
           />
+          {errors.repeatCount && <p className="error">{errors.repeatCount}</p>}
           <label>
             Dial timeout (sec):<span className="star">*</span>
           </label>
           <input
-            type="text"
+            type="number"
             placeholder="Enter the dial timeout"
-            value={dialTimeout}
-            onChange={(e) => setDialTimeout(e.target.value)}
+            name="dial_time_out"
+            value={formData.dial_time_out}
+            onChange={handleInputChange}
+            min="0"
           />
           <label>
+          {errors.dial_time_out && <p className="error">{errors.dial_time_out}</p>}
             Repeat key:<span className="star">*</span>
           </label>
           <div style={{ display: "flex" }}>
             <select
               className="input-select"
-              value={repeatKey}
-              onChange={(e) => setRepeatKey(e.target.value)}
+              value={formData.repeat_key}
+              name="repeat_key"
+              onChange={handleInputChange}
             >
-              <option value="">Select...</option>
-              {[...Array(10)].map((_, i) => i + 1).map((i) => (
-                <option key={i} value={i}>
-                  {i}
-                </option>
-              ))}
+              {[...Array(10)]
+                .map((_, i) => i)
+                .map((i) => (
+                  <option key={i} value={i}>
+                    {i}
+                  </option>
+                ))}
             </select>
           </div>
           <div>
@@ -155,44 +294,48 @@ const Ivrs = ({
             </label>
             <select
               className="input-select"
-              name="selectedValue"
-              value={noDtmfAudio}
-              onChange={(e) => setNoDtmfAudio(e.target.value)}
+              name="no_dtmf_audio"
+              value={formData.no_dtmf_audio}
+              onChange={handleInputChange}
             >
               <option value="">Select the audio</option>
-              {[...Array(10)].map((_, i) => i + 1).map((i) => (
-                <option key={i} value={i}>
-                  {i}
+              {audioOptions.map((audio, index) => (
+                <option key={index} value={audio.auni}>
+                  {audio.anm}
                 </option>
               ))}
             </select>
           </div>
+          {errors.repeatCount && <p className="error">{errors.repeatCount}</p>}
           <div>
+
             <label>
               Invalid DTMF audio:<span className="star">*</span>
             </label>
             <select
               className="input-select"
-              name="selectedValue"
-              value={invalidDtmfAudio}
-              onChange={(e) => setInvalidDtmfAudio(e.target.value)}
+              name="invalid_dtmf_audio"
+              value={formData.invalid_dtmf_audio}
+              onChange={handleInputChange}
             >
               <option value="">Select the audio</option>
-              {[...Array(10)].map((_, i) => i + 1).map((i) => (
-                <option key={i} value={i}>
-                  {i}
+              {audioOptions.map((audio, index) => (
+                <option key={index} value={audio.auni}>
+                  {audio.anm}
                 </option>
               ))}
             </select>
           </div>
+          {errors.repeatCount && <p className="error">{errors.repeatCount}</p>}
           <label>Description:</label>
           <textarea
             type="text"
             placeholder="Enter the description"
             rows="6"
             cols="40"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            name="des"
+            value={formData.des}
+            onChange={handleInputChange}
           />
         </form>
         <hr className="bottom-hr" />

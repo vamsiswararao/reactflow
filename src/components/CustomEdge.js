@@ -58,7 +58,7 @@ function CustomEdge({
       >
         <div>
           <button
-            className="edgebutton"
+            className="edge-button"
             onClick={() => onEdgeClick(id)}
           >
             X

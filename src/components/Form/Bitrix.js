@@ -4,35 +4,63 @@ import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 
 const BitrixForm = ({
+  node,
   nodeLabel,
   handleLabelChange,
   deleteNode,
   removeForm,
   save,
-  copyNode
+  copyNode,
+  flow_id
 }) => {
   const [isToggled, setIsToggled] = useState(true);
-  const [url, setUrl] = useState("");
-  const [additionalParameters, setAdditionalParameters] = useState("");
-  const [remarks, setRemarks] = useState("");
-  const [crmType, setCrmType] = useState("");
-  const [assignMiscellaneous, setAssignMiscellaneous] = useState("");
-
+  const [assignMiscellaneous, setAssignMiscellaneous] = useState([]);
   const [errors, setErrors] = useState({});
+
+  const [formData, setFormData] = useState({
+    lml: "66b9dee3ef1ca",
+    app_id: node.data.app_id,
+    flow_id: "66c708df247df",
+    inst_id: node.id,
+    nm: nodeLabel,
+    url: "",
+    additional_prm: "",
+    crm_create: isToggled ? "yes" : "no",
+    crm_entity_type: "candyce35t45w5w54w5gw4fwds4d",
+    mislanis_to: "",
+  });
+
+  const apiUrl = process.env.REACT_APP_API_URL;
+
+  const findIdByName = (array, name) => {
+    const item = array.find((element) => element.empnm === name);
+    return item ? item.empuni : null;
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`https://enrbgth6q54c8.x.pipedream.net`);
-        const data = await response.json();
-        if (data) {
-          setUrl(data.url || "");
-          setAdditionalParameters(data.additional_prm|| "");
-          setRemarks(data.remarks || "");
-          setIsToggled(data.create_crm !== undefined ? data.isToggled : true);
-          setCrmType(data.crm_type || "");
-          setAssignMiscellaneous(data.assign_Mis || "");
+        const response = await fetch(`${apiUrl}/app_get_employees`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            lml: "66b9dee3ef1ca",
+            flow_id,
+            app_id: node.data.app_id,
+            inst_id: node.id,
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch miscellaneous data");
         }
+
+        const data = await response.json();
+        setAssignMiscellaneous(data.resp.aud_data || []);
+        console.log(data.resp.aud_data)
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -40,18 +68,72 @@ const BitrixForm = ({
 
     if (nodeLabel) {
       fetchData();
+  
     }
-  }, [nodeLabel]);
+  }, [nodeLabel, flow_id, node.data.app_id, apiUrl, node.id]);
+
+  useEffect(() => {
+    const fetchBitrixData = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/app_get_data_bitrix`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            lml: "66b9dee3ef1ca",
+            flow_id,
+            app_id: node.data.app_id,
+            inst_id: node.id,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch miscellaneous data");
+        }
+
+        const data = await response.json();
+        const BitrixData= data.resp.app_data
+
+        
+        
+        setFormData((prevData) => ({
+          
+          lml: "66b9dee3ef1ca",
+         app_id: node.data.app_id,
+         flow_id: flow_id,
+         inst_id: node.id,
+         nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+         url: BitrixData.url,
+         additional_prm: BitrixData.prams,
+         crm_create: BitrixData.crm_create,
+         crm_entity_type: BitrixData.CRM_ENTITY_TYPE,
+         mislanis_to: findIdByName(assignMiscellaneous, BitrixData.mislanis_to_name),
+       }));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+
+    if (nodeLabel) {
+      fetchBitrixData()
+    }
+  }, [nodeLabel, flow_id, node.data.app_id, apiUrl, node.id,assignMiscellaneous]);
 
   const handleToggle = () => {
     setIsToggled(!isToggled);
+    setFormData((prevData) => ({
+      ...prevData,
+      crm_create: !isToggled ? "yes" : "no",
+    }));
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!nodeLabel.trim()) newErrors.nodeLabel = "Name is required.";
-    if (!url) newErrors.url = "URL is required.";
-    if (!assignMiscellaneous) newErrors.assignMiscellaneous = "Assign miscellaneous is required.";
+    if (!formData.nm.trim()) newErrors.nm = "Name is required.";
+    if (!formData.url.trim()) newErrors.url = "URL is required.";
+    if (!formData.mislanis_to.trim()) newErrors.mislanis_to = "Assign miscellaneous is required.";
     return newErrors;
   };
 
@@ -63,21 +145,11 @@ const BitrixForm = ({
       return;
     }
 
-    const formData = {
-      name: nodeLabel,
-      url: url,
-      additional_prm: additionalParameters,
-      remarks: remarks,
-      create_crm: isToggled,
-      crm_type: crmType,
-      assign_Mis: assignMiscellaneous,
-    };
-
     try {
-      const response = await fetch(`https://enrbgth6q54c8.x.pipedream.net`, {
-        method: 'POST',
+      const response = await fetch(`${apiUrl}/app_set_data_bitrix`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
@@ -86,22 +158,26 @@ const BitrixForm = ({
         throw new Error("Failed to save data");
       }
 
-      console.log("Form Data Saved:", formData);
+      const BitrixData = await response.json();
+      console.log("Form Data Saved:", BitrixData);
+      console.log(formData)
       save(nodeLabel);
     } catch (error) {
       console.error("Error saving data:", error);
     }
-
-    // Reset form fields
-    setUrl("");
-    setAdditionalParameters("");
-    setRemarks("");
-    setIsToggled(true);
-    setCrmType("");
-    setAssignMiscellaneous("");
-    setErrors({});
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+
+    if (name === "nm") {
+      handleLabelChange(e);
+    }
+  };
   return (
     <div className="form-one-container">
       <div className="form">
@@ -111,36 +187,40 @@ const BitrixForm = ({
         </button>
         <hr />
         <div className="form-container">
-          <label>
+          <label htmlFor="nm">
             Name:<span className="star">*</span>
           </label>
           <input
             type="text"
+            id="nm"
+            name="nm"
             placeholder="Enter the Name"
-            value={nodeLabel}
-            onChange={handleLabelChange}
+            value={formData.nm}
+            onChange={handleInputChange}
           />
-          {errors.nodeLabel && <p className="error">{errors.nodeLabel}</p>}
+          {errors.nm && <p className="error">{errors.nm}</p>}
 
-          <label>
+          <label htmlFor="url">
             Url:<span className="star">*</span>
           </label>
           <textarea
-            type="text"
+            id="url"
+            name="url"
             placeholder="Enter the url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            value={formData.url}
+            onChange={handleInputChange}
             rows="6"
             cols="40"
           />
           {errors.url && <p className="error">{errors.url}</p>}
 
-          <label>Additional parameters:</label>
+          <label htmlFor="additional_prm">Additional parameters:</label>
           <textarea
-            type="text"
+            id="additional_prm"
+            name="additional_prm"
             placeholder="Enter the additional parameters"
-            value={additionalParameters}
-            onChange={(e) => setAdditionalParameters(e.target.value)}
+            value={formData.additional_prm}
+            onChange={handleInputChange}
             rows="6"
             cols="40"
           />
@@ -154,20 +234,22 @@ const BitrixForm = ({
                 className={`switch ${isToggled ? "toggled" : "non-toggled"}`}
               >
                 {isToggled ? (
-                  <i className="icon-on"></i> // Icon when toggled on
+                  <i className="icon-on"></i> 
                 ) : (
-                  <i className="icon-off"></i> // Icon when toggled off
+                  <i className="icon-off"></i> 
                 )}
               </div>
             </div>
             <p style={{ marginLeft: "10px" }}>Yes</p>
           </div>
 
-          <label>CRM type:</label>
+          <label htmlFor="crm_entity_type">CRM type:</label>
           <select
+            id="crm_entity_type"
             className="input-select"
-            value={crmType}
-            onChange={(e) => setCrmType(e.target.value)}
+            name="crm_entity_type"
+            value={formData.crm_entity_type}
+            onChange={handleInputChange}
           >
             <option value="">Select the CRM type</option>
             <option value="Contact">Contact</option>
@@ -175,37 +257,37 @@ const BitrixForm = ({
             <option value="Lead">Lead</option>
           </select>
 
-          <label>
+          <label htmlFor="mislanis_to">
             Assign miscellaneous to:<span className="star">*</span>
           </label>
           <select
+            id="mislanis_to"
             className="input-select"
-            value={assignMiscellaneous}
-            onChange={(e) => setAssignMiscellaneous(e.target.value)}
+            name="mislanis_to"
+            value={formData.mislanis_to}
+            onChange={handleInputChange}
           >
             <option value="">Select the assign miscellaneous</option>
-            {[...Array(10)]
-              .map((_, i) => i + 1)
-              .map((i) => (
-                <option key={i} value={i}>
-                  {i}
-                </option>
-              ))}
+            {assignMiscellaneous.map((mis, index) => (
+              <option key={index} value={mis.empuni}>
+                {mis.empnm}
+              </option>
+            ))}
           </select>
-          {errors.assignMiscellaneous && (
-            <p className="error">{errors.assignMiscellaneous}</p>
+          {errors.mislanis_to && (
+            <p className="error">{errors.mislanis_to}</p>
           )}
         </div>
 
         <hr className="bottom-hr" />
+        <button className="delete-btn" onClick={() => deleteNode(node.id)}>
+          <RiDeleteBin6Line style={{ height: "20px", width: "20px" }} />
+        </button>
         <button className="save-btn" onClick={handleSave}>
           Save
         </button>
-        <button onClick={copyNode} className="copy-btn">
-          <FaCopy style={{ height: '20px', width: '20px' }} />
-        </button>
-        <button onClick={deleteNode} className="delete-btn">
-          <RiDeleteBin6Line style={{ height: "20px", width: "20px" }} />
+        <button className="copy-btn" onClick={() => copyNode(node)}>
+          <FaCopy style={{ height: "20px", width: "20px" }} />
         </button>
       </div>
     </div>

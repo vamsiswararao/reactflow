@@ -48,15 +48,6 @@ const CollectorFrom = ({
       setErrors(formErrors);
       return;
     }
-
-  
-    
-   
-   
-    
-    
-
-
     const formData = {
       app_id:node.data.app_id ,
       // "5c93b0a9b0810",

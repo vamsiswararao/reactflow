@@ -16,7 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { FaRegListAlt, FaSlack } from "react-icons/fa";
 import { GrAnnounce } from "react-icons/gr";
 import { RiLockPasswordLine, RiStickyNoteAddFill } from "react-icons/ri";
-import { FaTelegram , FaRepeat} from "react-icons/fa6";
+import { FaTelegram, FaRepeat } from "react-icons/fa6";
 import { MdOutlineSms, MdOutlineMailOutline } from "react-icons/md";
 import { BsMicrosoftTeams } from "react-icons/bs";
 import { CgVoicemailR } from "react-icons/cg";
@@ -30,8 +30,6 @@ import { MdPhoneMissed, MdHolidayVillage } from "react-icons/md";
 import { TiTicket, TiSortNumericallyOutline } from "react-icons/ti";
 import { FcCollect } from "react-icons/fc";
 import { BiTransfer } from "react-icons/bi";
-
-
 
 import CustomTwoNode from "./components/Nodes/CustomTwoNode";
 import CustomThreeNode from "./components/Nodes/CustomThreeNode";
@@ -106,7 +104,6 @@ const fixedNodeIds = {
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-
 const FlowChart = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -117,49 +114,57 @@ const FlowChart = () => {
   const [nodeLabel, setNodeLabel] = useState("");
   const [nodeCounters, setNodeCounters] = useState({});
   const [position, setPosition] = useState({ x: 50, y: 50 });
-  const flow_id="66addcaec9beb"
-  
+  //const flow_id="66addcaec9beb"
+  const  lml="66c7088544596"
+  const flow_id = "66c708df247df";
+
   useEffect(() => {
     const fetchFlowData = async () => {
       try {
-        const response = await fetch(`${apiUrl}/flow_data_get_data?flow_id=${flow_id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            // 'Authorization': 'Bearer YOUR_API_TOKEN' // If your API requires authorization
+        const response = await fetch(
+          `${apiUrl}/flow_data_get_data?flow_id=${flow_id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              // 'Authorization': 'Bearer YOUR_API_TOKEN' // If your API requires authorization
+            },
           }
-        });
+        );
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
 
         const data = await response.json();
-        //const data={"flow_data":{"id":"faf18cb1-f101-4234-82eb-5e3bec904a1a","flow_name":'ReactFlow',"flows":{"nodes":[{"id":"8379ebac-0492-451a-9260-85e03c919dd1","type":"default","data":{"label":"Announcement","app_id":"90712abd-697e-4841-832c-31229526dfa0","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":211,"y":22},"width":150,"height":38,"selected":false,"positionAbsolute":{"x":211,"y":22},"dragging":false},{"id":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","type":"twoCustom","data":{"label":"Collector","app_id":"88cfb29b-a325-4345-9824-6246a694e167","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":100,"y":100},"width":143,"height":45},{"id":"3683c782-e229-4123-8a99-4d8ee9b6f530","type":"twoCustom","data":{"label":"Extension","app_id":"335683bc-0b72-49b2-b352-b5e5cfbf406e","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":346,"y":108},"width":143,"height":45,"selected":true,"positionAbsolute":{"x":346,"y":108},"dragging":false}],"edges":[{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-5bd82aa5-19ce-477d-a14b-b336b67c64a0"},{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"3683c782-e229-4123-8a99-4d8ee9b6f530","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-3683c782-e229-4123-8a99-4d8ee9b6f530"}]}}}        
+        console.log(data)
+        //const data={"flow_data":{"id":"faf18cb1-f101-4234-82eb-5e3bec904a1a","flow_name":'ReactFlow',"flows":{"nodes":[{"id":"8379ebac-0492-451a-9260-85e03c919dd1","type":"default","data":{"label":"Announcement","app_id":"90712abd-697e-4841-832c-31229526dfa0","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":211,"y":22},"width":150,"height":38,"selected":false,"positionAbsolute":{"x":211,"y":22},"dragging":false},{"id":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","type":"twoCustom","data":{"label":"Collector","app_id":"88cfb29b-a325-4345-9824-6246a694e167","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":100,"y":100},"width":143,"height":45},{"id":"3683c782-e229-4123-8a99-4d8ee9b6f530","type":"twoCustom","data":{"label":"Extension","app_id":"335683bc-0b72-49b2-b352-b5e5cfbf406e","IvrsPorts":[true,true,true,true,true,true,true,true,true,true]},"position":{"x":346,"y":108},"width":143,"height":45,"selected":true,"positionAbsolute":{"x":346,"y":108},"dragging":false}],"edges":[{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"5bd82aa5-19ce-477d-a14b-b336b67c64a0","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-5bd82aa5-19ce-477d-a14b-b336b67c64a0"},{"source":"8379ebac-0492-451a-9260-85e03c919dd1","sourceHandle":null,"target":"3683c782-e229-4123-8a99-4d8ee9b6f530","targetHandle":null,"type":"customEdge","id":"reactflow__edge-8379ebac-0492-451a-9260-85e03c919dd1-3683c782-e229-4123-8a99-4d8ee9b6f530"}]}}}
         //console.log('Flow data retrieved successfully:', data.resp.flow_data);
         //console.log('Flow data retrieved successfully:', data.resp.flow_data.id);
-
-        // Update state with the retrieved flow data
-        setNodes(data.resp.flow_data.flows.nodes || []);
-        setEdges(data.resp.flow_data.flows.edges || []);
-        //setName(data.flow_data.flow_name)
-        const nodeLength=(data.resp.flow_data.flows.nodes.length)
-        if(nodeLength>0){
-        const position= (data.resp.flow_data.flows.nodes[nodeLength-1].position)
-        setPosition({ x: position.x+50 || 50, y: position.y+100 || 50 })
+        if (data.resp.error_code === "0") {
+          // Update state with the retrieved flow data
+          setNodes(data.resp.flow_data.flows.nodes || []);
+          setEdges(data.resp.flow_data.flows.edges || []);
+          //setName(data.flow_data.flow_name)
+          const nodeLength = data.resp.flow_data.flows.nodes.length;
+          if (nodeLength > 0) {
+            const position =
+              data.resp.flow_data.flows.nodes[nodeLength - 1].position;
+            setPosition({
+              x: position.x + 50 || 50,
+              y: position.y + 100 || 50,
+            });
+          }
         }
       } catch (error) {
-        console.error('Failed to retrieve flow data:', error);
+        console.error("Failed to retrieve flow data:", error);
       }
     };
 
     // Call fetchFlowData when flowId changes or on component mount
     fetchFlowData();
+  }, [setNodes, setEdges]); // useEffect dependency on setNodes and setEdges
 
-  }, [setNodes,setEdges]); // useEffect dependency on setNodes and setEdges
-
-
-
-  //node change new position values for nodes 
+  //node change new position values for nodes
   const handleNodeChange = (changes) => {
     changes.forEach((change) => {
       if (change.type === "position" && change.position) {
@@ -169,8 +174,7 @@ const FlowChart = () => {
     });
   };
 
-
-  // initialize the edges type 
+  // initialize the edges type
   const edgeTypes = useMemo(
     () => ({
       customEdge: (props) => <CustomEdge onEdgeClick={edgeClick} {...props} />,
@@ -178,35 +182,30 @@ const FlowChart = () => {
     []
   );
 
-
-    // initialize the nodes type 
+  // initialize the nodes type
   const nodeTypes = useMemo(
     () => ({
       twoCustom: CustomTwoNode,
       threeCustom: CustomThreeNode,
       fourCustom: CustomFourNode,
       fiveCustom: CustomNode,
-      twelveCustom: (props) => (
-        <CustomTwelveNode  {...props} />
-      ),
+      twelveCustom: (props) => <CustomTwelveNode {...props} />,
     }),
     []
   );
 
-
-// create a custom node 
-  const createNode = (type, name, app_id, style) => {
+  // create a custom node
+  const createNode = async (type, name, app_id, style) => {
     const count = nodeCounters[name] || 0;
     const number = count > 8 ? count + 1 : `0${count + 1}`;
     const newLabel = count === 0 ? name : `${name}_${number}`;
-    
+
     const newNode = {
       id: uuidv4(),
       type: type,
-      data: { label: newLabel, app_id , IvrsPorts:Array(10).fill(true)},
+      data: { label: newLabel, app_id, IvrsPorts: Array(10).fill(true) },
       position: { x: position.x, y: position.y },
       style: style,
-
     };
     setNodes((nds) => nds.concat(newNode));
     setNodeCounters((prevCounter) => ({
@@ -215,6 +214,35 @@ const FlowChart = () => {
     }));
     setPosition((pos) => ({ x: pos.x + 100, y: pos.y + 100 }));
     addDescription(`Added ${app_id}`);
+    const AppData = {
+      lml: lml,
+      flow_id: flow_id,
+      inst_id: newNode.id,
+      app_id: app_id,
+    };
+    console.log(AppData);
+    try {
+      // Replace the URL with your actual API endpoint
+      const response = await fetch(`${apiUrl}/app_add_instance`, {
+        method: "POST", // Use 'PUT' or 'PATCH' if you're updating an existing flow
+        headers: {
+          "Content-Type": "application/json",
+
+          //'Authorization': 'Bearer YOUR_API_TOKEN' // If your API requires authorization
+        },
+        body: JSON.stringify(AppData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      console.log("Node saved successfully:", data);
+      //toast(`Node data saved.`)
+    } catch (error) {
+      console.error("Failed to save node:", error);
+    }
   };
 
   const announcement = () =>
@@ -225,13 +253,18 @@ const FlowChart = () => {
   const Connector = () =>
     createNode("twoCustom", "Connector", fixedNodeIds.Connector);
   const DynamicConnector = () =>
-    createNode("threeCustom", "Dynamic Connector", fixedNodeIds.DynamicConnector);
+    createNode(
+      "threeCustom",
+      "Dynamic Connector",
+      fixedNodeIds.DynamicConnector
+    );
   const Email = () => createNode("default", "Email", fixedNodeIds.Email);
   const Extension = () =>
     createNode("twoCustom", "Extension", fixedNodeIds.Extension);
   const FreshDesk = () =>
     createNode("default", "FreshDesk", fixedNodeIds.FreshDesk);
-  const FlowTransfer = () => createNode("default", "FlowTransfer", fixedNodeIds.FlowTransfer);
+  const FlowTransfer = () =>
+    createNode("default", "FlowTransfer", fixedNodeIds.FlowTransfer);
   const Hangout = () => createNode("default", "HangOut", fixedNodeIds.Hangout);
   const Hangup = () => createNode("output", "HangUp", fixedNodeIds.Hangup);
   const Holidays = () =>
@@ -278,8 +311,7 @@ const FlowChart = () => {
     addDescription(`Removed edge from ${id}`);
   };
 
-
-// nodes and edges are connected to each other 
+  // nodes and edges are connected to each other
   const onConnect = useCallback(
     (params) => {
       setEdges((eds) => addEdge({ ...params, type: "customEdge" }, eds));
@@ -288,33 +320,84 @@ const FlowChart = () => {
     [setEdges]
   );
 
-  
-//remove nodes and edges from the flow data 
-  const removeNode = () => {
-    if (selectedNode) {
-      setNodes((nds) => nds.filter((node) => node.id !== selectedNode.id));
-      setEdges((eds) =>
-        eds.filter(
-          (edge) =>
-            edge.source !== selectedNode.id && edge.target !== selectedNode.id
-        )
-      );
-      // if(fixedNodeIds.IVRS){
-      //   setVisiblePorts(Array(10).fill(false))
-      // }
-      // const label=selectedNode.data.label;
-      // const name=label.replace(/[@\d]/g, "");
-      //  const count= nodeCounters[name] || 0;
-      // if(count>0){
-      //   setNodeCounters((prevCounter)=>({
-      //     ...prevCounter,
-      //     [name]:count-1,
-      //   }))
-      // }
-      addDescription(`Removed node ${selectedNode.id}`);
+  //remove nodes and edges from the flow data
+  // const removeNode = () => {
+  //   if (selectedNode) {
+  //     setNodes((nds) => nds.filter((node) => node.id !== selectedNode.id));
+  //     setEdges((eds) =>
+  //       eds.filter(
+  //         (edge) =>
+  //           edge.source !== selectedNode.id && edge.target !== selectedNode.id
+  //       )
+  //     );
+  //     // if(fixedNodeIds.IVRS){
+  //     //   setVisiblePorts(Array(10).fill(false))
+  //     // }
+  //     // const label=selectedNode.data.label;
+  //     // const name=label.replace(/[@\d]/g, "");
+  //     //  const count= nodeCounters[name] || 0;
+  //     // if(count>0){
+  //     //   setNodeCounters((prevCounter)=>({
+  //     //     ...prevCounter,
+  //     //     [name]:count-1,
+  //     //   }))
+  //     // }
+  //     addDescription(`Removed node ${selectedNode.id}`);
 
-      setPosition((pos) => ({ x: pos.x - 50, y: pos.y - 50 }));
-      setSelectedNode("");
+  //     setPosition((pos) => ({ x: pos.x - 50, y: pos.y - 50 }));
+  //     setSelectedNode("");
+  //   }
+  // };
+
+  const removeNode = async () => {
+    if (selectedNode) {
+      try {
+        // Define the API endpoint
+
+        // Prepare the data to be sent in the DELETE request
+        const requestData = {
+          lml: "66b9dee3ef1ca",
+          flow_id: "5c93b0a9b0810",
+          app_id: selectedNode.data.app_id,
+          inst_id: selectedNode.id,
+        };
+
+        // Make the API call to remove the node
+        const response = await fetch(`${apiUrl}/app_delete_instance`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        });
+
+        console.log(response)
+
+        // Handle the response
+        if (response.ok) {
+          // Node successfully deleted from the server, update local state
+          setNodes((nds) => nds.filter((node) => node.id !== selectedNode.id));
+          setEdges((eds) =>
+            eds.filter(
+              (edge) =>
+                edge.source !== selectedNode.id &&
+                edge.target !== selectedNode.id
+            )
+          );
+
+          addDescription(`Removed node ${selectedNode.id}`);
+
+          setPosition((pos) => ({ x: pos.x - 50, y: pos.y - 50 }));
+          setSelectedNode("");
+        } else {
+          console.error(
+            "Failed to remove node from server:",
+            response.statusText
+          );
+        }
+      } catch (error) {
+        console.error("Error occurred while removing node:", error);
+      }
     }
   };
 
@@ -328,11 +411,11 @@ const FlowChart = () => {
     setNodeLabel(node.data.label);
   };
 
-
-  // change the selected node label 
+  // change the selected node label
   const handleLabelChange = (event) => {
     if (selectedNode) {
       setNodeLabel(event.target.value);
+      console.log(event.target.value)
       setNodes((nds) =>
         nds.map((node) =>
           node.id === selectedNode.id
@@ -376,51 +459,53 @@ const FlowChart = () => {
   //   addDescription("Saved flow state");
   // }
 
-  //remove the selected node  
+  //remove the selected node
   const removeForm = () => {
     setSelectedNode("");
   };
 
-  //save the node data to the flow  
+  //save the node data to the flow
   const save = (data) => {
-    setSelectedNode("");
     toast(`${data} data saved.`);
   };
 
   // save the flow data to the flow
   const publishFlow = async () => {
     const flowData = {
-     flow_data: {id:"66addcaec9beb",
-      flows: {
-        nodes,
-        edges,
-      }}
+      flow_data: {
+        id: flow_id,
+        flows: {
+          nodes,
+          edges,
+        },
+      },
     };
     try {
       // Replace the URL with your actual API endpoint
       const response = await fetch(`${apiUrl}/flow_data_update`, {
-        method: 'POST', // Use 'PUT' or 'PATCH' if you're updating an existing flow
+        method: "POST", // Use 'PUT' or 'PATCH' if you're updating an existing flow
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer YOUR_API_TOKEN' // If your API requires authorization
+          "Content-Type": "application/json",
+          Authorization: "Bearer YOUR_API_TOKEN", // If your API requires authorization
         },
-        body: JSON.stringify(flowData)
+        body: JSON.stringify(flowData),
       });
-  
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-  
       const data = await response.json();
-      console.log('Flow saved successfully:', data,flowData);
-      toast(`Flow data saved.`)
-      addDescription("Saved flow state");
+      console.log(data.resp)
+      if (data.response.status=== "SUCCESS") {
+        console.log("Flow saved successfully:", data);
+        toast(`Flow data saved.`);
+        addDescription("Saved flow state")
+      }else{
+        console.log(data)
+      }
+
+
     } catch (error) {
-      console.error('Failed to save flow:', error);
+      console.error("Failed to save flow:", error);
       addDescription("Failed to save flow state");
     }
   };
-  
 
   // const restoreFlow = () => {
   //   const flow = JSON.parse(localStorage.getItem("flow"));
@@ -436,8 +521,7 @@ const FlowChart = () => {
   //   }
   // };
 
-
-  //code nodes form 
+  //code nodes form
   const copyNode = () => {
     if (!selectedNode) return;
     const app_id = selectedNode.data.app_id;
@@ -449,7 +533,7 @@ const FlowChart = () => {
     const newNode = {
       ...selectedNode,
       id: uuidv4(),
-      data: { label: newLabel, app_id,IvrsPorts:Array(10).fill(true) },
+      data: { label: newLabel, app_id, IvrsPorts: Array(10).fill(true) },
       position: {
         x: position.x + 100,
         y: position.y + 100,
@@ -466,8 +550,7 @@ const FlowChart = () => {
     setNodeLabel(newNode.data.label);
   };
 
-
-  //forms 
+  //forms
   const renderForm = () => {
     if (selectedNode) {
       const formProps = {
@@ -479,8 +562,7 @@ const FlowChart = () => {
         removeForm: removeForm,
         save: save,
         copyNode: copyNode,
-        flow_id:flow_id
-
+        flow_id: flow_id,
       };
       switch (selectedNode.data.app_id) {
         case fixedNodeIds.Announcement:
@@ -500,7 +582,7 @@ const FlowChart = () => {
         case fixedNodeIds.FreshDesk:
           return <FreshDeskFrom {...formProps} />;
         case fixedNodeIds.FlowTransfer:
-            return <FlowTransferForm {...formProps} />;
+          return <FlowTransferForm {...formProps} />;
         case fixedNodeIds.Hangout:
           return <HangOut {...formProps} />;
         case fixedNodeIds.Hangup:
@@ -635,7 +717,7 @@ const FlowChart = () => {
           </button>
           <button onClick={FlowTransfer}>
             <span>
-            <BiTransfer />
+              <BiTransfer />
             </span>
             Flow Transfer
           </button>
@@ -709,7 +791,7 @@ const FlowChart = () => {
           </button>
           <button onClick={RepeatedCall}>
             <span>
-            <FaRepeat />
+              <FaRepeat />
             </span>
             Repeated call
           </button>
@@ -776,9 +858,7 @@ const FlowChart = () => {
     console.log(nodeData);
   };
 
-
-
-// Ivrs checkboxes
+  // Ivrs checkboxes
   const handleCheckboxChange = (update) => {
     setNodes((nds) =>
       nds.map((node) =>
@@ -787,7 +867,7 @@ const FlowChart = () => {
               ...node,
               data: {
                 ...node.data,
-                IvrsPorts: update
+                IvrsPorts: update,
               },
             }
           : node
@@ -796,61 +876,73 @@ const FlowChart = () => {
   };
 
   return (
-    <div style={{height:'100%'}}>
-    {/* {name ?( */}
-      <div style={{ height: "100vh", width: "100%", display: "flex" }}>
-      <ReactFlowProvider>
-        <div className="left-container">
-          <div className="header-btn">
-            <h3 style={{marginRight:'150px',marginBottom:'25px',marginLeft:'10px'}}>Name</h3>
-            <div className="description-button-wrapper">
-              <button className="flow-btn">
-                <span className="num">
-                  {descriptions.length !== 0 ? descriptions.length : ""}
-                </span>
-                Changes to Flow
-              </button>
-              <div className="description-lists">
-                <h3>Descriptions</h3>
-                <ul>
-                  {descriptions.map((desc, index) => (
-                    <li key={index}>{desc}</li>
-                  ))}
-                </ul>
+    <div style={{ height: "100vh" }}>
+      {/* {name ?( */}
+      <div style={{ height: "100%", width: "100%", display: "flex" }}>
+        <ReactFlowProvider>
+          <div className="left-container">
+            <div className="header-btn">
+              <h3
+                style={{
+                  marginRight: "150px",
+                  marginBottom: "25px",
+                  marginLeft: "10px",
+                }}
+              >
+                Name
+              </h3>
+              <div className="description-button-wrapper">
+                <button className="flow-btn">
+                  <span className="num">
+                    {descriptions.length !== 0 ? descriptions.length : ""}
+                  </span>
+                  Changes to Flow
+                </button>
+                <div className="description-lists">
+                  <h3>Descriptions</h3>
+                  <ul>
+                    {descriptions.map((desc, index) => (
+                      <li key={index}>{desc}</li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </div>
-            {/* <button onClick={saveFlow} className="publish-btn">
+              {/* <button onClick={saveFlow} className="publish-btn">
               Save
             </button>
             <button onClick={restoreFlow} className="publish-btn">
               Restore
             </button> */}
-            <button onClick={publishFlow} className="publish-btn">Publish</button>
+              <button onClick={publishFlow} className="publish-btn">
+                Publish
+              </button>
+            </div>
+            <ReactFlow
+              style={{ flex: 1 }}
+              nodes={nodes}
+              edges={edges}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onNodesChange={(changes) => {
+                handleNodeChange(changes);
+                onNodesChange(changes);
+              }}
+              onNodeClick={handleNodeClick}
+              edgeTypes={edgeTypes}
+              nodeTypes={nodeTypes}
+            >
+              <MiniMap />
+              <Controls />
+              <Background />
+            </ReactFlow>
           </div>
-          <ReactFlow
-            style={{ flex: 1 }}
-            nodes={nodes}
-            edges={edges}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onNodesChange={(changes) => {
-              handleNodeChange(changes);
-              onNodesChange(changes);
-            }}
-            onNodeClick={handleNodeClick}
-            edgeTypes={edgeTypes}
-            nodeTypes={nodeTypes}
-          >
-            <MiniMap />
-            <Controls />
-            <Background />
-          </ReactFlow>
-        </div>
-        <div style={{height:'100%', width: "30%", paddingRight: "20px" }}>{renderForm()}</div>
-      </ReactFlowProvider>
-      <ToastContainer />
+          <div style={{ height: "100%", width: "30%", paddingRight: "20px" }}>
+            {renderForm()}
+          </div>
+        </ReactFlowProvider>
+        <ToastContainer />
       </div>
-     {/* ):(<div style={{display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}>invalid id</div>)} */}
+      {/* ):(<div style={{display:'flex',flexDirection:'column', justifyContent:'center',alignItems:'center'}}>invalid id</div>)} */}
     </div>
   );
 };

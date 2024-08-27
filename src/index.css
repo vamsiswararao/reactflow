@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height:'100vh';
 }
 
 code {
@@ -57,7 +58,7 @@ label{
 } 
 
 
-.edgebutton {
+.edge-button {
   width: 20px;
   height: 20px;
   background: #eee;
@@ -72,7 +73,7 @@ button{
   margin-right: 10px;
 }
 
-.edgebutton:hover {
+.edge-button:hover {
   box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.08);
 }
 

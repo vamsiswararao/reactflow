@@ -3,32 +3,68 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 
-
-const Passwords = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,copyNode }) => {
+const Passwords = ({ node,nodeLabel, handleLabelChange, deleteNode, removeForm, save, copyNode,flow_id }) => {
   const [selectedValue, setSelectedValue] = useState("");
   const [password, setPassword] = useState("");
   const [successAudio, setSuccessAudio] = useState("");
   const [failAudio, setFailAudio] = useState("");
 
+  // Error state variables
+  const [nodeLabelError, setNodeLabelError] = useState("");
+  const [selectedValueError, setSelectedValueError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [successAudioError, setSuccessAudioError] = useState("");
+  const [failAudioError, setFailAudioError] = useState("");
+
   const handleSave = () => {
-    // Validation
-    if (!nodeLabel ||!password || !selectedValue || !successAudio ||!failAudio){
-      alert("Please fill out all required fields.");
-     return;
+    // Clear previous error messages
+    setNodeLabelError("");
+    setSelectedValueError("");
+    setPasswordError("");
+    setSuccessAudioError("");
+    setFailAudioError("");
+
+    // Validate form fields
+    let hasError = false;
+    if (!nodeLabel) {
+      setNodeLabelError("Name is required.");
+      hasError = true;
+    }
+    if (!selectedValue) {
+      setSelectedValueError("Audio selection is required.");
+      hasError = true;
+    }
+    if (!password) {
+      setPasswordError("Password is required.");
+      hasError = true;
+    }
+    if (!successAudio) {
+      setSuccessAudioError("Success audio selection is required.");
+      hasError = true;
+    }
+    if (!failAudio) {
+      setFailAudioError("Fail audio selection is required.");
+      hasError = true;
     }
 
+    if (hasError) return;
 
-    // Log form data
-    console.log({
-      nodeLabel,
+    // Create form data object
+    const formData = {
+      app_id:node.data.app_id ,
+      // "5c93b0a9b0810",
+      flow_id: flow_id,
+      inst_id:node.id,
+      name:nodeLabel,
       password,
       selectedValue,
       successAudio,
       failAudio,
-    });
-    save(nodeLabel)
+    };
 
-    // Clear errors if everything is valid
+    // Log form data to console
+    console.log("Form Data:", formData);
+    save(nodeLabel);
   };
 
   return (
@@ -47,7 +83,8 @@ const Passwords = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,c
             value={nodeLabel}
             onChange={handleLabelChange}
           />
-
+          {nodeLabelError && <p className="error">{nodeLabelError}</p>}
+          
           <label>Audio:<span className="star">*</span></label>
           <select
             className="input-select"
@@ -61,6 +98,7 @@ const Passwords = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,c
               </option>
             ))}
           </select>
+          {selectedValueError && <p className="error">{selectedValueError}</p>}
 
           <label>Password:<span className="star">*</span></label>
           <input
@@ -69,6 +107,7 @@ const Passwords = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,c
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {passwordError && <p className="error">{passwordError}</p>}
 
           <label>Success audio:<span className="star">*</span></label>
           <select
@@ -83,6 +122,7 @@ const Passwords = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,c
               </option>
             ))}
           </select>
+          {successAudioError && <p className="error">{successAudioError}</p>}
 
           <label>Fail audio:<span className="star">*</span></label>
           <select
@@ -97,6 +137,7 @@ const Passwords = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,c
               </option>
             ))}
           </select>
+          {failAudioError && <p className="error">{failAudioError}</p>}
         </div>
 
         <hr className="bottom-hr" />

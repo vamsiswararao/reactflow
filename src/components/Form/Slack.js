@@ -3,27 +3,63 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 
-
-const SlackForm = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,copyNode }) => {
+const SlackForm = ({ node,nodeLabel, handleLabelChange, deleteNode, removeForm, save, copyNode, flow_id }) => {
   // State for form fields
   const [url, setUrl] = useState('');
   const [message, setMessage] = useState('');
 
-  // Validation function
-
+  // State for error messages
+  const [errors, setErrors] = useState({ nodeLabel: '', url: '', message: '' });
 
   // Handle save button click
   const handleSave = () => {
-    if (nodeLabel.trim() !== '' && url.trim() !== '' && message.trim() !== '') {
-      console.log({
-        nodeLabel,
+    let hasError = false;
+    const newErrors = { nodeLabel: '', url: '', message: '' };
+
+    if (nodeLabel.trim() === '') {
+      newErrors.nodeLabel = 'Name is required';
+      hasError = true;
+    }
+
+    if (url.trim() === '') {
+      newErrors.url = 'URL is required';
+      hasError = true;
+    }
+
+    if (message.trim() === '') {
+      newErrors.message = 'Message is required';
+      hasError = true;
+    }
+
+    if (hasError) {
+      setErrors(newErrors);
+    } else {
+      const formData = {
+        app_id:node.data.app_id ,
+        // "5c93b0a9b0810",
+        flow_id: flow_id,
+        inst_id:node.id,
+        name:nodeLabel,
         url,
         message,
-      });
-      save()
-      // Clear the form or proceed with form submission logic
-    } else {
-      alert('All fields are required.');
+      };
+
+      // Save the data to a dummy API
+      fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          save(nodeLabel); // Call save function after successful API call
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
     }
   };
 
@@ -43,6 +79,8 @@ const SlackForm = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,c
             value={nodeLabel}
             onChange={handleLabelChange}
           />
+          {errors.nodeLabel && <p className="error">{errors.nodeLabel}</p>}
+
           <label>Url:<span className="star">*</span></label>
           <textarea 
             type="url" 
@@ -52,6 +90,8 @@ const SlackForm = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,c
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />
+          {errors.url && <p className="error">{errors.url}</p>}
+
           <label>Message:<span className="star">*</span></label>
           <textarea 
             placeholder="write the message" 
@@ -60,6 +100,7 @@ const SlackForm = ({ nodeLabel, handleLabelChange, deleteNode, removeForm,save,c
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
+          {errors.message && <p className="error">{errors.message}</p>}
         </div>
         <hr className="bottom-hr" />
         <button onClick={handleSave} className="save-btn">Save</button>

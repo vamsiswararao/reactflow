@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
+
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const CollectorForm = ({
   node,
@@ -10,26 +12,100 @@ const CollectorForm = ({
   deleteNode,
   removeForm,
   save,
-  copyNode, 
+  copyNode,
   flow_id
-
 }) => {
-  const [audio, setAudio] = useState("");
-  const [description, setDescription] = useState("");
-  const [dtmfKey, setDtmfKey] = useState("");
-  const [keyLength, setKeyLength] = useState("");
-  const [timeout, setTimesOut] = useState("");
-  const [repeatCount, setRepeatCount] = useState("");
-
+  const [audioOptions, setAudioOptions] = useState([]);
+  const [formData, setFormData] = useState({
+    lml: "66b9dee3ef1ca",
+    app_id: node.data.app_id,
+    flow_id: flow_id,
+    inst_id: node.id,
+    nm: nodeLabel || "",
+    audio: "",
+    des: "",
+    finish_key: "",
+    key_length: "",
+    time_out: "",
+    repeat: "",
+  });
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const fetchAnnouncementData = async () => {
+      try {
+        const audioResponse = await fetch(`${apiUrl}/app_get_audios`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            lml: "66b9dee3ef1ca",
+            flow_id: flow_id,
+            app_id: node.data.app_id,
+            inst_id: node.id,
+          }),
+        });
+
+        if (!audioResponse.ok) {
+          throw new Error("Failed to fetch audio options");
+        }
+
+        const audioData = await audioResponse.json();
+        setAudioOptions(audioData.resp.aud_data || []);
+
+        const CollectorResponse = await fetch(`${apiUrl}/app_get_data_collector`,
+          {
+          method: "POST", // Specify the PUT method
+         headers: {
+           "Content-Type": "application/json", // Ensure the content type is JSON
+         },
+         body: JSON.stringify({
+           lml: "66b9dee3ef1ca",
+           flow_id: "66c708df247df", // Use the provided flow_id
+           app_id: node.data.app_id, // Use the provided app_id
+           inst_id: node.id, // Use the provided inst_id
+         }),
+       }
+       );
+       const announcementData = await CollectorResponse.json();
+       //console.log(announcementData.resp.app_data)
+       const collData= announcementData.resp.app_data
+       console.log(collData)
+       if (!CollectorResponse.ok) {
+         throw new Error("Failed to fetch data");
+       }
+ 
+       setFormData((prevData) => ({
+         
+          lml: "66b9dee3ef1ca",
+         app_id: node.data.app_id,
+         flow_id: flow_id,
+         inst_id: node.id,
+         nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+         key_length:collData.key_length,
+         finish_key:collData.finish_key,
+         time_out:collData.time_out,
+         audio: collData.audio, // Example of dynamic data usage
+         repeat: collData.repeat, // Example of dynamic data usage
+         des: collData.des, // Example of dynamic data usage
+       }));
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchAnnouncementData();
+  }, [flow_id, nodeLabel, node]);
 
   const validateForm = () => {
     const newErrors = {};
-    if (!nodeLabel) newErrors.nodeLabel = "Name is required.";
-    if (!audio) newErrors.audio = "Audio selection is required.";
-    if (!dtmfKey) newErrors.dtmfKey = "DTMF finish key is required.";
-    if (!keyLength) newErrors.keyLength = "Key length is required.";
-    if (!timeout) newErrors.timeout = "Timeout is required.";
+    if (!formData.nm) newErrors.nodeLabel = "Name is required.";
+    if (!formData.audio) newErrors.audio = "Audio selection is required.";
+    if (!formData.finish_key) newErrors.dtmfKey = "DTMF finish key is required.";
+    if (!formData.key_length) newErrors.keyLength = "Key length is required.";
+    if (!formData.time_out) newErrors.timeout = "Timeout is required.";
     return newErrors;
   };
 
@@ -40,52 +116,36 @@ const CollectorForm = ({
       setErrors(formErrors);
       return;
     }
-
-    const formData = {
-      app_id:node.data.app_id ,
-    // "5c93b0a9b0810",
-      flow_id: flow_id,
-      inst_id:node.id,
-      name: nodeLabel,
-      audio_id: audio,
-      dtmf_key_finish: dtmfKey,
-      key_length: keyLength,
-      time_out: timeout,
-      repeat_cnt: repeatCount,
-      description: description,
-    };
-
     try {
-      // Simulate POST request to a dummy URL
-      const response = await fetch("https://enrbgth6q54c8.x.pipedream.net", {
+      const response = await fetch(`${apiUrl}/app_set_data_collector`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
-
+      const data = await response.json();
+      console.log(data)
       if (!response.ok) {
         throw new Error("Network response was not ok.");
       }
-
       console.log("Form Data Saved:", formData);
-
-      // Clear form fields and errors after successful save
-      setAudio("");
-      setDescription("");
-      setDtmfKey("");
-      setKeyLength("");
-      setTimesOut("");
-      setRepeatCount("");
       setErrors({});
-
-      // Call save callback if needed
-      save(nodeLabel); // Assuming save function handles the logic after saving
+      save(formData.nm);
     } catch (error) {
       console.error("Error saving form data:", error);
-      // Handle error state or retry logic
     }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "nm") {
+      handleLabelChange(e);
+    }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   return (
@@ -100,65 +160,70 @@ const CollectorForm = ({
           <label>Name:<span className="star">*</span></label>
           <input
             type="text"
+            name="nm"
             placeholder="Enter the Name"
-            value={nodeLabel}
-            onChange={handleLabelChange}
+            value={formData.nm}
+            onChange={handleInputChange}
           />
           {errors.nodeLabel && <p className="error">{errors.nodeLabel}</p>}
 
           <label>Audio:<span className="star">*</span></label>
           <select
             className="input-select"
-            value={audio}
-            onChange={(e) => setAudio(e.target.value)}
+            name="audio"
+            value={formData.audio}
+            onChange={handleInputChange}
           >
             <option value="">Select the audio</option>
-            {[...Array(10)]
-              .map((_, i) => i + 1)
-              .map((i) => (
-                <option key={i} value={i}>
-                  {i}
-                </option>
-              ))}
+            {audioOptions.map((audio, index) => (
+              <option key={index} value={audio.auni}>
+                {audio.anm}
+              </option>
+            ))}
           </select>
           {errors.audio && <p className="error">{errors.audio}</p>}
 
           <label>DTMF finish key:<span className="star">*</span></label>
           <input
-            value={dtmfKey}
+            name="finish_key"
+            value={formData.finish_key}
             placeholder="Enter the DTMF finish key"
-            onChange={(e) => setDtmfKey(e.target.value)}
+            onChange={handleInputChange}
           />
           {errors.dtmfKey && <p className="error">{errors.dtmfKey}</p>}
 
           <label>Key length:<span className="star">*</span></label>
           <input
-            value={keyLength}
+            name="key_length"
+            value={formData.key_length}
             placeholder="Enter the key length"
-            onChange={(e) => setKeyLength(e.target.value)}
+            onChange={handleInputChange}
           />
           {errors.keyLength && <p className="error">{errors.keyLength}</p>}
 
           <label>Timeout:<span className="star">*</span></label>
           <input
-            value={timeout}
+            name="time_out"
+            value={formData.time_out}
             placeholder="Enter the timeout"
-            onChange={(e) => setTimesOut(e.target.value)}
+            onChange={handleInputChange}
           />
           {errors.timeout && <p className="error">{errors.timeout}</p>}
 
           <label>Repeat count:</label>
           <input
-            value={repeatCount}
+            name="repeat"
+            value={formData.repeat}
             placeholder="Enter the repeat count"
-            onChange={(e) => setRepeatCount(e.target.value)}
+            onChange={handleInputChange}
           />
 
           <label>Description:</label>
           <textarea
+            name="des"
             placeholder="Write the description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            value={formData.des}
+            onChange={handleInputChange}
             rows="6"
             cols="40"
           />

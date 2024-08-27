@@ -5,12 +5,14 @@ import { FaCopy } from "react-icons/fa";
 import { RiInformation2Fill } from "react-icons/ri";
 
 const DynamicConnectorForm = ({
+  node,
   nodeLabel,
   handleLabelChange,
   deleteNode,
   removeForm,
   save, // Function to handle saving form data
   copyNode,
+  flow_id
 }) => {
   const [connectType, setConnectType] = useState("");
   const [flowType, setFlowType] = useState("no"); // State for Flow Type radio button
@@ -48,7 +50,11 @@ const DynamicConnectorForm = ({
 
     // Gather all form data into an object
     const formData = {
-      nodeLabel,
+      app_id:node.data.app_id ,
+    // "5c93b0a9b0810",
+      flow_id: flow_id,
+      inst_id:node.id,
+      name:nodeLabel,
       connectType,
       distributionType,
       missedCallTo,
