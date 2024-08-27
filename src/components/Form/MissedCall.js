@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
+const apiUrl = process.env.REACT_APP_API_URL;
+
 
 const MissedCall = ({
   node,
@@ -9,33 +11,80 @@ const MissedCall = ({
   handleLabelChange,
   deleteNode,
   removeForm,
-  copyNode
+  copyNode,
+  flow_id
 }) => {
   const [formData, setFormData] = useState({
+    lml: "66b9dee3ef1ca",
     app_id: node.data.app_id,
     flow_id: node.flow_id,
     inst_id: node.id,
-    name: nodeLabel || ''
+    nm: nodeLabel || ''
   });
 
   const [error, setError] = useState("");
+
+
+  useEffect(() => {
+    const fetchAnnouncementData = async () => {
+      try {
+        const missedCallResponse = await fetch(
+          `${apiUrl}/app_get_data_mcall`,
+          {
+            method: "POST", // Specify the PUT method
+            headers: {
+              "Content-Type": "application/json", // Ensure the content type is JSON
+            },
+            body: JSON.stringify({
+              lml: "66b9dee3ef1ca",
+              flow_id: "66c708df247df", // Use the provided flow_id
+              app_id: node.data.app_id, // Use the provided app_id
+              inst_id: node.id, // Use the provided inst_id
+            }),
+          }
+        );
+        const MissedCallData = await missedCallResponse.json();
+        //console.log(announcementData.resp.app_data)
+        const finalData = MissedCallData.resp.app_data;
+        if (!missedCallResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        setFormData((prevData) => ({
+          lml: "66b9dee3ef1ca",
+          app_id: node.data.app_id,
+          // "5c93b0a9b0810",
+          flow_id: flow_id,
+          inst_id: node.id,
+          nm: nodeLabel || finalData.nm, // Initialize with nodeLabel or an empty string
+        }));
+       
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchAnnouncementData();
+  }, [flow_id, nodeLabel, node]);
 
   // Handle form submission
   const handleSave = async () => {
     // Reset error state
     setError("");
-
+    
     // Perform validation
-    if (!formData.name.trim()) {
+    if (!formData.nm.trim()) {
       setError("Name is required.");
       return;
     }
 
-    // Define the API endpoint (use a dummy endpoint for testing)
-    const apiEndpoint = "https://jsonplaceholder.typicode.com/posts";
+
+
+    // Define the API
 
     try {
-      const response = await fetch(apiEndpoint, {
+      const response = await fetch(`${apiUrl}/app_set_data_mcall`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -49,16 +98,22 @@ const MissedCall = ({
 
       const data = await response.json();
       console.log("Form Data saved:", data);
-
-      // Optionally, you can clear the form or perform other actions here
-      setFormData({
-        ...formData,
-        name: '' // Clear the name field or reset formData as needed
-      });
     } catch (error) {
       console.error("Error saving form data:", error);
       setError("Failed to save data.");
     }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    if (name === "nm") {
+      handleLabelChange(e); // Call the prop function to update nodeLabel in parent component
+    }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   return (
@@ -74,8 +129,9 @@ const MissedCall = ({
           <input
             type="text"
             placeholder="Enter the name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.nm}
+            name="nm"
+            onChange={handleInputChange}
           />
         </div>
         {error && <p className="error">{error}</p>}

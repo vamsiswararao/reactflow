@@ -260,7 +260,7 @@ const ListManagers = ({
             onChange={handleInputChange}
           >
             <option value="1">add</option>
-            <option value="2">Delete</option>
+            <option value="0">Delete</option>
           </select>
         </form>
         <hr className="bottom-hr" />

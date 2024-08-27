@@ -199,7 +199,7 @@ const FlowChart = () => {
     const count = nodeCounters[name] || 0;
     const number = count > 8 ? count + 1 : `0${count + 1}`;
     const newLabel = count === 0 ? name : `${name}_${number}`;
-
+    console.log(app_id)
     const newNode = {
       id: uuidv4(),
       type: type,
@@ -214,6 +214,7 @@ const FlowChart = () => {
     }));
     setPosition((pos) => ({ x: pos.x + 100, y: pos.y + 100 }));
     addDescription(`Added ${app_id}`);
+    console.log(app_id)
     const AppData = {
       lml: lml,
       flow_id: flow_id,
@@ -288,7 +289,7 @@ const FlowChart = () => {
     createNode("twoCustom", "Password", fixedNodeIds.Password);
   const RepeatedCall = () =>
     createNode("twoCustom", "Repeated Call", fixedNodeIds.RepeatedCall);
-  const Sms = () => createNode("default", "SMS", fixedNodeIds.Sms);
+  const Sms = () => createNode("default", "SMS", fixedNodeIds.SMS);
   const Slacks = () => createNode("default", "Slack", fixedNodeIds.Slack);
   const StickyAgent = () =>
     createNode("threeCustom", "Sticky Agent", fixedNodeIds.StickyAgent);
@@ -612,7 +613,7 @@ const FlowChart = () => {
           return <Passwords {...formProps} />;
         case fixedNodeIds.RepeatedCall:
           return <RepeatedCallForm {...formProps} />;
-        case fixedNodeIds.Sms:
+        case fixedNodeIds.SMS:
           return <SmsFrom {...formProps} />;
         case fixedNodeIds.Slack:
           return <SlackForm {...formProps} />;

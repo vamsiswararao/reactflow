@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 
+
 import "./Form.css";
+
+const apiUrl = process.env.REACT_APP_API_URL;
+
 
 const VoicemailForm = ({
   node,
@@ -17,21 +21,86 @@ const VoicemailForm = ({
 
 }) => {
   const [formData, setFormData] = useState({
+    lml: "66b9dee3ef1ca",
     app_id:node.data.app_id ,
       // "5c93b0a9b0810",
     flow_id: flow_id,
     inst_id:node.id,
-    name: nodeLabel ||'',
-    audio_id: "",
-    recording_duration: "",
-    remarks: "",
+    nm: nodeLabel ||'',
+    audio: "",
+    record_dur: "",
+    des: "",
   });
 
-  const [errors, setErrors] = useState({
-    audio_id: "",
-    recording_duration: "",
-    remarks: "",
-  });
+  const [audioOptions, setAudioOptions] = useState([]); 
+  const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    const fetchAnnouncementData= async () => {
+      try {
+        const announcementResponse = await fetch(`${apiUrl}/app_get_data_vmail`,
+           {
+           method: "POST", // Specify the PUT method
+          headers: {
+            "Content-Type": "application/json", // Ensure the content type is JSON
+          },
+          body: JSON.stringify({
+            lml: "66b9dee3ef1ca",
+            flow_id: "66c708df247df", // Use the provided flow_id
+            app_id: node.data.app_id, // Use the provided app_id
+            inst_id: node.id, // Use the provided inst_id
+          }),
+        }
+        );
+        const announcementData = await announcementResponse.json();
+        //console.log(announcementData.resp.app_data)
+        const annData= announcementData.resp.app_data
+        if (!announcementResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+  
+        setFormData((prevData) => ({
+          
+           lml: "66b9dee3ef1ca",
+          app_id: node.data.app_id,
+          flow_id: flow_id,
+          inst_id: node.id,
+          nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+          audio: annData.audio, // Example of dynamic data usage
+          record_dur: annData.record, // Example of dynamic data usage
+          des: annData.des, // Example of dynamic data usage
+        }));
+
+                // Fetch audio options with the same data
+                const audioResponse = await fetch(`${apiUrl}/app_get_audios`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    lml:"66b9dee3ef1ca",
+                    flow_id: flow_id,
+                    app_id: node.data.app_id,
+                    inst_id: node.id,
+                  }),
+                });
+        
+                if (!audioResponse.ok) {
+                  throw new Error("Failed to fetch audio options");
+                }
+        
+                const audioData = await audioResponse.json();
+                setAudioOptions(audioData.resp.aud_data || []);
+                //console.log(audioData.resp.aud_data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    
+  
+    fetchAnnouncementData();
+  }, [flow_id, nodeLabel, node]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -41,31 +110,44 @@ const VoicemailForm = ({
     }));
   };
 
-  const validateForm = () => {
-    let isValid = true;
-    const newErrors = { selectedValue: "", repeatCount: "", remarks: "" };
 
-    if (!formData.audio_id) {
-      newErrors.selectedValue = "Audio selection is required.";
-      isValid = false;
-    }
-    if (!formData.recording_duration) {
-      newErrors.repeatCount = "Recording duration is required.";
-      isValid = false;
-    } else if (isNaN(formData.recording_duration) || formData.recording_duration <= 0) {
-      newErrors.repeatCount = "Please enter a valid recording duration.";
-      isValid = false;
-    }
-    
-    setErrors(newErrors);
-    return isValid;
+  const validateForm = () => {
+    console.log(formData.nm)
+    const newErrors = {};
+    if (!formData.nm) newErrors.name = "Name is required";
+    if (!formData.audio)
+      newErrors.selectedValue = "Audio selection is required";
+    if (!formData.record_dur)
+      newErrors.record_dur = "Recording duration is required.";
+    return newErrors;
   };
 
-  const handleSave = () => {
-    if (validateForm()) {
-      console.log("Saved Data:", formData);
-      save()
-      // You can also add code here to handle the form submission
+
+  const handleSave = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length === 0) {
+      setErrors({})
+      try {
+        const response = await fetch(`${apiUrl}/app_set_data_vmail`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+        const data = await response.json();
+        console.log(data);
+        if (!response.ok) {
+          throw new Error("Failed to save data");
+        }
+
+        console.log("Form Data Saved:", formData);
+        save(nodeLabel); // Call the save handler from props
+      } catch (error) {
+        console.error("Error saving data:", error);
+      }
+    } else {
+      setErrors(formErrors);
     }
   };
 
@@ -82,42 +164,40 @@ const VoicemailForm = ({
           <input
             type="text"
             placeholder="Enter the Name"
-            value={formData.name}
-            onChange={handleLabelChange}
+            value={formData.nm}
+            onChange={handleInputChange}
           />
           <label>Audio:<span className="star">*</span></label>
           <select
-            className="input-select"
-            name="audio_id"
-            value={formData.audio_id}
-            onChange={handleInputChange}
-          >
-            <option value="">Select the audio</option>
-            {[...Array(10)]
-              .map((_, i) => i + 1)
-              .map((i) => (
-                <option key={i} value={i}>
-                  {i}
-                </option>
-              ))}
-          </select>
+                className="input-select"
+                name="audio"
+                value={formData.audio}
+                onChange={handleInputChange}
+              >
+                <option value="">Select the audio</option>
+                {audioOptions.map((audio, index) => (
+                  <option key={index} value={audio.auni}>
+                    {audio.anm}
+                  </option>
+                ))}
+              </select>
           {errors.selectedValue && <p className="error">{errors.selectedValue}</p>}
           <label>Recording duration:<span className="star">*</span></label>
           <input
             type="text"
-            name="recording_duration"
+            name="record_dur"
             placeholder="Enter the repeat count"
-            value={formData.recording_duration }
+            value={formData.record_dur }
             onChange={handleInputChange}
           />
-          {errors.repeatCount && <p className="error">{errors.repeatCount}</p>}
+          {errors.record_dur && <p className="error">{errors.record_dur}</p>}
           <label>Remarks</label>
           <textarea
-            name="remarks"
+            name="des"
             placeholder="Write the remarks"
             rows="6"
             cols="40"
-            value={formData.remarks}
+            value={formData.des}
             onChange={handleInputChange}
           />
         </div>
