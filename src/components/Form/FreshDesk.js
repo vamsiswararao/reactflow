@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
+const apiUrl = process.env.REACT_APP_API_URL;
+
 
 const FreshDeskForm = ({
   node,
@@ -14,11 +16,11 @@ const FreshDeskForm = ({
   flow_id
 }) => {
   // State for form inputs and errors
-  const [formValues, setFormValues] = useState({
+  const [formData, setFormData] = useState({
     app_id: node.data.app_id,
     flow_id: flow_id,
     inst_id: node.id,
-    name: nodeLabel || "",
+    nm: nodeLabel || "",
     api_key: "",
     password: "",
     domain: "",
@@ -32,14 +34,87 @@ const FreshDeskForm = ({
   });
 
   const [errors, setErrors] = useState({});
+  const [audioOptions, setAudioOptions] = useState([]); 
+
+
+  useEffect(() => {
+    const fetchAnnouncementData= async () => {
+      try {
+        // const announcementResponse = await fetch(`${apiUrl}/app_get_data_anoncment`,
+        //    {
+        //    method: "POST", // Specify the PUT method
+        //   headers: {
+        //     "Content-Type": "application/json", // Ensure the content type is JSON
+        //   },
+        //   body: JSON.stringify({
+        //     lml: "66c7088544596",
+        //     flow_id: "66c708df247df", // Use the provided flow_id
+        //     app_id: node.data.app_id, // Use the provided app_id
+        //     inst_id: node.id, // Use the provided inst_id
+        //   }),
+        // }
+        // );
+        // const announcementData = await announcementResponse.json();
+        // console.log(announcementData)
+        // const annData= announcementData.resp.app_data
+        // console.log(annData)
+        // if (!announcementResponse.ok) {
+        //   throw new Error("Failed to fetch data");
+        // }
+  
+        // setFormData((prevData) => ({
+          
+        //    lml: "66c7088544596",
+        //   app_id: node.data.app_id,
+        //   flow_id: flow_id,
+        //   inst_id: node.id,
+        //   nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+        //   audio: annData.audio_id || "", // Example of dynamic data usage
+        //   repeat: annData.repeat || "", // Example of dynamic data usage
+        //   des: annData.des || "", // Example of dynamic data usage
+        // }));
+
+                // Fetch audio options with the same data
+                const audioResponse = await fetch(`${apiUrl}/app_get_audios`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    lml:"66c7088544596",
+                    flow_id: flow_id,
+                    app_id: node.data.app_id,
+                    inst_id: node.id,
+                  }),
+                });
+        
+                if (!audioResponse.ok) {
+                  throw new Error("Failed to fetch audio options");
+                }
+        
+                const audioData = await audioResponse.json();
+                setAudioOptions(audioData.resp.aud_data || []);
+                console.log(audioData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    
+  
+    fetchAnnouncementData();
+  }, [flow_id, nodeLabel, node]);
 
   // Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === "name") {
+    if (name === "nm") {
       handleLabelChange(e); // Call the prop function to update nodeLabel in parent component
     }
-    setFormValues({ ...formValues, [name]: value });
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   // Handle form submission
@@ -47,17 +122,17 @@ const FreshDeskForm = ({
     e.preventDefault();
     // Perform validation
     const newErrors = {};
-    if (!formValues.name) newErrors.name = "Name is required.";
-    if (!formValues.api_key) newErrors.api_key = "API key is required.";
-    if (!formValues.password) newErrors.password = "Password is required.";
-    if (!formValues.domain) newErrors.domain = "Domain is required.";
-    if (!formValues.priority_id) newErrors.priority_id = "Priority is required.";
-    if (!formValues.audio_id) newErrors.audio_id = "Audio is required.";
-    if (!formValues.description) newErrors.description = "Description is required.";
-    if (!formValues.subject) newErrors.subject = "Subject is required.";
-    if (!formValues.status_id) newErrors.status_id = "Status is required.";
-    if (!formValues.source_id) newErrors.source_id = "Source is required.";
-    if (!formValues.custom_post_field) newErrors.custom_post_field = "Custom post field is required.";
+    if (!formData.name) newErrors.name = "Name is required.";
+    if (!formData.api_key) newErrors.api_key = "API key is required.";
+    if (!formData.password) newErrors.password = "Password is required.";
+    if (!formData.domain) newErrors.domain = "Domain is required.";
+    if (!formData.priority_id) newErrors.priority_id = "Priority is required.";
+    if (!formData.audio_id) newErrors.audio_id = "Audio is required.";
+    if (!formData.description) newErrors.description = "Description is required.";
+    if (!formData.subject) newErrors.subject = "Subject is required.";
+    if (!formData.status_id) newErrors.status_id = "Status is required.";
+    if (!formData.source_id) newErrors.source_id = "Source is required.";
+    if (!formData.custom_post_field) newErrors.custom_post_field = "Custom post field is required.";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -65,12 +140,12 @@ const FreshDeskForm = ({
     } 
 
     // Save or submit form data
-    console.log("Form data:", formValues);
+    console.log("Form data:", formData);
     save(nodeLabel);
     // Clear errors and form values
     setErrors({});
-    setFormValues({
-      ...formValues,
+    setFormData({
+      ...formData,
       api_key: "",
       password: "",
       domain: "",
@@ -100,7 +175,7 @@ const FreshDeskForm = ({
             type="text"
             name="name"
             placeholder="Enter the name"
-            value={formValues.name}
+            value={formData.nm}
             onChange={handleInputChange}
           />
           {errors.name && <div className="error-msg">{errors.name}</div>}
@@ -112,7 +187,7 @@ const FreshDeskForm = ({
             type="text"
             name="api_key"
             placeholder="Enter the api key"
-            value={formValues.api_key}
+            value={formData.api_key}
             onChange={handleInputChange}
           />
           {errors.api_key && <div className="error-msg">{errors.api_key}</div>}
@@ -124,7 +199,7 @@ const FreshDeskForm = ({
             type="text"
             name="password"
             placeholder="Enter the password"
-            value={formValues.password}
+            value={formData.password}
             onChange={handleInputChange}
           />
           {errors.password && <div className="error-msg">{errors.password}</div>}
@@ -136,7 +211,7 @@ const FreshDeskForm = ({
             type="text"
             name="domain"
             placeholder="Enter the domain"
-            value={formValues.domain}
+            value={formData.domain}
             onChange={handleInputChange}
           />
           {errors.domain && <div className="error-msg">{errors.domain}</div>}
@@ -147,7 +222,7 @@ const FreshDeskForm = ({
           <select
             className="input-select"
             name="priority_id"
-            value={formValues.priority_id}
+            value={formData.priority_id}
             onChange={handleInputChange}
           >
             <option value="">Select the priority</option>
@@ -163,18 +238,18 @@ const FreshDeskForm = ({
             Send audio file:<span className="star">*</span>
           </label>
           <select
-            className="input-select"
-            name="audio_id"
-            value={formValues.audio_id}
-            onChange={handleInputChange}
-          >
-            <option value="">Select the audio File</option>
-            {[...Array(10)].map((_, i) => (
-              <option key={i + 1} value={i + 1}>
-                {i + 1}
-              </option>
-            ))}
-          </select>
+                className="input-select"
+                name="audio"
+                value={formData.audio}
+                onChange={handleInputChange}
+              >
+                <option value="">Select the audio</option>
+                {audioOptions.map((audio, index) => (
+                  <option key={index} value={audio.auni}>
+                    {audio.anm}
+                  </option>
+                ))}
+              </select>
           {errors.audio_id && <div className="error-msg">{errors.audio_id}</div>}
           
           <label>
@@ -183,7 +258,7 @@ const FreshDeskForm = ({
           <textarea
             name="description"
             placeholder="Enter the Ticket Message"
-            value={formValues.description}
+            value={formData.description}
             onChange={handleInputChange}
             rows="6"
             cols="40"
@@ -196,7 +271,7 @@ const FreshDeskForm = ({
           <textarea
             name="subject"
             placeholder="Enter the subject"
-            value={formValues.subject}
+            value={formData.subject}
             onChange={handleInputChange}
             rows="3"
             cols="40"
@@ -209,7 +284,7 @@ const FreshDeskForm = ({
           <select
             className="input-select"
             name="status_id"
-            value={formValues.status_id}
+            value={formData.status_id}
             onChange={handleInputChange}
           >
             <option value="">Select...</option>
@@ -227,7 +302,7 @@ const FreshDeskForm = ({
           <select
             className="input-select"
             name="source_id"
-            value={formValues.source_id}
+            value={formData.source_id}
             onChange={handleInputChange}
           >
             <option value="">Select...</option>
@@ -245,7 +320,7 @@ const FreshDeskForm = ({
           <textarea
             name="custom_post_field"
             placeholder="Enter the post field"
-            value={formValues.custom_post_field}
+            value={formData.custom_post_field}
             onChange={handleInputChange}
             rows="6"
             cols="40"

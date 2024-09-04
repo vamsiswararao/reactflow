@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
+const apiUrl = process.env.REACT_APP_API_URL;
+
 
 const WebhookForm = ({
   nodeLabel,
@@ -10,64 +12,183 @@ const WebhookForm = ({
   deleteNode,
   removeForm,
   copyNode,
+  node,
+  flow_id,
+  save
 }) => {
+  const [formData, setFormData] = useState({
+    lml: "66c7088544596",
+    app_id: node.data.app_id,
+    // "5c93b0a9b0810",
+    flow_id: flow_id,
+    inst_id: node.id,
+    nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+    url: "",
+    mthod: "Get",
+    prams: [{ key: "", val: "" }],
+    headers: [{ key: "", val: "" }],
+    json_text: "",
+    des: "",
+  });
+  const [errors, setErrors] = useState({});
+
+
+
+  useEffect(() => {
+    const fetchAnnouncementData= async () => {
+      try {
+        const webResponse = await fetch(`${apiUrl}/app_get_data_whook`,
+           {
+           method: "POST", // Specify the POST method
+          headers: {
+            "Content-Type": "application/json", // Ensure the content type is JSON
+          },
+          body: JSON.stringify({
+            lml: "66c7088544596",
+            flow_id: "66c708df247df", // Use the provided flow_id
+            app_id: node.data.app_id, // Use the provided app_id
+            inst_id: node.id, // Use the provided inst_id
+          }),
+        }
+        );
+        const webData = await webResponse.json();
+        //console.log(announcementData.resp.app_data)
+        const webFinalData= webData.resp.app_data
+        console.log(webFinalData)
+        if (!webResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+
+        if(webData.resp.error_code==="0"){
+  
+        setFormData((prevData) => ({
+          
+           lml: "66c7088544596",
+          app_id: node.data.app_id,
+          flow_id: flow_id,
+          inst_id: node.id,
+          nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+          url: webFinalData.url,
+          mthod: webFinalData.url || "Get",
+          prams: webFinalData.prams || [{ key: "", val: "" }],
+          headers: webFinalData.headers || [{ key: "", val: "" }],
+          json_text: webFinalData.json_text,
+          des: webFinalData.des,// Example of dynamic data usage
+        }));
+
+      }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    
+  
+    fetchAnnouncementData();
+  }, [flow_id, nodeLabel, node]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    if (name === "nm") {
+      handleLabelChange(e); // Call the prop function to update nodeLabel in parent component
+    }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
   const [isToggled, setIsToggled] = useState(false);
-  const [params, setParams] = useState([{ key: "", value: "" }]);
-  const [headers, setHeaders] = useState([{ key: "", value: "" }]);
-  const [selectedMethod, setSelectedMethod] = useState("Get");
-  const [url, setUrl] = useState("");
-  const [description, setDescription] = useState("");
+  const [prams, setParams] = useState([{ key: "", val: "" }]);
+  const [headers, setHeaders] = useState([{ key: "", val: "" }]);
 
   const handleToggle = () => {
     setIsToggled(!isToggled);
   };
 
   const handleAddParam = () => {
-    setParams([...params, { key: "", value: "" }]);
+    setParams([...prams, { key: "", val: "" }]);
+    setFormData({
+      ...formData,
+      params: [...formData.prams, { key: "", val: "" }],
+    });
   };
 
   const handleParamChange = (index, e) => {
-    const updatedParams = [...params];
+    const updatedParams = [...prams];
     updatedParams[index][e.target.name] = e.target.value;
     setParams(updatedParams);
+    setFormData({ ...formData, prams: updatedParams });
   };
 
   const handleRemoveParam = (index) => {
-    const updatedParams = [...params];
+    const updatedParams = [...prams];
     updatedParams.splice(index, 1);
     setParams(updatedParams);
+    setFormData({ ...formData, headers: updatedParams });
   };
 
   const handleAddHeader = () => {
-    setHeaders([...headers, { key: "", value: "" }]);
+    setHeaders([...headers, { key: "", val: "" }]);
+    setFormData({
+      ...formData,
+      headers: [...formData.headers, { key: "", val: "" }],
+    });
   };
 
   const handleHeaderChange = (index, e) => {
     const updatedHeaders = [...headers];
     updatedHeaders[index][e.target.name] = e.target.value;
     setHeaders(updatedHeaders);
+    setFormData({ ...formData, headers: updatedHeaders });
   };
 
   const handleRemoveHeader = (index) => {
     const updatedHeaders = [...headers];
     updatedHeaders.splice(index, 1);
     setHeaders(updatedHeaders);
+    setFormData({ ...formData, headers: updatedHeaders });
   };
 
-  const handleMethodChange = (e) => {
-    setSelectedMethod(e.target.value);
+  const validateForm = () => {
+    console.log(formData.nm)
+    const newErrors = {};
+    if (!formData.nm) newErrors.name = "Name is required";
+    if (!formData.url)
+      newErrors.url = "url  is required";
+    if (!formData.mthod)
+      newErrors.mthod = "Mehod is required";
+    return newErrors;
   };
+  const handleSave = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length === 0) {
+      setErrors({})
+     console.log(formData)
+      try {
+        const response = await fetch(`${apiUrl}/app_set_data_whook`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+        const data = await response.json();
+        console.log(data);
+        if (!response.ok) {
+          throw new Error("Failed to save data");
+        }
 
-  const handleSave = () => {
-    const formData = {
-      nodeLabel,
-      url,
-      selectedMethod,
-      params,
-      headers,
-      description,
-    };
-    console.log(formData);
+        console.log("Form Data Saved:", formData);
+        save(nodeLabel); // Call the save handler from props
+      } catch (error) {
+        console.error("Error saving data:", error);
+      }
+    } else {
+      setErrors(formErrors);
+    }
   };
 
   const Params = () => (
@@ -84,22 +205,24 @@ const WebhookForm = ({
         Params
       </div>
       <div className="params-container">
-        {params.map((param, index) => (
+        {prams.map((param, index) => (
           <div key={index} className="params">
-            <label style={{ marginRight: '5px' }}>Key :</label>
+            <label style={{ marginRight: "5px" }}>Key :</label>
             <input
-              style={{ width: '75px', marginRight: '5px' }}
+              style={{ width: "75px", marginRight: "5px" }}
               type="text"
               name="key"
               value={param.key}
               onChange={(e) => handleParamChange(index, e)}
             />
-            <label style={{ marginLeft: '10px', marginRight: '5px' }}>Value :</label>
+            <label style={{ marginLeft: "10px", marginRight: "5px" }}>
+              Value :
+            </label>
             <input
-              style={{ width: '75px', marginRight: '5px' }}
+              style={{ width: "75px", marginRight: "5px" }}
               type="text"
-              name="value"
-              value={param.value}
+              name="val"
+              value={param.val}
               onChange={(e) => handleParamChange(index, e)}
             />
             {index === 0 ? (
@@ -110,7 +233,7 @@ const WebhookForm = ({
                   marginTop: "8px",
                   marginRight: "5px",
                   height: "25px",
-                  width: '20px'
+                  width: "20px",
                 }}
               >
                 +
@@ -123,7 +246,7 @@ const WebhookForm = ({
                   marginTop: "8px",
                   marginRight: "5px",
                   height: "25px",
-                  width: '20px'
+                  width: "20px",
                 }}
               >
                 <RxCross2 />
@@ -146,20 +269,22 @@ const WebhookForm = ({
       <div className="params-container">
         {headers.map((header, index) => (
           <div key={index} className="params">
-            <label style={{ marginRight: '5px' }}>Key :</label>
+            <label style={{ marginRight: "5px" }}>Key :</label>
             <input
-              style={{ width: '75px', marginRight: '5px' }}
+              style={{ width: "75px", marginRight: "5px" }}
               type="text"
               name="key"
               value={header.key}
               onChange={(e) => handleHeaderChange(index, e)}
             />
-            <label style={{ marginLeft: '10px', marginRight: '5px' }}>Value :</label>
+            <label style={{ marginLeft: "10px", marginRight: "5px" }}>
+              Value :
+            </label>
             <input
-              style={{ width: '75px', marginRight: '5px' }}
+              style={{ width: "75px", marginRight: "5px" }}
               type="text"
-              name="value"
-              value={header.value}
+              name="val"
+              value={header.val}
               onChange={(e) => handleHeaderChange(index, e)}
             />
             {index === 0 ? (
@@ -169,8 +294,8 @@ const WebhookForm = ({
                   background: "Green",
                   marginTop: "8px",
                   marginRight: "5px",
-                  height: '25px',
-                  width: '20px'
+                  height: "25px",
+                  width: "20px",
                 }}
               >
                 +
@@ -183,7 +308,7 @@ const WebhookForm = ({
                   marginTop: "8px",
                   marginRight: "5px",
                   height: "25px",
-                  width: '20px'
+                  width: "20px",
                 }}
               >
                 <RxCross2 />
@@ -210,9 +335,11 @@ const WebhookForm = ({
           <input
             type="text"
             placeholder="Enter the Name"
-            value={nodeLabel}
-            onChange={handleLabelChange}
+            value={formData.nm}
+            name="nm"
+            onChange={handleInputChange}
           />
+          {errors.name && <p className="error">{errors.name}</p>}
           <label>
             Url:<span className="star">*</span>
           </label>
@@ -220,9 +347,11 @@ const WebhookForm = ({
             placeholder="write the url"
             rows="4"
             cols="40"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            name="url"
+            value={formData.url}
+            onChange={handleInputChange}
           />
+          {errors.url && <p className="error">{errors.url}</p>}
           <div style={{ display: "flex", width: "200px" }}>
             <label>
               Method:<span className="star">*</span>
@@ -231,35 +360,42 @@ const WebhookForm = ({
           <div className="radio">
             <input
               type="radio"
-              name="method"
+              name="mthod"
               value="Get"
-              checked={selectedMethod === "Get"}
-              onChange={handleMethodChange}
+              checked={formData.mthod === "Get"}
+              onChange={handleInputChange}
             />
             <span>GET</span>
             <input
               type="radio"
-              name="method"
+              name="mthod"
               value="Post"
-              checked={selectedMethod === "Post"}
-              onChange={handleMethodChange}
+              checked={formData.mthod === "Post"}
+              onChange={handleInputChange}
             />
             <span>POST</span>
             <input
               type="radio"
-              name="method"
+              name="mthod"
               value="Json"
-              checked={selectedMethod === "Json"}
-              onChange={handleMethodChange}
+              checked={formData.mthod === "Json"}
+              onChange={handleInputChange}
             />
             <span>Json</span>
           </div>
+          {errors.mthod && <p className="error">{errors.mthod}</p>}
           <div>
-            {selectedMethod === "Json" && (
+            {formData.mthod === "Json" && (
               <div style={{ display: "flex", alignItems: "center" }}>
-                <p style={{ marginRight: "10px", marginLeft: "10px" }}>key-value</p>
+                <p style={{ marginRight: "10px", marginLeft: "10px" }}>
+                  key-value
+                </p>
                 <div className="toggle-switch" onClick={handleToggle}>
-                  <div className={`switch ${isToggled ? "toggled" : "non-toggled"}`}>
+                  <div
+                    className={`switch ${
+                      isToggled ? "toggled" : "non-toggled"
+                    }`}
+                  >
                     {isToggled ? (
                       <i className="icon-on"></i> // Icon when toggled on
                     ) : (
@@ -271,13 +407,19 @@ const WebhookForm = ({
               </div>
             )}
 
-            {selectedMethod === "Json" ? (
+            {formData.mthod === "Json" ? (
               !isToggled ? (
                 <Params />
               ) : (
                 <>
                   <label>Json-text:</label>
-                  <textarea placeholder="write the text" rows="4" cols="40" />
+                  <textarea
+                    placeholder="write the text"
+                    value="json_text"
+                    onChange={handleInputChange}
+                    rows="4"
+                    cols="40"
+                  />
                 </>
               )
             ) : (
@@ -289,8 +431,9 @@ const WebhookForm = ({
                 placeholder="write the description"
                 rows="4"
                 cols="40"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                name="des"
+                value={formData.des}
+                onChange={handleInputChange}
               />
             </div>
           </div>

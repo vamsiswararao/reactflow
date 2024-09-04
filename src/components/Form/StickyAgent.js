@@ -18,7 +18,7 @@ const StickyAgentForm = ({
 }) => {
 
   const [formData, setFormData] = useState({
-    lml: "66b9dee3ef1ca",
+    lml: "66c7088544596",
     app_id: node.data.app_id,
     // "5c93b0a9b0810",
     flow_id: flow_id,
@@ -33,7 +33,6 @@ const StickyAgentForm = ({
 
 
   const [audioOptions, setAudioOptions] = useState([]); 
-  const [connectOptions, setConnectOptions] = useState([]); 
   const [departmentsOptions, setDepartmentsOptions] = useState([]); 
 
   const [errors, setErrors] = useState({});
@@ -52,7 +51,7 @@ const StickyAgentForm = ({
             "Content-Type": "application/json", // Ensure the content type is JSON
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: "66c7088544596",
             flow_id: "66c708df247df", // Use the provided flow_id
             app_id: node.data.app_id, // Use the provided app_id
             inst_id: node.id, // Use the provided inst_id
@@ -62,44 +61,27 @@ const StickyAgentForm = ({
         const stickyData = await stickyResponse.json();
         //console.log(announcementData.resp.app_data)
         const annData= stickyData.resp.app_data
+        console.log(annData)
         if (!stickyResponse.ok) {
           throw new Error("Failed to fetch data");
         }
   
+
+        if(stickyData.resp.error_code==="0"){
         setFormData((prevData) => ({
           
-           lml: "66b9dee3ef1ca",
+           lml: "66c7088544596",
           app_id: node.data.app_id,
           flow_id: flow_id,
           inst_id: node.id,
           nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
-          audio: annData.audio_id, // Example of dynamic data usage
-          hold_audio:annData.hold_audio,
-          connect_to:annData.connect_to,
-          dep_uniq: annData.dep_uniq,
-          des: annData.des,
+          audio: annData.audio_id || "", // Example of dynamic data usage
+          hold_audio:annData.hold_audio || "",
+          connect_to:annData.connect_to|| "",
+          dep_uniq: annData.dep_uniq || "",
+          des: annData.des || "",
         }));
-                // Fetch connect options with the same data
-                const connectResponse = await fetch(`${apiUrl}/app_get_employees`, {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    lml:"66b9dee3ef1ca",
-                    flow_id: flow_id,
-                    app_id: node.data.app_id,
-                    inst_id: node.id,
-                  }),
-                });
-        
-                if (!connectResponse.ok) {
-                  throw new Error("Failed to fetch audio options");
-                }
-        
-                const connectData = await connectResponse.json();
-                setConnectOptions(connectData.resp.aud_data || []);
-
+      }
 
                 const audioResponse = await fetch(`${apiUrl}/app_get_audios`, {
                   method: "POST",
@@ -107,7 +89,7 @@ const StickyAgentForm = ({
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    lml:"66b9dee3ef1ca",
+                    lml:"66c7088544596",
                     flow_id: flow_id,
                     app_id: node.data.app_id,
                     inst_id: node.id,
@@ -130,7 +112,7 @@ const StickyAgentForm = ({
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    lml:"66b9dee3ef1ca",
+                    lml:"66c7088544596",
                     flow_id: flow_id,
                     app_id: node.data.app_id,
                     inst_id: node.id,
@@ -143,6 +125,7 @@ const StickyAgentForm = ({
         
                 const departmentsData = await departmentsResponse.json();
                 setDepartmentsOptions(departmentsData.resp.aud_data || []);
+                console.log(departmentsData.resp.aud_data)
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -263,12 +246,10 @@ const StickyAgentForm = ({
                 value={formData.connect_to}
                 onChange={handleInputChange}
               >
-                <option value="">Select the connect</option>
-                {connectOptions.map((connect, index) => (
-                  <option key={index} value={connect.empuni}>
-                    {connect.empnm}
-                  </option>
-                ))}
+                <option value="">Select... </option>
+                <option value="11">Last Dialed answered</option>
+                <option value="12">Last Dialed Not answered</option>
+                <option value="13">Last Dialed</option>
               </select>
           <label>Department:<span className="star">*</span></label>
           <div className="line">
@@ -278,10 +259,10 @@ const StickyAgentForm = ({
                 value={formData.dep_uniq}
                 onChange={handleInputChange}
               >
-                <option value="">Select the connect</option>
+                <option value="">Select the department</option>
                 {departmentsOptions.map((dep, index) => (
-                  <option key={index} value={dep.empuni}>
-                    {dep.empnm}
+                  <option key={index} value={dep.mu}>
+                    {dep.dn}
                   </option>
                 ))}
               </select>

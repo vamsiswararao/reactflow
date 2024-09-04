@@ -21,7 +21,7 @@ const VoicemailForm = ({
 
 }) => {
   const [formData, setFormData] = useState({
-    lml: "66b9dee3ef1ca",
+    lml: "66c7088544596",
     app_id:node.data.app_id ,
       // "5c93b0a9b0810",
     flow_id: flow_id,
@@ -38,39 +38,40 @@ const VoicemailForm = ({
   useEffect(() => {
     const fetchAnnouncementData= async () => {
       try {
-        const announcementResponse = await fetch(`${apiUrl}/app_get_data_vmail`,
+        const voiceMailResponse = await fetch(`${apiUrl}/app_get_data_vmail`,
            {
            method: "POST", // Specify the PUT method
           headers: {
             "Content-Type": "application/json", // Ensure the content type is JSON
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: "66c7088544596",
             flow_id: "66c708df247df", // Use the provided flow_id
             app_id: node.data.app_id, // Use the provided app_id
             inst_id: node.id, // Use the provided inst_id
           }),
         }
         );
-        const announcementData = await announcementResponse.json();
+        const data = await voiceMailResponse.json();
         //console.log(announcementData.resp.app_data)
-        const annData= announcementData.resp.app_data
-        if (!announcementResponse.ok) {
+        const voiceData= data.resp.app_data
+        if (!voiceMailResponse.ok) {
           throw new Error("Failed to fetch data");
         }
-  
+     
+        if(voiceData.resp.error_code==="0"){
         setFormData((prevData) => ({
           
-           lml: "66b9dee3ef1ca",
+           lml: "66c7088544596",
           app_id: node.data.app_id,
           flow_id: flow_id,
           inst_id: node.id,
           nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
-          audio: annData.audio, // Example of dynamic data usage
-          record_dur: annData.record, // Example of dynamic data usage
-          des: annData.des, // Example of dynamic data usage
+          audio: voiceData.audio, // Example of dynamic data usage
+          record_dur: voiceData.record, // Example of dynamic data usage
+          des: voiceData.des, // Example of dynamic data usage
         }));
-
+      }
                 // Fetch audio options with the same data
                 const audioResponse = await fetch(`${apiUrl}/app_get_audios`, {
                   method: "POST",
@@ -78,7 +79,7 @@ const VoicemailForm = ({
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    lml:"66b9dee3ef1ca",
+                    lml:"66c7088544596",
                     flow_id: flow_id,
                     app_id: node.data.app_id,
                     inst_id: node.id,
@@ -184,11 +185,12 @@ const VoicemailForm = ({
           {errors.selectedValue && <p className="error">{errors.selectedValue}</p>}
           <label>Recording duration:<span className="star">*</span></label>
           <input
-            type="text"
+            type="number"
             name="record_dur"
             placeholder="Enter the repeat count"
             value={formData.record_dur }
             onChange={handleInputChange}
+            min="0"
           />
           {errors.record_dur && <p className="error">{errors.record_dur}</p>}
           <label>Remarks</label>

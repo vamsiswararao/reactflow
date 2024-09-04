@@ -17,7 +17,7 @@ const EmailFrom = ({
 }) => {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    lml: "66b9dee3ef1ca",
+    lml: "66c7088544596",
     app_id: node.data.app_id,
     flow_id: flow_id,
     inst_id: node.id,
@@ -41,7 +41,7 @@ const EmailFrom = ({
             "Content-Type": "application/json", // Ensure the content type is JSON
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: "66c7088544596",
             flow_id: "66c708df247df", // Use the provided flow_id
             app_id: node.data.app_id, // Use the provided app_id
             inst_id: node.id, // Use the provided inst_id
@@ -55,11 +55,11 @@ const EmailFrom = ({
         if (!announcementResponse.ok) {
           throw new Error("Failed to fetch data");
         }
-  
+        if(emailDataList.resp.error_code==="0"){
         setFormData((prevData) => ({
           
           
-          lml: "66b9dee3ef1ca",
+          lml: "66c7088544596",
           app_id: node.data.app_id,
           flow_id: flow_id,
           inst_id: node.id,
@@ -69,28 +69,29 @@ const EmailFrom = ({
           msg: emailData.msg,
           des:emailData.des,
         }));
+      }
 
                 // Fetch audio options with the same data
-                const audioResponse = await fetch(`${apiUrl}/app_get_emails`, {
+                const toResponse = await fetch(`${apiUrl}/app_get_emails`, {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    lml:"66b9dee3ef1ca",
+                    lml:"66c7088544596",
                     flow_id: flow_id,
                     app_id: node.data.app_id,
                     inst_id: node.id,
                   }),
                 });
         
-                if (!audioResponse.ok) {
+                if (!toResponse.ok) {
                   throw new Error("Failed to fetch audio options");
                 }
         
-                const audioData = await audioResponse.json();
-                setToOptions(audioData.resp.aud_data || []);
-                //console.log(audioData.resp.aud_data);
+                const toData = await toResponse.json();
+                setToOptions(toData.resp.aud_data || []);
+                console.log(toData.resp.aud_data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -178,7 +179,7 @@ const EmailFrom = ({
                 value={formData.to}
                 onChange={handleInputChange}
               >
-                <option value="">Select the audio</option>
+                <option value="">Select...</option>
                 {toOptions.map((to, index) => (
                   <option key={index} value={to.uni}>
                     {to.mob}

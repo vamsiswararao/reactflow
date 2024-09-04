@@ -1,11 +1,40 @@
 import React, { useEffect, useState } from "react";
+import Select from "react-select";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
-import Audio from "./Audio"
-
+import Audio from "./Audio";
 import "./Form.css";
+
 const apiUrl = process.env.REACT_APP_API_URL;
+
+// Define custom styles for react-select
+const customStyles = {
+  menu: (provided) => ({
+    ...provided,
+    zIndex: 9999, // Ensure dropdown is above other elements
+    maxHeight: "150px", // Adjust as needed
+  }),
+  menuList: (provided) => ({
+    ...provided,
+    maxHeight: "120px", // Adjust as needed
+    overflowY: "auto",
+  }),
+  control: (provided) => ({
+    ...provided,
+    minHeight: "28px", // Decrease height of the select control
+    height: "28px", // Decrease height of the select control
+  }),
+  
+  placeholder: (provided) => ({
+    ...provided,
+    fontSize: "14px", // Adjust placeholder font size
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    fontSize: "14px", // Adjust selected value font size
+  }),
+};
 
 const Announcement = ({
   node,
@@ -18,92 +47,86 @@ const Announcement = ({
   flow_id,
 }) => {
   const [formData, setFormData] = useState({
-    lml: "66b9dee3ef1ca",
+    lml: "66c7088544596",
     app_id: node.data.app_id,
-    // "5c93b0a9b0810",
     flow_id: flow_id,
     inst_id: node.id,
-    nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+    nm: nodeLabel || "",
     audio: "",
     repeat: "",
     des: "",
   });
-  const [audioOptions, setAudioOptions] = useState([]); 
+  const [audioOptions, setAudioOptions] = useState([]);
   const [errors, setErrors] = useState({});
 
-  // Fetch data from dummy URL on component mount
   useEffect(() => {
-    const fetchAnnouncementData= async () => {
+    const fetchAnnouncementData = async () => {
       try {
-        const announcementResponse = await fetch(`${apiUrl}/app_get_data_anoncment`,
-           {
-           method: "POST", // Specify the PUT method
+        const announcementResponse = await fetch(`${apiUrl}/app_get_data_anoncment`, {
+          method: "POST",
           headers: {
-            "Content-Type": "application/json", // Ensure the content type is JSON
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
-            flow_id: "66c708df247df", // Use the provided flow_id
-            app_id: node.data.app_id, // Use the provided app_id
-            inst_id: node.id, // Use the provided inst_id
+            lml: "66c7088544596",
+            flow_id: flow_id,
+            app_id: node.data.app_id,
+            inst_id: node.id,
           }),
-        }
-        );
+        });
         const announcementData = await announcementResponse.json();
-        //console.log(announcementData.resp.app_data)
-        const annData= announcementData.resp.app_data
         if (!announcementResponse.ok) {
           throw new Error("Failed to fetch data");
         }
-  
-        setFormData((prevData) => ({
-          
-           lml: "66b9dee3ef1ca",
-          app_id: node.data.app_id,
-          flow_id: flow_id,
-          inst_id: node.id,
-          nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
-          audio: annData.audio_id, // Example of dynamic data usage
-          repeat: annData.repeat, // Example of dynamic data usage
-          des: annData.des, // Example of dynamic data usage
-        }));
 
-                // Fetch audio options with the same data
-                const audioResponse = await fetch(`${apiUrl}/app_get_audios`, {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    lml:"66b9dee3ef1ca",
-                    flow_id: flow_id,
-                    app_id: node.data.app_id,
-                    inst_id: node.id,
-                  }),
-                });
-        
-                if (!audioResponse.ok) {
-                  throw new Error("Failed to fetch audio options");
-                }
-        
-                const audioData = await audioResponse.json();
-                setAudioOptions(audioData.resp.aud_data || []);
-                //console.log(audioData.resp.aud_data);
+        if (announcementData.resp.error_code === "0") {
+          const annData = announcementData.resp.app_data;
+          setFormData((prevData) => ({
+            lml: "66c7088544596",
+            app_id: node.data.app_id,
+            flow_id: flow_id,
+            inst_id: node.id,
+            nm: nodeLabel || "",
+            audio: annData.audio_id || "",
+            repeat: annData.repeat || "",
+            des: annData.des || "",
+          }));
+        }
+
+        const audioResponse = await fetch(`${apiUrl}/app_get_audios`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            lml: "66c7088544596",
+            flow_id: flow_id,
+            app_id: node.data.app_id,
+            inst_id: node.id,
+          }),
+        });
+        if (!audioResponse.ok) {
+          throw new Error("Failed to fetch audio options");
+        }
+        const audioData = await audioResponse.json();
+        setAudioOptions(
+          audioData.resp.aud_data.map((audio) => ({
+            value: audio.auni,
+            label: audio.anm,
+          })) || []
+        );
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    
-  
     fetchAnnouncementData();
   }, [flow_id, nodeLabel, node]);
-  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "nm") {
-      handleLabelChange(e); // Call the prop function to update nodeLabel in parent component
+      handleLabelChange(e);
     }
     setFormData((prevData) => ({
       ...prevData,
@@ -111,21 +134,25 @@ const Announcement = ({
     }));
   };
 
+  const handleSelectChange = (selectedOption) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      audio: selectedOption ? selectedOption.value : "",
+    }));
+  };
+
   const validateForm = () => {
-    console.log(formData.nm)
     const newErrors = {};
     if (!formData.nm) newErrors.name = "Name is required";
-    if (!formData.audio)
-      newErrors.selectedValue = "Audio selection is required";
-    if (!formData.repeat)
-      newErrors.repeatCount = "Repeat Count is required";
+    if (!formData.audio) newErrors.selectedValue = "Audio selection is required";
+    if (!formData.repeat) newErrors.repeatCount = "Repeat Count is required";
     return newErrors;
   };
 
   const handleSave = async () => {
     const formErrors = validateForm();
     if (Object.keys(formErrors).length === 0) {
-      setErrors({})
+      setErrors({});
       try {
         const response = await fetch(`${apiUrl}/app_set_data_anoncment`, {
           method: "POST",
@@ -135,13 +162,12 @@ const Announcement = ({
           body: JSON.stringify(formData),
         });
         const data = await response.json();
-        console.log(data);
         if (!response.ok) {
           throw new Error("Failed to save data");
         }
 
         console.log("Form Data Saved:", formData);
-        save(nodeLabel); // Call the save handler from props
+        save(nodeLabel);
       } catch (error) {
         console.error("Error saving data:", error);
       }
@@ -185,20 +211,15 @@ const Announcement = ({
               Audio:<span className="star">*</span>
             </label>
             <div style={{ display: "flex" }}>
-            <select
+              <Select
                 className="input-select"
-                name="audio"
-                value={formData.audio}
-                onChange={handleInputChange}
-              >
-                <option value="">Select the audio</option>
-                {audioOptions.map((audio, index) => (
-                  <option key={index} value={audio.auni}>
-                    {audio.anm}
-                  </option>
-                ))}
-              </select>
-            <button
+                options={audioOptions}
+                value={audioOptions.find((option) => option.value === formData.audio)}
+                onChange={handleSelectChange}
+                placeholder="Select the audio"
+                styles={customStyles} // Apply custom styles
+              />
+              <button
                 style={{
                   background: "green",
                   marginLeft: "5px",
@@ -209,9 +230,7 @@ const Announcement = ({
                 +
               </button>
             </div>
-            {errors.selectedValue && (
-              <p className="error">{errors.selectedValue}</p>
-            )}
+            {errors.selectedValue && <p className="error">{errors.selectedValue}</p>}
             <label>
               Repeat count:<span className="star">*</span>
             </label>
@@ -221,10 +240,9 @@ const Announcement = ({
               name="repeat"
               value={formData.repeat}
               onChange={handleInputChange}
+              min="0"
             />
-            {errors.repeatCount && (
-              <p className="error">{errors.repeatCount}</p>
-            )}
+            {errors.repeatCount && <p className="error">{errors.repeatCount}</p>}
             <label>Remarks</label>
             <textarea
               placeholder="write the remarks"
@@ -249,7 +267,7 @@ const Announcement = ({
           </div>
         </div>
       </div>
-      {showPopup && <Audio handleClosePopup={handleClosePopup}/>}
+      {showPopup && <Audio handleClosePopup={handleClosePopup} />}
     </>
   );
 };

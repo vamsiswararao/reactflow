@@ -18,7 +18,7 @@ const BitrixForm = ({
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
-    lml: "66b9dee3ef1ca",
+    lml: "66c7088544596",
     app_id: node.data.app_id,
     flow_id: "66c708df247df",
     inst_id: node.id,
@@ -26,7 +26,7 @@ const BitrixForm = ({
     url: "",
     additional_prm: "",
     crm_create: isToggled ? "yes" : "no",
-    crm_entity_type: "candyce35t45w5w54w5gw4fwds4d",
+    crm_entity_type: "",
     mislanis_to: "",
   });
 
@@ -47,7 +47,7 @@ const BitrixForm = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: "66c7088544596",
             flow_id,
             app_id: node.data.app_id,
             inst_id: node.id,
@@ -81,7 +81,7 @@ const BitrixForm = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: "66c7088544596",
             flow_id,
             app_id: node.data.app_id,
             inst_id: node.id,
@@ -94,22 +94,26 @@ const BitrixForm = ({
 
         const data = await response.json();
         const BitrixData= data.resp.app_data
-
+       console.log(data)
         
-        
+       if(data.resp.error_code==="0"){
         setFormData((prevData) => ({
           
-          lml: "66b9dee3ef1ca",
+          lml: "66c7088544596",
          app_id: node.data.app_id,
          flow_id: flow_id,
          inst_id: node.id,
          nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
-         url: BitrixData.url,
+         url: BitrixData.url || "",
          additional_prm: BitrixData.prams,
          crm_create: BitrixData.crm_create,
          crm_entity_type: BitrixData.CRM_ENTITY_TYPE,
          mislanis_to: findIdByName(assignMiscellaneous, BitrixData.mislanis_to_name),
        }));
+
+       }
+        
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -206,6 +210,7 @@ const BitrixForm = ({
           <textarea
             id="url"
             name="url"
+            type="url"
             placeholder="Enter the url"
             value={formData.url}
             onChange={handleInputChange}
@@ -267,7 +272,8 @@ const BitrixForm = ({
             value={formData.mislanis_to}
             onChange={handleInputChange}
           >
-            <option value="">Select the assign miscellaneous</option>
+            <option value="">Select...</option>
+            <option value="0">None</option>
             {assignMiscellaneous.map((mis, index) => (
               <option key={index} value={mis.empuni}>
                 {mis.empnm}

@@ -18,7 +18,7 @@ const ListManagers = ({
   save,
 }) => {
   const [formData, setFormData] = useState({
-    lml: "66b9dee3ef1ca",
+    lml: "66c7088544596",
     app_id: node.data.app_id,
     // "5c93b0a9b0810",
     flow_id: flow_id,
@@ -29,7 +29,7 @@ const ListManagers = ({
   });
 
   const [listData, setListData] = useState({
-    lml: "66b9dee3ef1ca",
+    lml: "66c7088544596",
     app_id: node.data.app_id,
     // "5c93b0a9b0810",
     flow_id: flow_id,
@@ -44,7 +44,7 @@ const ListManagers = ({
   useEffect(() => {
     const fetchAnnouncementData = async () => {
       try {
-        const announcementResponse = await fetch(
+        const managerResponse = await fetch(
           `${apiUrl}/app_get_data_lmanage`,
           {
             method: "POST", // Specify the PUT method
@@ -52,22 +52,22 @@ const ListManagers = ({
               "Content-Type": "application/json", // Ensure the content type is JSON
             },
             body: JSON.stringify({
-              lml: "66b9dee3ef1ca",
+              lml: "66c7088544596",
               flow_id: "66c708df247df", // Use the provided flow_id
               app_id: node.data.app_id, // Use the provided app_id
               inst_id: node.id, // Use the provided inst_id
             }),
           }
         );
-        const announcementData = await announcementResponse.json();
+        const data = await managerResponse.json();
         //console.log(announcementData.resp.app_data)
-        const managerData = announcementData.resp.app_data;
-        if (!announcementResponse.ok) {
+        const managerData = data.resp.app_data;
+        if (!managerResponse.ok) {
           throw new Error("Failed to fetch data");
         }
-
+        if(data.resp.error_code==="0"){
         setFormData((prevData) => ({
-          lml: "66b9dee3ef1ca",
+          lml: "66c7088544596",
           app_id: node.data.app_id,
           // "5c93b0a9b0810",
           flow_id: flow_id,
@@ -77,6 +77,7 @@ const ListManagers = ({
           action_typ: managerData.typ || "1",
         }));
 
+      }
         // Fetch audio options with the same data
         const audioResponse = await fetch(`${apiUrl}/app_get_lists_lmanage`, {
           method: "POST",
@@ -84,7 +85,7 @@ const ListManagers = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: "66c7088544596",
             flow_id: flow_id,
             app_id: node.data.app_id,
             inst_id: node.id,
@@ -233,7 +234,7 @@ const ListManagers = ({
               value={formData.list_id}
               onChange={handleInputChange}
             >
-              <option value="">Select the audio</option>
+              <option value="">Select...</option>
               {listOptions.map((list, index) => (
                 <option key={index} value={list.cluni}>
                   {list.clnm}

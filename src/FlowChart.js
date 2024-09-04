@@ -214,7 +214,6 @@ const FlowChart = () => {
     }));
     setPosition((pos) => ({ x: pos.x + 100, y: pos.y + 100 }));
     addDescription(`Added ${app_id}`);
-    console.log(app_id)
     const AppData = {
       lml: lml,
       flow_id: flow_id,
@@ -233,11 +232,9 @@ const FlowChart = () => {
         },
         body: JSON.stringify(AppData),
       });
-
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-
       const data = await response.json();
       console.log("Node saved successfully:", data);
       //toast(`Node data saved.`)
@@ -357,8 +354,8 @@ const FlowChart = () => {
 
         // Prepare the data to be sent in the DELETE request
         const requestData = {
-          lml: "66b9dee3ef1ca",
-          flow_id: "5c93b0a9b0810",
+          lml: lml,
+          flow_id: flow_id,
           app_id: selectedNode.data.app_id,
           inst_id: selectedNode.id,
         };
@@ -493,7 +490,7 @@ const FlowChart = () => {
       });
       const data = await response.json();
       console.log(data.resp)
-      if (data.response.status=== "SUCCESS") {
+      if (data.resp.status=== "SUCCESS") {
         console.log("Flow saved successfully:", data);
         toast(`Flow data saved.`);
         addDescription("Saved flow state")
@@ -564,6 +561,7 @@ const FlowChart = () => {
         save: save,
         copyNode: copyNode,
         flow_id: flow_id,
+        lml: lml,
       };
       switch (selectedNode.data.app_id) {
         case fixedNodeIds.Announcement:

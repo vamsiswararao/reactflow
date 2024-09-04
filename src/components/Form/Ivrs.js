@@ -14,13 +14,14 @@ const Ivrs = ({
   copyNode,
   save,
   flow_id,
+  lml
 }) => {
   const { data } = node;
   const { IvrsPorts } = data;
   const [port, setPort] = useState(IvrsPorts);
   const apiUrl = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
-    lml: "66b9dee3ef1ca",
+    lml: "66c7088544596",
     app_id: node.data.app_id,
     // "5c93b0a9b0810",
     flow_id: flow_id,
@@ -46,43 +47,45 @@ const Ivrs = ({
   useEffect(() => {
     const fetchAnnouncementData = async () => {
       try {
-        const announcementResponse = await fetch(`${apiUrl}/app_get_data_ivrs`,
+        const ivrsResponse = await fetch(`${apiUrl}/app_get_data_ivrs`,
            {
            method: "POST", // Specify the PUT method
           headers: {
             "Content-Type": "application/json", // Ensure the content type is JSON
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: "66c7088544596",
             flow_id: "66c708df247df", // Use the provided flow_id
             app_id: node.data.app_id, // Use the provided app_id
             inst_id: node.id, // Use the provided inst_id
           }),
         }
         );
-        const announcementData = await announcementResponse.json();
-        console.log(announcementData.resp.app_data)
-        const annData= announcementData.resp.app_data
-        if (!announcementResponse.ok) {
+        const data = await ivrsResponse.json();
+        console.log(data.resp.app_data)
+        const ivrsData= data.resp.app_data
+        if (!ivrsResponse.ok) {
           throw new Error("Failed to fetch data");
         }
+        if(data.resp.error_code==="0"){
 
         setFormData((prevData) => ({
 
-           lml: "66b9dee3ef1ca",
+           lml: "66c7088544596",
           app_id: node.data.app_id,
           flow_id: flow_id,
           inst_id: node.id,
           nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
-          audio:annData.audio,
-          Ivrs_ports: annData.ivrs_ports || port,
-          repeat_cnt: annData.retries, // Example of dynamic data usage
-          dial_time_out: annData.dto,
-          repeat_key: annData.repeat_key|| "0",
-          no_dtmf_audio: annData.nodt_audio,
-          invalid_dtmf_audio: annData.inv_audio,
+          audio:ivrsData.audio,
+          Ivrs_ports: ivrsData.ivrs_ports || port,
+          repeat_cnt: ivrsData.retries, // Example of dynamic data usage
+          dial_time_out: ivrsData.dto,
+          repeat_key: ivrsData.repeat_key|| "0",
+          no_dtmf_audio: ivrsData.nodt_audio,
+          invalid_dtmf_audio: ivrsData.inv_audio,
           des: "",
         }));
+      }
 
         // Fetch audio options with the same data
 
@@ -92,7 +95,7 @@ const Ivrs = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: lml,
             flow_id: flow_id,
             app_id: node.data.app_id,
             inst_id: node.id,
@@ -113,7 +116,7 @@ const Ivrs = ({
     };
 
     fetchAnnouncementData();
-  }, [flow_id, nodeLabel, node, apiUrl]);
+  }, [flow_id, nodeLabel, node, apiUrl,lml,port]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

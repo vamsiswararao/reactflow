@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const FlowTransferForm =({
     node,
@@ -11,26 +12,94 @@ const FlowTransferForm =({
     removeForm,
     save,
     copyNode,
-    flow_id
+    flow_id,
+    lml
 
   })=>{
 
     const [formData, setFormData] = useState({
+        lml:lml,
         app_id:node.data.app_id ,
       // "5c93b0a9b0810",
         flow_id: flow_id,
         inst_id:node.id,
-        name: nodeLabel || "", // Initialize with nodeLabel or an empty string
-        flow: "",
-        description: "",
+        nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+        flow_to: "",
+        des: "",
       });
-    
+      const [flowOptions, setFlowOptions] = useState([]); 
       const [errors, setErrors] = useState({});
-      const apiUrl = process.env.REACT_APP_API_URL;
-      console.log(apiUrl);
+
+      useEffect(() => {
+        const fetchAnnouncementData= async () => {
+          try {
+            const transferResponse = await fetch(`${apiUrl}/app_get_data_flowtrans`,
+               {
+               method: "POST", // Specify the PUT method
+              headers: {
+                "Content-Type": "application/json", // Ensure the content type is JSON
+              },
+              body: JSON.stringify({
+                lml:lml,
+                flow_id: "66c708df247df", // Use the provided flow_id
+                app_id: node.data.app_id, // Use the provided app_id
+                inst_id: node.id, // Use the provided inst_id
+              }),
+            }
+            );
+            const transferData = await transferResponse.json();
+            console.log(transferData)
+            const traData= transferData.resp.app_data
+            console.log(traData)
+            if (!transferResponse.ok) {
+              throw new Error("Failed to fetch data");
+            }
+      
+            setFormData((prevData) => ({
+              
+               lml: lml,
+              app_id: node.data.app_id,
+              flow_id: flow_id,
+              inst_id: node.id,
+              nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+              flow_to: traData.flow_uniq || "", // Example of dynamic data usage
+              des: traData.des || "", // Example of dynamic data usage
+            }));
+    
+                    // Fetch audio options with the same data
+                    const flowResponse = await fetch(`${apiUrl}/app_get_flows`, {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        lml:lml,
+                        flow_id: flow_id,
+                        app_id: node.data.app_id,
+                        inst_id: node.id,
+                      }),
+                    });
+            
+                    if (!flowResponse.ok) {
+                      throw new Error("Failed to fetch audio options");
+                    }
+            
+                    const flowData = await flowResponse.json();
+                    setFlowOptions(flowData.resp.ivrs_drpdwn || []);
+                    console.log(flowData);
+          } catch (error) {
+            console.error("Error fetching data:", error);
+          }
+        };
+    
+        
+      
+        fetchAnnouncementData();
+      }, [flow_id, nodeLabel, node,lml]);
+
       const handleInputChange = (e) => {
         const { name, value } = e.target;
-        if (name === "name") {
+        if (name === "nm") {
           handleLabelChange(e); // Call the prop function to update nodeLabel in parent component
         }    
         setFormData((prevData) => ({
@@ -41,46 +110,39 @@ const FlowTransferForm =({
     
       const validateForm = () => {
         const newErrors = {};
-        if (!formData.name) newErrors.name = "Name is required";
-        if (!formData.flow) newErrors.flow = "Flow selection is required";
+        if (!formData.nm) newErrors.name = "Name is required";
+        if (!formData.flow_to) newErrors.flow = "Flow selection is required";
         return newErrors;
       };
     
-      const handleSave = () => {
+      const handleSave = async () => {
         const formErrors = validateForm();
         if (Object.keys(formErrors).length === 0) {
-          console.log("Saved Data:", formData);
-          
-          // Adding the data to the dummy API
-          fetch(`${apiUrl}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              "lml" : "66b0db9cc12ec",
-              "nm" : "testing",
-              "remarks" : "ytewytfyjewcyffecyw",
-              "mtyp" : "66aa1b3e7e166",
-              "k" : "66ab27436a029",
-              "flw" : "5dfb230c2b44a"
-          }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              console.log("Success:", data); // You can handle the response data if needed
-              save(formData.name); // Use formData.name instead of nodeLabel
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-              // You can handle the error if needed
+          setErrors({})
+          try {
+            const response = await fetch(`${apiUrl}/app_set_data_flowtrans`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(formData),
             });
-
+            console.log(formData);
+            const data = await response.json();
+            console.log(data);
+            if (!response.ok) {
+              throw new Error("Failed to save data");
+            }
+    
+            console.log("Form Data Saved:", formData);
+            save(nodeLabel); // Call the save handler from props
+          } catch (error) {
+            console.error("Error saving data:", error);
+          }
         } else {
           setErrors(formErrors);
         }
       };
-
     return (
         <div className="announcement-container">
           <div className="form">
@@ -96,8 +158,8 @@ const FlowTransferForm =({
               <input
                 type="text"
                 placeholder="Enter the Name"
-                name="name"
-                value={formData.name}
+                name="nm"
+                value={formData.nm}
                 onChange={handleInputChange}
               />
               {errors.name && <p className="error">{errors.name}</p>}
@@ -106,18 +168,16 @@ const FlowTransferForm =({
               </label>
               <select
                 className="input-select"
-                name="flow"
-                value={formData.flow}
+                name="flow_to"
+                value={formData.flow_to}
                 onChange={handleInputChange}
               >
                 <option>Select...</option>
-                {[...Array(10)]
-                  .map((_, i) => i + 1)
-                  .map((i) => (
-                    <option key={i} value={i}>
-                      {i}
-                    </option>
-                  ))}
+                {flowOptions.map((audio, index) => (
+                  <option key={index} value={audio.ifuniq}>
+                    {audio.ifname}
+                  </option>
+                ))}
               </select>
               {errors.flow && <p className="error">{errors.flow}</p>}
               <label>Description :</label>
@@ -125,8 +185,8 @@ const FlowTransferForm =({
                 placeholder="write the description"
                 rows="6"
                 cols="40"
-                name="description"
-                value={formData.description}
+                name="des"
+                value={formData.des}
                 onChange={handleInputChange}
               />
             </div>

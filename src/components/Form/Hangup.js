@@ -17,7 +17,7 @@ const HangUp = ({
   flow_id
 }) => {
   const [formData, setFormData] = useState({
-    lml: "66b9dee3ef1ca",
+    lml: "66c7088544596",
     app_id: node.data.app_id,
     flow_id: flow_id,
     inst_id: node.id,
@@ -37,7 +37,7 @@ const HangUp = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: "66c7088544596",
             flow_id: flow_id,
             app_id: node.data.app_id,
             inst_id: node.id,
@@ -49,13 +49,15 @@ const HangUp = ({
         }
 
         const data = await response.json();
-        const extensionData = data.resp.app_data;
+        const HungUpData = data.resp.app_data;
+        if(data.resp.error_code==="0"){
+
         setFormData((prevData) => ({
           ...prevData,
           nm: nodeLabel || "",
-          des: extensionData.des,
+          des: HungUpData.des || "",
         }));
-
+      }
 
       } catch (error) {
         console.error("Error fetching data:", error);

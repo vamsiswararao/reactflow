@@ -19,7 +19,7 @@ const TelegramForm = ({
 
 
   const [formData, setFormData] = useState({
-    lml: "66b9dee3ef1ca",
+    lml: "66c7088544596",
     app_id: node.data.app_id,
     // "5c93b0a9b0810",
     flow_id: flow_id,
@@ -42,7 +42,7 @@ const TelegramForm = ({
             "Content-Type": "application/json", // Ensure the content type is JSON
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: "66c7088544596",
             flow_id: "66c708df247df", // Use the provided flow_id
             app_id: node.data.app_id, // Use the provided app_id
             inst_id: node.id, // Use the provided inst_id
@@ -56,9 +56,11 @@ const TelegramForm = ({
           throw new Error("Failed to fetch data");
         }
   
+
+        if(telegramData.resp.error_code==="0"){
         setFormData((prevData) => ({
           
-           lml: "66b9dee3ef1ca",
+           lml: "66c7088544596",
           app_id: node.data.app_id,
           flow_id: flow_id,
           inst_id: node.id,
@@ -66,7 +68,7 @@ const TelegramForm = ({
           send_to: telData.mi_to,
           msg: telData.msg
         }));
-
+      }
                 // Fetch audio options with the same data
                 const toResponse = await fetch(`${apiUrl}/app_get_numbers_tgram`, {
                   method: "POST",
@@ -74,7 +76,7 @@ const TelegramForm = ({
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    lml:"66b9dee3ef1ca",
+                    lml:"66c7088544596",
                     flow_id: flow_id,
                     app_id: node.data.app_id,
                     inst_id: node.id,
@@ -178,7 +180,7 @@ const TelegramForm = ({
                 value={formData.send_to}
                 onChange={handleInputChange}
               >
-                <option value="">Select the audio</option>
+                <option value="">Select...</option>
                 {toOptions.map((to, index) => (
                   <option key={index} value={to.uni}>
                     {to.nm}

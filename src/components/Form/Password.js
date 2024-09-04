@@ -1,70 +1,153 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
+const apiUrl = process.env.REACT_APP_API_URL;
+
 
 const Passwords = ({ node,nodeLabel, handleLabelChange, deleteNode, removeForm, save, copyNode,flow_id }) => {
-  const [selectedValue, setSelectedValue] = useState("");
-  const [password, setPassword] = useState("");
-  const [successAudio, setSuccessAudio] = useState("");
-  const [failAudio, setFailAudio] = useState("");
+  const [formData, setFormData] = useState({
+    lml: "66c7088544596",
+    app_id: node.data.app_id,
+    // "5c93b0a9b0810",
+    flow_id: flow_id,
+    inst_id: node.id,
+    nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+    audio: "",
+    pswd:'',
+    suc_audio:'',
+    fail_audio:'',
+  });
+  const [audioOptions, setAudioOptions] = useState([]); 
+  const [errors, setErrors] = useState({});
+  
+  useEffect(() => {
+    const fetchAnnouncementData= async () => {
+      try {
+        const smsResponse = await fetch(`${apiUrl}/app_get_data_pword`,
+           {
+           method: "POST", // Specify the PUT method
+          headers: {
+            "Content-Type": "application/json", // Ensure the content type is JSON
+          },
+          body: JSON.stringify({
+            lml: "66c7088544596",
+            flow_id: "66c708df247df", // Use the provided flow_id
+            app_id: node.data.app_id, // Use the provided app_id
+            inst_id: node.id, // Use the provided inst_id
+          }),
+        }
+        );
+        const smsData = await smsResponse.json();
+        const smsFinalData=smsData.resp.app_data
+        if (!smsResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+  
 
-  // Error state variables
-  const [nodeLabelError, setNodeLabelError] = useState("");
-  const [selectedValueError, setSelectedValueError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [successAudioError, setSuccessAudioError] = useState("");
-  const [failAudioError, setFailAudioError] = useState("");
+        if(smsData.resp.error_code==="0"){
 
-  const handleSave = () => {
-    // Clear previous error messages
-    setNodeLabelError("");
-    setSelectedValueError("");
-    setPasswordError("");
-    setSuccessAudioError("");
-    setFailAudioError("");
+        setFormData((prevData) => ({
+          
+           lml: "66c7088544596",
+          app_id: node.data.app_id,
+          flow_id: flow_id,
+          inst_id: node.id,
+          nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+          audio: smsFinalData.audio|| "", // Example of dynamic data usage
+          pswd:smsFinalData.pswrd,
+          suc_audio:smsFinalData.saudio,
+          fail_audio:smsFinalData.faudio,
+        }));
 
-    // Validate form fields
-    let hasError = false;
-    if (!nodeLabel) {
-      setNodeLabelError("Name is required.");
-      hasError = true;
-    }
-    if (!selectedValue) {
-      setSelectedValueError("Audio selection is required.");
-      hasError = true;
-    }
-    if (!password) {
-      setPasswordError("Password is required.");
-      hasError = true;
-    }
-    if (!successAudio) {
-      setSuccessAudioError("Success audio selection is required.");
-      hasError = true;
-    }
-    if (!failAudio) {
-      setFailAudioError("Fail audio selection is required.");
-      hasError = true;
-    }
+      }
 
-    if (hasError) return;
-
-    // Create form data object
-    const formData = {
-      app_id:node.data.app_id ,
-      // "5c93b0a9b0810",
-      flow_id: flow_id,
-      inst_id:node.id,
-      name:nodeLabel,
-      password,
-      selectedValue,
-      successAudio,
-      failAudio,
+                // Fetch audio options with the same data
+                const audioResponse = await fetch(`${apiUrl}/app_get_audios`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    lml:"66c7088544596",
+                    flow_id: flow_id,
+                    app_id: node.data.app_id,
+                    inst_id: node.id,
+                  }),
+                });
+        
+                if (!audioResponse.ok) {
+                  throw new Error("Failed to fetch audio options");
+                }
+        
+                const audioData = await audioResponse.json();
+                setAudioOptions(audioData.resp.aud_data || []);
+                //console.log(audioData.resp.aud_data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
-    // Log form data to console
-    console.log("Form Data:", formData);
-    save(nodeLabel);
+    
+  
+    fetchAnnouncementData();
+  }, [flow_id, nodeLabel, node]);
+
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "nm") {
+      handleLabelChange(e); // Call the prop function to update nodeLabel in parent component
+    }
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const validateForm = () => {
+    console.log(formData.nm)
+    const newErrors = {};
+    if (!formData.nm) newErrors.nm = "Name is required";
+    if (!formData.audio)
+      newErrors.audio = "Audio selection is required";
+    if (!formData.pswd)
+      newErrors.pswd = "password is required";
+    if (!formData.suc_audio)
+      newErrors.suc_audio = "success audio selection is required";
+    if (formData.pswd && formData.pswd.length < 8) newErrors.pswd = "Password must be at least 8 characters long";
+    if (!formData.fail_audio)
+      newErrors.fail_audio = "Fail audio selection is required";
+    return newErrors;
+  };
+
+  const handleSave = async () => {
+    const formErrors = validateForm();
+    console.log(formErrors)
+    if (Object.keys(formErrors).length === 0) {
+      setErrors({})
+      try {
+        const response = await fetch(`${apiUrl}/app_set_data_pword`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+        const data = await response.json();
+        console.log(data);
+        if (!response.ok) {
+          throw new Error("Failed to save data");
+        }
+
+        console.log("Form Data Saved:", formData);
+        save(nodeLabel); // Call the save handler from props
+      } catch (error) {
+        console.error("Error saving data:", error);
+      }
+    } else {
+      setErrors(formErrors);
+    }
   };
 
   return (
@@ -83,62 +166,66 @@ const Passwords = ({ node,nodeLabel, handleLabelChange, deleteNode, removeForm, 
             value={nodeLabel}
             onChange={handleLabelChange}
           />
-          {nodeLabelError && <p className="error">{nodeLabelError}</p>}
+            {errors.name && <p className="error">{errors.name}</p>}
           
           <label>Audio:<span className="star">*</span></label>
           <select
-            className="input-select"
-            value={selectedValue}
-            onChange={(e) => setSelectedValue(e.target.value)}
-          >
-            <option value="">Select the audio</option>
-            {[...Array(10)].map((_, i) => i + 1).map((i) => (
-              <option key={i} value={i}>
-                {i}
-              </option>
-            ))}
-          </select>
-          {selectedValueError && <p className="error">{selectedValueError}</p>}
+                className="input-select"
+                name="audio"
+                value={formData.audio}
+                onChange={handleInputChange}
+              >
+                <option value="">Select the audio</option>
+                {audioOptions.map((audio, index) => (
+                  <option key={index} value={audio.auni}>
+                    {audio.anm}
+                  </option>
+                ))}
+              </select>
+              {errors.audio && <p className="error">{errors.audio}</p>}
 
           <label>Password:<span className="star">*</span></label>
           <input
-            type="password"
+            type="pswd"
             placeholder="Enter the password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formData.pswd}
+            name="pswd"
+            onChange={handleInputChange}
           />
-          {passwordError && <p className="error">{passwordError}</p>}
+            {errors.pswd && <p className="error">{errors.pswd}</p>}
 
           <label>Success audio:<span className="star">*</span></label>
           <select
-            className="input-select"
-            value={successAudio}
-            onChange={(e) => setSuccessAudio(e.target.value)}
-          >
-            <option value="">Select...</option>
-            {[...Array(10)].map((_, i) => i + 1).map((i) => (
-              <option key={i} value={i}>
-                {i}
-              </option>
-            ))}
-          </select>
-          {successAudioError && <p className="error">{successAudioError}</p>}
+                className="input-select"
+                name="suc_audio"
+                value={formData.suc_audio}
+                onChange={handleInputChange}
+              >
+                <option value="">Select the audio</option>
+                {audioOptions.map((audio, index) => (
+                  <option key={index} value={audio.auni}>
+                    {audio.anm}
+                  </option>
+                ))}
+              </select>
+              {errors.suc_audio && <p className="error">{errors.suc_audio}</p>}
 
           <label>Fail audio:<span className="star">*</span></label>
           <select
-            className="input-select"
-            value={failAudio}
-            onChange={(e) => setFailAudio(e.target.value)}
-          >
-            <option value="">Select...</option>
-            {[...Array(10)].map((_, i) => i + 1).map((i) => (
-              <option key={i} value={i}>
-                {i}
-              </option>
-            ))}
-          </select>
-          {failAudioError && <p className="error">{failAudioError}</p>}
-        </div>
+                className="input-select"
+                name="fail_audio"
+                value={formData.fail_audio}
+                onChange={handleInputChange}
+              >
+                <option value="">Select the audio</option>
+                {audioOptions.map((audio, index) => (
+                  <option key={index} value={audio.auni}>
+                    {audio.anm}
+                  </option>
+                ))}
+              </select>
+              {errors.fail_audio && <p className="error">{errors.fail_audio}</p>}
+              </div>
 
         <hr className="bottom-hr" />
         <button onClick={handleSave} className="save-btn">Save</button>

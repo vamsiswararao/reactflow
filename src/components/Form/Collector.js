@@ -13,11 +13,11 @@ const CollectorForm = ({
   removeForm,
   save,
   copyNode,
-  flow_id
+  flow_id,
 }) => {
   const [audioOptions, setAudioOptions] = useState([]);
   const [formData, setFormData] = useState({
-    lml: "66b9dee3ef1ca",
+    lml: "66c7088544596",
     app_id: node.data.app_id,
     flow_id: flow_id,
     inst_id: node.id,
@@ -40,7 +40,7 @@ const CollectorForm = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: "66c7088544596",
             flow_id: flow_id,
             app_id: node.data.app_id,
             inst_id: node.id,
@@ -54,43 +54,43 @@ const CollectorForm = ({
         const audioData = await audioResponse.json();
         setAudioOptions(audioData.resp.aud_data || []);
 
-        const CollectorResponse = await fetch(`${apiUrl}/app_get_data_collector`,
+        const CollectorResponse = await fetch(
+          `${apiUrl}/app_get_data_collector`,
           {
-          method: "POST", // Specify the PUT method
-         headers: {
-           "Content-Type": "application/json", // Ensure the content type is JSON
-         },
-         body: JSON.stringify({
-           lml: "66b9dee3ef1ca",
-           flow_id: "66c708df247df", // Use the provided flow_id
-           app_id: node.data.app_id, // Use the provided app_id
-           inst_id: node.id, // Use the provided inst_id
-         }),
-       }
-       );
-       const announcementData = await CollectorResponse.json();
-       //console.log(announcementData.resp.app_data)
-       const collData= announcementData.resp.app_data
-       console.log(collData)
-       if (!CollectorResponse.ok) {
-         throw new Error("Failed to fetch data");
-       }
- 
-       setFormData((prevData) => ({
-         
-          lml: "66b9dee3ef1ca",
-         app_id: node.data.app_id,
-         flow_id: flow_id,
-         inst_id: node.id,
-         nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
-         key_length:collData.key_length,
-         finish_key:collData.finish_key,
-         time_out:collData.time_out,
-         audio: collData.audio, // Example of dynamic data usage
-         repeat: collData.repeat, // Example of dynamic data usage
-         des: collData.des, // Example of dynamic data usage
-       }));
-
+            method: "POST", // Specify the PUT method
+            headers: {
+              "Content-Type": "application/json", // Ensure the content type is JSON
+            },
+            body: JSON.stringify({
+              lml: "66c7088544596",
+              flow_id: "66c708df247df", // Use the provided flow_id
+              app_id: node.data.app_id, // Use the provided app_id
+              inst_id: node.id, // Use the provided inst_id
+            }),
+          }
+        );
+        const announcementData = await CollectorResponse.json();
+        //console.log(announcementData.resp.app_data)
+        const collData = announcementData.resp.app_data;
+        console.log(collData);
+        if (!CollectorResponse.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        if(announcementData.resp.error_code==="0"){
+        setFormData((prevData) => ({
+          lml: "66c7088544596",
+          app_id: node.data.app_id,
+          flow_id: flow_id,
+          inst_id: node.id,
+          nm: nodeLabel || "", // Initialize with nodeLabel or an empty string
+          key_length: collData.key_length,
+          finish_key: collData.finish_key,
+          time_out: collData.time_out,
+          audio: collData.audio, // Example of dynamic data usage
+          repeat: collData.repeat, // Example of dynamic data usage
+          des: collData.des, // Example of dynamic data usage
+        }));
+      }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -103,7 +103,8 @@ const CollectorForm = ({
     const newErrors = {};
     if (!formData.nm) newErrors.nodeLabel = "Name is required.";
     if (!formData.audio) newErrors.audio = "Audio selection is required.";
-    if (!formData.finish_key) newErrors.dtmfKey = "DTMF finish key is required.";
+    if (!formData.finish_key)
+      newErrors.dtmfKey = "DTMF finish key is required.";
     if (!formData.key_length) newErrors.keyLength = "Key length is required.";
     if (!formData.time_out) newErrors.timeout = "Timeout is required.";
     return newErrors;
@@ -125,7 +126,7 @@ const CollectorForm = ({
         body: JSON.stringify(formData),
       });
       const data = await response.json();
-      console.log(data)
+      console.log(data);
       if (!response.ok) {
         throw new Error("Network response was not ok.");
       }
@@ -157,7 +158,9 @@ const CollectorForm = ({
         </button>
         <hr />
         <div className="form-container">
-          <label>Name:<span className="star">*</span></label>
+          <label>
+            Name:<span className="star">*</span>
+          </label>
           <input
             type="text"
             name="nm"
@@ -167,14 +170,16 @@ const CollectorForm = ({
           />
           {errors.nodeLabel && <p className="error">{errors.nodeLabel}</p>}
 
-          <label>Audio:<span className="star">*</span></label>
+          <label>
+            Audio:<span className="star">*</span>
+          </label>
           <select
             className="input-select"
             name="audio"
             value={formData.audio}
             onChange={handleInputChange}
           >
-            <option value="">Select the audio</option>
+            <option value="">Select...</option>
             {audioOptions.map((audio, index) => (
               <option key={index} value={audio.auni}>
                 {audio.anm}
@@ -183,8 +188,12 @@ const CollectorForm = ({
           </select>
           {errors.audio && <p className="error">{errors.audio}</p>}
 
-          <label>DTMF finish key:<span className="star">*</span></label>
+          <label>
+            DTMF finish key:<span className="star">*</span>
+          </label>
           <input
+            type="number"
+            min="0"
             name="finish_key"
             value={formData.finish_key}
             placeholder="Enter the DTMF finish key"
@@ -192,8 +201,12 @@ const CollectorForm = ({
           />
           {errors.dtmfKey && <p className="error">{errors.dtmfKey}</p>}
 
-          <label>Key length:<span className="star">*</span></label>
+          <label>
+            Key length:<span className="star">*</span>
+          </label>
           <input
+            type="number"
+            min="0"
             name="key_length"
             value={formData.key_length}
             placeholder="Enter the key length"
@@ -201,8 +214,12 @@ const CollectorForm = ({
           />
           {errors.keyLength && <p className="error">{errors.keyLength}</p>}
 
-          <label>Timeout:<span className="star">*</span></label>
+          <label>
+            Timeout:<span className="star">*</span>
+          </label>
           <input
+            type="number"
+            min="0"
             name="time_out"
             value={formData.time_out}
             placeholder="Enter the timeout"
@@ -212,6 +229,8 @@ const CollectorForm = ({
 
           <label>Repeat count:</label>
           <input
+            type="number"
+            min="0"
             name="repeat"
             value={formData.repeat}
             placeholder="Enter the repeat count"

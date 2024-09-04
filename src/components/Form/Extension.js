@@ -16,7 +16,7 @@ const Extensions = ({
   save,
 }) => {
   const [formData, setFormData] = useState({
-    lml: "66b9dee3ef1ca",
+    lml: "66c7088544596",
     app_id: node.data.app_id,
     flow_id: flow_id,
     inst_id: node.id,
@@ -37,7 +37,7 @@ const Extensions = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: "66c7088544596",
             flow_id: flow_id,
             app_id: node.data.app_id,
             inst_id: node.id,
@@ -50,6 +50,7 @@ const Extensions = ({
 
         const data = await response.json();
         const extensionData = data.resp.app_data;
+        if(data.resp.error_code==="0"){
         setFormData((prevData) => ({
           ...prevData,
           nm: nodeLabel || "",
@@ -57,6 +58,7 @@ const Extensions = ({
           retries: extensionData.retries || "1",
           des: extensionData.des,
         }));
+      }
 
         // Fetch audio options
         const audioResponse = await fetch(`${apiUrl}/app_get_audios`, {
@@ -65,7 +67,7 @@ const Extensions = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            lml: "66b9dee3ef1ca",
+            lml: "66c7088544596",
             flow_id: flow_id,
             app_id: node.data.app_id,
             inst_id: node.id,
