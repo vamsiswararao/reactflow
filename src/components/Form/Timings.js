@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiCircleRemove } from "react-icons/ci";
 import { FaCopy } from "react-icons/fa";
-//import './styles.css';
-
 const apiUrl = process.env.REACT_APP_API_URL;
+
 
 const TimingsForm = ({
   nodeLabel,
@@ -40,7 +39,7 @@ const TimingsForm = ({
   useEffect(() => {
     const fetchAnnouncementData = async () => {
       try {
-        const response = await fetch(`${apiUrl}/app_get_data_timings`, {
+        const timeResponse = await fetch(`${apiUrl}/app_get_data_timings`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -52,27 +51,26 @@ const TimingsForm = ({
             inst_id: node.id,
           }),
         });
-
-        const data = await response.json();
-
-        if (!response.ok) {
+        const timeData = await timeResponse.json();
+        if (!timeResponse.ok) {
           throw new Error("Failed to fetch data");
         }
 
-        if (data.resp.error_code === "0") {
-          const annData = data.resp.app_data;
-
-          // Update the state with the fetched timings data
+        if (timeData.resp.error_code === "0") {
+          const tData = timeData.resp.app_data;
+          console.log(tData)
           setFormData((prevData) => ({
-            ...prevData,
-            timings: annData.chek || {},
-            des: annData.des || "",
+            lml: lml,
+            app_id: node.data.app_id,
+            flow_id: flow_id,
+            inst_id: node.id,
+            nm: nodeLabel || "",
+            timings:tData.chek ||'',
+            des: tData.des || "",
           }));
-
-          // Update daysOpenStatus based on fetched timings
           const newDaysOpenStatus = {};
           Object.keys(daysOpenStatus).forEach((day) => {
-            newDaysOpenStatus[day] = annData.chek && annData.chek[day] ? true : false;
+            newDaysOpenStatus[day] = tData.chek && tData.chek[day] ? true : false;
           });
           setDaysOpenStatus(newDaysOpenStatus);
         }
@@ -83,7 +81,7 @@ const TimingsForm = ({
     };
 
     fetchAnnouncementData();
-  }, [flow_id, nodeLabel, node, lml,daysOpenStatus]);
+  }, [flow_id, nodeLabel, node,lml]);
 
   const timeOptions = Array.from({ length: 48 }, (_, index) => {
     const hours = String(Math.floor(index / 2)).padStart(2, '0');
@@ -112,7 +110,15 @@ const TimingsForm = ({
   };
 
   const handleSave = async () => {
-    const timings = {};
+    // const isValid = formData.nm.trim() !== "";
+
+    // if (!isValid) {
+    //   alert("Please fill in all required fields.");
+    //   return;
+    // }
+
+    // Collect time data for each day
+    const timings ={};
     Object.keys(daysOpenStatus).forEach((day) => {
       if (daysOpenStatus[day]) {
         const from = document.getElementById(`${day}-from`).value;
@@ -121,11 +127,14 @@ const TimingsForm = ({
       }
     });
 
+    // Update form data
     const updatedFormData = {
       ...formData,
       timings,
     };
     setFormData(updatedFormData);
+
+    console.log("Form Data:", updatedFormData);
 
     try {
       const response = await fetch(`${apiUrl}/app_set_data_timings`, { 
@@ -139,6 +148,7 @@ const TimingsForm = ({
       if (response.ok) {
         const data = await response.json();
         console.log("Data saved successfully:", data);
+        console.log(updatedFormData)
         save(); // Call the save callback to trigger any additional save actions
       } else {
         console.error("Failed to save data:", response.statusText);
@@ -152,9 +162,9 @@ const TimingsForm = ({
     <div className="form-one-container">
       <div className="form">
         <button onClick={removeForm} className="remove-btn">
-          <CiCircleRemove />
+          <CiCircleRemove style={{ height: "30px", width: "30px" }} />
         </button>
-        <h3 className="form-title">Timings</h3>
+        <h3 style={{ textAlign: "center" }}>Timings</h3>
         <hr />
         <div className="form-container">
           <label>
@@ -164,13 +174,13 @@ const TimingsForm = ({
             type="text"
             name="nm"
             placeholder="Enter the Name"
-            value={formData.nm || ''}
+            value={nodeLabel}
             onChange={handleLabelChange}
           />
           {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
             <div key={day}>
               <div className="radio">
-                <label>{day}:</label>
+                <label style={{ minWidth: '90px' }}>{day}:</label>
                 <input
                   type="radio"
                   name={`${day.toLowerCase()}-status`}
@@ -190,33 +200,33 @@ const TimingsForm = ({
               </div>
               {daysOpenStatus[day] && (
                 <div className="time-radio">
-                  <label>From time:</label>
-                  <select id={`${day}-from`} className="time-select" defaultValue={formData.timings[day]?.from || ''} required>
+                  <label style={{width:'160px',marginRight:'10px'}}>From time:</label>
+                  <select id={`${day}-from`} style={{ marginLeft:'5px', width: "90px",height:'25px',fontSize:'16px' }}  defaultValue={formData.timings[day]?.from || ''} required>
                     {timeOptions}
                   </select>
-                  <label>To time:</label>
-                  <select id={`${day}-to`} className="time-select" defaultValue={formData.timings[day]?.to || ''}>
+                  <label style={{marginLeft:"20px",width:'100px'}}>To time:</label>
+                  <select id={`${day}-to`} style={{ marginLeft:'5px',width: "90px",height:"25px",fontSize:'16px'}}  defaultValue={formData.timings[day]?.to || ''}>
                     {timeOptions}
                   </select>
                 </div>
               )}
             </div>
           ))}
-          <label className="textarea-label">Description:</label>
+          <label style={{ marginTop: "10px" }}>Description:</label>
           <textarea
             name="description"
             placeholder="Enter the description"
             rows="6"
             cols="40"
-            value={formData.des || ''}
+            value={formData.description}
             onChange={handleChange}
           />
         </div>
         <hr className="bottom-hr" />
         <button onClick={handleSave} className="save-btn">Save</button>
-        <button onClick={copyNode} className="copy-btn"><FaCopy /></button>
+        <button onClick={copyNode} className="copy-btn"><FaCopy style={{ height: '20px', width: '20px' }} /></button>
         <button onClick={deleteNode} className="delete-btn">
-          <RiDeleteBin6Line />
+          <RiDeleteBin6Line style={{ height: "20px", width: "20px" }} />
         </button>
       </div>
     </div>

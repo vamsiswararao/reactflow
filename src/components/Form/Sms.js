@@ -13,6 +13,7 @@ const SmsFrom = ({
   save,
   copyNode,
   flow_id,
+  lml
 }) => {
   const [SenderIdOptions, setSenderIdOptions] = useState([]);
   const [templateOptions, setTemplateOptions] = useState([]);
@@ -33,6 +34,8 @@ const SmsFrom = ({
     des: "",
   });
   const [routeOptions, setRouteOptions] = useState([]);
+  const [toOptions, setToOptions] = useState([]);
+
   //const [SenderToOptions, setSenderToOptions] = useState([]);
   const [errors, setErrors] = useState({});
 
@@ -67,6 +70,38 @@ const SmsFrom = ({
 
     fetchRoute();
   }, [flow_id, node]);
+
+  useEffect(() => {
+    const fetchRoute = async () => {
+      try {
+        // Fetch audio options with the same data
+        const routeResponse = await fetch(`${apiUrl}/app_get_mobiles_sms`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            lml: lml,
+            flow_id: flow_id,
+            app_id: node.data.app_id,
+            inst_id: node.id,
+          }),
+        });
+
+        if (!routeResponse.ok) {
+          throw new Error("Failed to fetch audio options");
+        }
+
+        const finalIdData = await routeResponse.json();
+        setToOptions(finalIdData.resp.aud_data || []);
+        console.log(finalIdData);
+      } catch (error) {
+        console.error("Error fetching options for select 1:", error);
+      }
+    };
+
+    fetchRoute();
+  }, [flow_id, node,lml]);
 
   useEffect(() => {
     const fetchAnnouncementData = async () => {
@@ -381,10 +416,16 @@ console.log(formData.unicode)
             onChange={handleInputChange}
           >
             <option value="">Select...</option>
-            <option value="">Select... </option>
-            <option value="11">Last Dialed answered</option>
-            <option value="12">Last Dialed Not answered</option>
-            <option value="13">Last Dialed</option>
+            <option value="123">Caller</option>
+            <option value="1234">agent Answered</option>
+            <option value="12345">No Answered Agent</option>
+            <option value="123456">All No Answered Agent</option>
+            {toOptions.map((to, index) => (
+              <option key={index} value={to.uni}>
+                {to.nm}-{to.mob}
+              </option>
+            ))}
+   
           </select>
           {errors.toValue && <p className="error">{errors.toValue}</p>}
           <div style={{display:"flex",alignItems:'center'}}>
